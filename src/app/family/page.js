@@ -132,14 +132,16 @@ export default function FamilyPage() {
 
   if (!user) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-16 animate-fade-in">
-        <Users className="mx-auto text-cyan mb-6 opacity-50" size={80} />
-        <h1 className="text-3xl font-black font-['Outfit'] mb-4">Family Hub</h1>
-        <p className="text-slate-400 mb-8 max-w-md mx-auto">
-          Protect your loved ones. Create a family group to track everyone's Scam IQ and ensure they stay safe online.
+      <div className="max-w-2xl mx-auto text-center py-16 animate-fade-in px-4">
+        <div className="w-20 h-20 bg-sky-100 text-sky-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-sm text-4xl animate-bounce">
+          👨‍👩‍👧‍👦
+        </div>
+        <h1 className="text-3xl font-black font-['Outfit'] mb-3 text-slate-900">Family Safety Group</h1>
+        <p className="text-slate-600 mb-8 max-w-md mx-auto font-normal">
+          Protect your loved ones. Create a free family circle to track everyone's Scam Awareness and ensure your grandparents and parents stay safe online.
         </p>
-        <div className="bg-rose/10 border border-rose/30 text-rose p-4 rounded-xl inline-block font-bold shadow-[0_0_15px_rgba(244,63,94,0.2)]">
-          Please Sign In or Sign Up to access the Family Hub.
+        <div className="bg-amber-50 border border-amber-200 text-amber-800 p-4 rounded-2xl inline-block font-bold shadow-xs text-sm">
+          Please Sign In to open your Family Safety Group.
         </div>
       </div>
     );
@@ -148,11 +150,13 @@ export default function FamilyPage() {
   // State 1: User is not in a family
   if (!familyGroup) {
     return (
-      <div className="max-w-4xl mx-auto py-8 animate-fade-in">
+      <div className="max-w-4xl mx-auto py-8 animate-fade-in px-4">
         <div className="mb-10 text-center">
-          <Users className="mx-auto text-cyan mb-4 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]" size={60} />
-          <h1 className="text-3xl md:text-4xl font-black font-['Outfit'] mb-2">Protect Your Loved Ones</h1>
-          <p className="text-slate-400">Join an existing family group or create a new one to start tracking Scam IQ.</p>
+          <div className="w-16 h-16 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xs text-3xl">
+            🛡️
+          </div>
+          <h1 className="text-3xl md:text-4xl font-black font-['Outfit'] mb-2 text-slate-900">Protect Your Family</h1>
+          <p className="text-slate-600">Invite your parents or kids to start learning cyber safety together.</p>
         </div>
 
         {error && (
@@ -163,35 +167,33 @@ export default function FamilyPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Create Family Card */}
-          <div className="glass-card p-8 border-cyan/20 flex flex-col justify-between group hover:-translate-y-1 transition-all relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-cyan/10 rounded-full blur-3xl pointer-events-none group-hover:bg-cyan/20 transition-all"></div>
+          <div className="glass-card p-8 border-slate-200 flex flex-col justify-between group hover:-translate-y-1 transition-all relative overflow-hidden bg-white">
             <div>
-              <div className="w-14 h-14 bg-cyan/10 rounded-2xl flex items-center justify-center text-cyan mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 bg-sky-50 rounded-2xl flex items-center justify-center text-sky-600 mb-6 group-hover:scale-110 transition-transform shadow-xs">
                 <Shield size={28} />
               </div>
-              <h2 className="text-2xl font-black font-['Outfit'] mb-3">Create Family Group</h2>
-              <p className="text-slate-400 text-sm leading-relaxed mb-8">
-                Be the admin of your family. Invite your parents, spouse, and kids to ensure everyone is learning how to stay safe.
+              <h2 className="text-2xl font-black font-['Outfit'] mb-3 text-slate-900">Create Family Group</h2>
+              <p className="text-slate-600 text-sm leading-relaxed mb-8">
+                Be the guide for your family. Invite your parents, spouse, and kids to ensure everyone is learning how to stay safe from online scams.
               </p>
             </div>
             <button 
               onClick={handleCreateFamily}
               disabled={actionLoading}
-              className="btn-primary w-full py-4 text-lg font-black flex justify-center items-center gap-2"
+              className="btn-primary w-full py-4 text-base font-bold flex justify-center items-center gap-2 shadow-md"
             >
-              {actionLoading ? <Loader2 className="animate-spin" /> : "Create Group Now"}
+              {actionLoading ? <Loader2 className="animate-spin" /> : "Create Free Group Now"}
             </button>
           </div>
 
           {/* Join Family Card */}
-          <div className="glass-card p-8 border-violet/20 flex flex-col justify-between group hover:-translate-y-1 transition-all relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-32 h-32 bg-violet/10 rounded-full blur-3xl pointer-events-none group-hover:bg-violet/20 transition-all"></div>
+          <div className="glass-card p-8 border-slate-200 flex flex-col justify-between group hover:-translate-y-1 transition-all relative overflow-hidden bg-white">
             <div>
-              <div className="w-14 h-14 bg-violet/10 rounded-2xl flex items-center justify-center text-violet mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600 mb-6 group-hover:scale-110 transition-transform shadow-xs">
                 <KeyRound size={28} />
               </div>
-              <h2 className="text-2xl font-black font-['Outfit'] mb-3">Join with Code</h2>
-              <p className="text-slate-400 text-sm leading-relaxed mb-6">
+              <h2 className="text-2xl font-black font-['Outfit'] mb-3 text-slate-900">Join with Invite Code</h2>
+              <p className="text-slate-600 text-sm leading-relaxed mb-6">
                 Did someone in your family already create a group? Ask them for the 6-character Invite Code and enter it below.
               </p>
             </div>
@@ -202,14 +204,14 @@ export default function FamilyPage() {
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                   placeholder="Enter 6-digit Code"
-                  className="w-full bg-navy/50 border border-white/10 rounded-xl py-4 pl-4 pr-12 text-center text-xl font-black tracking-widest uppercase focus:outline-none focus:border-violet focus:ring-1 focus:ring-violet transition-all"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 pl-4 pr-12 text-center text-xl font-black tracking-widest uppercase focus:outline-none focus:border-purple-500 focus:bg-white transition-all placeholder:text-slate-400"
                   maxLength={6}
                   disabled={actionLoading}
                 />
                 <button 
                   type="submit"
                   disabled={actionLoading || joinCode.length < 3}
-                  className="absolute right-2 top-2 bottom-2 bg-violet hover:bg-violet/90 text-white rounded-lg px-4 font-bold transition-all disabled:opacity-50 flex items-center justify-center"
+                  className="absolute right-2 top-2 bottom-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl px-4 font-bold transition-all disabled:opacity-50 flex items-center justify-center shadow-xs"
                 >
                   {actionLoading ? <Loader2 className="animate-spin" size={20} /> : <ArrowRight size={20} />}
                 </button>

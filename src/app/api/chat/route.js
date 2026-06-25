@@ -1,50 +1,76 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "dummy_key_for_build");
-
-const SYSTEM_PROMPT = `
-You are CyberSiksha's AI Mentor. Your job is to explain cybersecurity concepts and digital scams to elderly Indians and children in very simple, friendly language.
-RULES:
-1. Use simple analogies they understand (e.g., locks, doors, keys, physical wallets).
-2. Never use jargon (like 'phishing', 'malware', '2FA') without explaining it simply first.
-3. Be warm, patient, and respectful (like a grandchild explaining a phone feature to a grandparent).
-4. If they describe a suspicious message or call, explain the scam pattern and give clear steps to stay safe.
-5. Keep answers concise (3-5 sentences maximum). No long essays.
-6. You can respond in Hindi, English, or Hinglish based on the user's language.
-`;
+import { NextResponse } from 'next/server';
 
 export async function POST(req) {
   try {
-    const { messages } = await req.json();
-    
-    // For local dev without API key, send a mock response
-    if (!process.env.GEMINI_API_KEY) {
-      return Response.json({ 
-        role: 'assistant', 
-        content: "Namaste! I am your CyberSiksha AI mentor. (Note: Gemini API key is missing, so this is a mock response. Please add GEMINI_API_KEY to your .env file to enable real AI responses!)"
-      });
+    const { message } = await req.json();
+    let rawKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = rawKey ? rawKey.replace(/['"]/g, '').trim() : null;
+
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'Server Gemini API key is missing. Please add GEMINI_API_KEY to your .env file.' },
+        { status: 500 }
+      );
     }
 
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash", systemInstruction: SYSTEM_PROMPT });
+    // Step 1: Query Google's REST endpoint to dynamically discover active models for this key!
+    const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`);
+    const modelsData = await modelsRes.json();
+
+    if (!modelsRes.ok) {
+      throw new Error(`Failed to list models: ${modelsData.error?.message || modelsRes.statusText}`);
+    }
+
+    // Step 2: Filter models that specifically support text generation (generateContent)
+    const validModels = (modelsData.models || [])
+      .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
+      .map(m => m.name.replace('models/', ''));
+
+    if (validModels.length === 0) {
+      throw new Error("No models supporting generateContent found for your API key clearance.");
+    }
+
+    console.log("Dynamically discovered active Gemini models:", validModels);
+
+    const genAI = new GoogleGenerativeAI(apiKey);
     
-    const formattedHistory = messages.slice(0, -1).map(m => ({
-      role: m.role === 'user' ? 'user' : 'model',
-      parts: [{ text: m.content }]
-    }));
-    
-    const chat = model.startChat({
-      history: formattedHistory,
-    });
-    
-    const latestMessage = messages[messages.length - 1].content;
-    const result = await chat.sendMessage(latestMessage);
-    const response = await result.response;
-    const text = response.text();
-    
-    return Response.json({ role: 'assistant', content: text });
-    
+    const systemInstruction = `You are a cybersecurity expert mentor for an Indian platform called CyberSiksha. 
+Your goal is to help elderly people, parents, and youth spot digital scams (like UPI frauds, digital arrests, fake parcel scams, WhatsApp links).
+
+Provide a clear, simple, empathetic, and reassuring answer. Do not use complex technical jargon. 
+Give them direct advice on whether it's safe or a scam, and tell them exactly what steps to take next. Keep it structured and under 150 words.
+CRITICAL MANDATE: Output ONLY your direct response to the user. Do not output your role, analysis, constraints, or thought process.`;
+
+    let text = "";
+    let lastErr = null;
+
+    for (const modelName of validModels) {
+      try {
+        console.log(`Attempting generation with model: ${modelName}`);
+        const model = genAI.getGenerativeModel({ 
+          model: modelName,
+          systemInstruction: systemInstruction
+        });
+        const result = await model.generateContent(message);
+        text = result.response.text();
+        break;
+      } catch (err) {
+        console.warn(`Model ${modelName} failed (${err.message}), trying next valid model...`);
+        lastErr = err;
+      }
+    }
+
+    if (!text) {
+      throw new Error(`All discovered models (${validModels.slice(0, 3).join(', ')}) failed. Last error: ${lastErr?.message}`);
+    }
+
+    return NextResponse.json({ reply: text });
   } catch (error) {
-    console.error("Chat API Error:", error);
-    return Response.json({ error: "Failed to generate response" }, { status: 500 });
+    console.error('API Chat Error:', error);
+    return NextResponse.json(
+      { error: `Google AI Error: ${error.message}` },
+      { status: 500 }
+    );
   }
 }

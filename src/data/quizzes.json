@@ -1,0 +1,58 @@
+[
+  {
+    "id": "q1",
+    "category": "upi-scams",
+    "scenario": "You get a call from someone saying they mistakenly transferred ₹5000 to your PhonePe account. They send a screenshot showing the transfer and ask you to send it back. You check your bank balance and there is no new money. What do you do?",
+    "options": [
+      "Trust the screenshot and send ₹5000 back to be a good person.",
+      "Send ₹5000 back but only after they promise it's not a scam.",
+      "Refuse to send anything since your actual bank balance hasn't changed."
+    ],
+    "correctIndex": 2,
+    "feedback": "Correct! Scammers easily fake screenshots. Always trust your actual bank statement, never a screenshot sent on WhatsApp.",
+    "isSafeOrScam": true,
+    "safeOrScamAnswer": "Scam"
+  },
+  {
+    "id": "q2",
+    "category": "digital-arrest",
+    "scenario": "You receive an automatic IVR call claiming to be from FedEx. It says a package with your Aadhaar has been intercepted by Customs with illegal goods. Press 1 for customer care.",
+    "options": [
+      "Press 1 to clear up the misunderstanding.",
+      "Disconnect the call immediately.",
+      "Wait on the line to see what happens next."
+    ],
+    "correctIndex": 1,
+    "feedback": "Correct! This is the start of the 'Digital Arrest' scam. FedEx and Customs do not make automated calls like this. Disconnect immediately.",
+    "isSafeOrScam": true,
+    "safeOrScamAnswer": "Scam"
+  },
+  {
+    "id": "q3",
+    "category": "kyc-fraud",
+    "scenario": "Your bank's official app sends a push notification inside the app (not an SMS) asking you to review your annual KYC status by visiting your nearest branch.",
+    "options": [
+      "Ignore it, it's probably a scam.",
+      "Click the notification to read the details inside the secure app, or visit the branch.",
+      "Call the number in a random SMS you received earlier to ask about it."
+    ],
+    "correctIndex": 1,
+    "feedback": "Correct! In-app notifications from the official banking app asking you to visit a branch are legitimate and safe.",
+    "isSafeOrScam": true,
+    "safeOrScamAnswer": "Safe"
+  },
+  {
+    "id": "q4",
+    "category": "upi-scams",
+    "scenario": "You list an old sofa on OLX. A buyer immediately agrees to the price without negotiating and says they will send money via a QR code. They send you a QR code on WhatsApp and ask you to scan it to 'receive' the payment.",
+    "options": [
+      "Scan the QR code to receive the money quickly.",
+      "Ask them to send the QR code via email instead for security.",
+      "Block the buyer. You scan QR codes to PAY, never to RECEIVE."
+    ],
+    "correctIndex": 2,
+    "feedback": "Correct! This is a classic OLX scam. Scanning a QR code ALWAYS deducts money from your account. You NEVER scan a QR code to receive money.",
+    "isSafeOrScam": true,
+    "safeOrScamAnswer": "Scam"
+  }
+]

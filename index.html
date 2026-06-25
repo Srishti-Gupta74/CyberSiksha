@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CyberSiksha — A gamified AI-powered cybersecurity education platform that teaches elderly, parents, and children to recognize and outsmart digital scams in India.">
+  <title>CyberSiksha — Learn to Outsmart Scams</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- SVG gradient for ring -->
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#10b981"/>
+        <stop offset="50%" stop-color="#38bdf8"/>
+        <stop offset="100%" stop-color="#8b5cf6"/>
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <canvas id="confetti-canvas"></canvas>
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ==================== AUTH MODAL ==================== -->
+  <div class="auth-overlay" id="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <span class="logo-icon">🛡️</span>
+        <span class="logo-text">CyberSiksha</span>
+        <p class="logo-sub">Because nobody taught our parents how the internet really works.</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-signin" data-form="signin">Sign In</button>
+        <button class="auth-tab" id="tab-signup" data-form="signup">Sign Up</button>
+      </div>
+
+      <div class="auth-error" id="auth-error"></div>
+      <div class="auth-success" id="auth-success"></div>
+
+      <!-- Sign In Form -->
+      <form class="auth-form" id="form-signin" autocomplete="on">
+        <div class="form-group">
+          <label class="form-label" for="si-email">Email</label>
+          <input class="form-input" id="si-email" type="email" placeholder="you@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="si-pass">Password</label>
+          <input class="form-input" id="si-pass" type="password" placeholder="••••••••" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-brand btn-full" id="signin-btn">Sign In</button>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form class="auth-form hidden" id="form-signup" autocomplete="on">
+        <div class="form-group">
+          <label class="form-label" for="su-name">Display Name</label>
+          <input class="form-input" id="su-name" type="text" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="su-email">Email</label>
+          <input class="form-input" id="su-email" type="email" placeholder="you@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="su-pass">Password</label>
+          <input class="form-input" id="su-pass" type="password" placeholder="Min 6 characters" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-brand btn-full" id="signup-btn">Create Account</button>
+      </form>
+
+      <div class="auth-divider">or</div>
+
+      <div class="auth-skip">
+        <button id="skip-auth">Continue as Guest</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== APP ==================== -->
+  <div id="app">
+    
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-brand">
+        <span class="topbar-logo">🛡️</span>
+        <span class="topbar-name">CyberSiksha</span>
+      </div>
+      <div class="topbar-iq" id="topbar-iq">
+        Scam IQ <span class="iq-val" id="topbar-iq-val">0</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- ===== HOME ===== -->
+      <section class="tab-panel active" id="panel-home">
+        
+        <!-- User header (if logged in) -->
+        <div class="user-header hidden" id="user-bar">
+          <div class="user-avatar" id="user-avatar">U</div>
+          <span class="user-name" id="user-name">Guest</span>
+          <button class="signout-btn" id="signout-btn">Sign Out</button>
+        </div>
+
+        <div class="dash-hero">
+          <p class="dash-greeting">Welcome back 👋</p>
+          <h1 class="dash-name" id="dash-name">Cyber Learner</h1>
+          <div class="level-badge lv1" id="level-badge">🌱 Cyber Newbie</div>
+
+          <div class="ring-wrap">
+            <svg class="progress-ring" width="130" height="130">
+              <circle class="ring-bg" cx="65" cy="65" r="56"/>
+              <circle class="ring-fill" id="iq-ring" cx="65" cy="65" r="56"
+                stroke-dasharray="351.86" stroke-dashoffset="351.86"/>
+            </svg>
+            <div class="ring-label">
+              <div class="num" id="hero-iq">0</div>
+              <div class="sub">Scam IQ</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-tile xp">
+            <div class="s-icon">⚡</div>
+            <div class="s-val" id="s-xp">0</div>
+            <div class="s-lbl">XP</div>
+          </div>
+          <div class="stat-tile streak">
+            <div class="s-icon">🔥</div>
+            <div class="s-val" id="s-streak">0</div>
+            <div class="s-lbl">Streak</div>
+          </div>
+          <div class="stat-tile lessons">
+            <div class="s-icon">📚</div>
+            <div class="s-val" id="s-lessons">0</div>
+            <div class="s-lbl">Lessons</div>
+          </div>
+        </div>
+
+        <!-- Continue Learning -->
+        <div class="glow-card continue-card hidden" id="continue-card">
+          <div class="cont-label">▶ Continue Learning</div>
+          <div class="cont-title" id="cont-title"></div>
+          <div class="cont-meta" id="cont-meta"></div>
+        </div>
+
+        <div class="card mb-md">
+          <h3 class="mb-sm">🏆 Badges</h3>
+          <div class="badges-wrap" id="badges"></div>
+        </div>
+
+        <div class="card">
+          <h3 class="mb-sm">📊 Progress</h3>
+          <div class="prog-list stagger" id="prog-list"></div>
+        </div>
+      </section>
+
+      <!-- ===== LEARN ===== -->
+      <section class="tab-panel" id="panel-learn">
+        <div id="learn-list">
+          <div class="section-hdr">
+            <h2>📚 Learn</h2>
+            <p>Master every scam pattern. Tap a lesson to begin.</p>
+          </div>
+          <div class="cat-filter" id="cat-filter"></div>
+          <div class="lesson-grid stagger" id="lesson-grid"></div>
+        </div>
+
+        <div class="lesson-detail" id="lesson-detail">
+          <button class="back-link" id="back-lessons">← Back</button>
+          <div class="detail-hdr">
+            <h2 id="det-title"></h2>
+            <div class="meta" id="det-meta"></div>
+          </div>
+          <div id="det-content"></div>
+          <div class="flags-box" id="det-flags">
+            <h3>🚩 Red Flags</h3>
+            <ul id="det-flags-ul"></ul>
+          </div>
+          <button class="complete-btn" id="det-complete">✅ Complete — Earn 20 XP</button>
+        </div>
+      </section>
+
+      <!-- ===== QUIZ ===== -->
+      <section class="tab-panel" id="panel-quiz">
+        <div class="section-hdr">
+          <h2>🎮 Safe or Scam?</h2>
+          <p>Real scenarios from India. Can you spot the scam?</p>
+        </div>
+
+        <div class="quiz-scores" id="quiz-scores">
+          <div class="q-pill ok"><div class="v" id="qc">0</div><div class="l">Correct</div></div>
+          <div class="q-pill nope"><div class="v" id="qw">0</div><div class="l">Wrong</div></div>
+          <div class="q-pill pts"><div class="v" id="qx">0</div><div class="l">XP</div></div>
+        </div>
+
+        <div class="q-prog-text" id="q-prog-text">Question 1 of 24</div>
+        <div class="q-prog-bar"><div class="fill" id="q-fill" style="width:4%"></div></div>
+
+        <div id="quiz-area"></div>
+        <div id="quiz-summary" class="q-summary hidden"></div>
+      </section>
+
+      <!-- ===== NEWS ===== -->
+      <section class="tab-panel" id="panel-news">
+        <div class="section-hdr">
+          <h2>📰 Scam Alert Feed</h2>
+          <p>Latest scam trends across India. Stay informed.</p>
+        </div>
+        <div class="news-grid stagger" id="news-grid"></div>
+      </section>
+
+      <!-- ===== CHAT ===== -->
+      <section class="tab-panel" id="panel-chat">
+        <div class="section-hdr">
+          <h2>🤖 AI Mentor</h2>
+          <p>Ask anything about cyber safety. Hindi, English, or Hinglish.</p>
+        </div>
+
+        <div class="api-bar" id="api-bar">
+          <strong>⚡ Connect AI:</strong> Paste your free Gemini API key.
+          <br><small>Get one: <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a></small>
+          <div class="api-row">
+            <input type="password" id="api-key-in" placeholder="Gemini API key...">
+            <button id="api-key-go">Save</button>
+          </div>
+        </div>
+
+        <div class="chat-wrap">
+          <div class="chat-msgs" id="chat-msgs">
+            <div class="chat-msg bot">
+              <div class="chat-av">🤖</div>
+              <div class="chat-bbl">Namaste! 🙏 I'm your CyberSiksha AI mentor. Ask me about any scam, security tip, or online safety concern. I'll explain simply! 🛡️</div>
+            </div>
+          </div>
+          <div class="chat-chips" id="chat-chips">
+            <button class="chip" data-q="What is phishing? Explain simply.">Phishing?</button>
+            <button class="chip" data-q="How do UPI scams work in India?">UPI scams</button>
+            <button class="chip" data-q="What is digital arrest scam?">Digital arrest</button>
+            <button class="chip" data-q="How to create a strong password?">Passwords</button>
+            <button class="chip" data-q="What is SIM swap fraud?">SIM swap</button>
+            <button class="chip" data-q="Are loan apps safe?">Loan apps</button>
+          </div>
+          <div class="chat-input-row">
+            <input type="text" class="chat-input" id="chat-in" placeholder="Ask anything about cyber safety...">
+            <button class="chat-send" id="chat-go">➤</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== FAMILY ===== -->
+      <section class="tab-panel" id="panel-family">
+        <div class="section-hdr">
+          <h2>👨‍👩‍👧 Family Dashboard</h2>
+          <p>Protect your whole family. Track everyone's cyber awareness.</p>
+        </div>
+
+        <div class="glow-card family-invite-card">
+          <h3 id="fam-invite-title">➕ Add Family Member</h3>
+          <div class="fam-input-row" id="fam-input-row">
+            <input type="email" id="fam-email-in" placeholder="Family member's email">
+            <button id="fam-invite-btn">Invite</button>
+          </div>
+          <div class="invite-code-box hidden" id="invite-code-box">
+            <p>Or share this invite code: <code id="invite-code">------</code></p>
+          </div>
+        </div>
+
+        <div class="family-list" id="family-list"></div>
+
+        <div class="card fam-info mt-md">
+          <h3>💡 How Family Dashboard Works</h3>
+          <ul>
+            <li>Invite family members via email — they'll get an invite link</li>
+            <li>Each member signs up and their progress syncs automatically</li>
+            <li>See who has completed which lessons and their Scam IQ</li>
+            <li>Nudge family members who haven't learned about new scam types</li>
+          </ul>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-panel="home">
+        <span class="nav-icon">🏠</span><span>Home</span>
+      </button>
+      <button class="nav-item" data-panel="learn">
+        <span class="nav-icon">📚</span><span>Learn</span>
+      </button>
+      <button class="nav-item" data-panel="quiz">
+        <span class="nav-icon">🎮</span><span>Quiz</span>
+      </button>
+      <button class="nav-item" data-panel="news">
+        <span class="nav-icon">📰</span><span>News</span>
+      </button>
+      <button class="nav-item" data-panel="chat">
+        <span class="nav-icon">🤖</span><span>AI</span>
+      </button>
+      <button class="nav-item" data-panel="family">
+        <span class="nav-icon">👨‍👩‍👧</span><span>Family</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Supabase JS (loaded but only used if configured) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="data.js"></script>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

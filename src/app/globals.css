@@ -1,51 +1,128 @@
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0A0E1A;
-  --color-cyan: #A4F6F9;
-  --color-cyan-glow: rgba(164, 246, 249, 0.4);
-  --color-card: #151A2C;
-  --color-card-hover: #1C2339;
+  --color-navy: #04060E;
+  --color-navy-light: #0E1326;
+  --color-cyan: #38BDF8;
+  --color-cyan-glow: rgba(56, 189, 248, 0.4);
+  --color-card: rgba(14, 19, 38, 0.65);
+  --color-card-hover: rgba(20, 26, 51, 0.8);
+  
+  --color-emerald: #10B981;
+  --color-violet: #8B5CF6;
+  --color-gold: #F59E0B;
+  --color-rose: #F43F5E;
   
   --color-success: #10B981;
-  --color-error: #EF4444;
+  --color-error: #F43F5E;
   --color-warning: #F59E0B;
 }
 
+@layer base {
+  @font-face {
+    font-family: 'Outfit';
+    src: url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&display=swap');
+  }
+}
+
 :root {
-  --background: #0A0E1A;
-  --foreground: #F8FAFC;
+  --background: #04060E;
+  --foreground: #F1F3F9;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Mesh Background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 600px 400px at 10% 15%, rgba(139, 92, 246, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 85% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 300px at 50% 50%, rgba(245, 158, 11, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 300px 300px at 90% 10%, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
+  animation: meshShift 30s ease-in-out infinite alternate;
+}
+
+@keyframes meshShift {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
 }
 
 .glass-card {
-  background: rgba(21, 26, 44, 0.6);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(164, 246, 249, 0.1);
-  border-radius: 1rem;
+  background: var(--color-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  background: var(--color-card-hover);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
 .glow-text {
-  text-shadow: 0 0 10px var(--color-cyan-glow);
+  text-shadow: 0 0 12px var(--color-cyan-glow);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, var(--color-emerald) 0%, var(--color-cyan) 50%, var(--color-violet) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .btn-primary {
-  background: var(--color-cyan);
-  color: var(--color-navy);
-  font-weight: 600;
+  background: linear-gradient(135deg, var(--color-emerald) 0%, var(--color-cyan) 50%, var(--color-violet) 100%);
+  color: white;
+  font-weight: 700;
   padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 14px 0 var(--color-cyan-glow);
+  border-radius: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px 0 rgba(164, 246, 249, 0.6);
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.35);
 }
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.stagger > * {
+  opacity: 0;
+  animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger > *:nth-child(5) { animation-delay: 0.25s; }

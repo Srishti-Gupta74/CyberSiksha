@@ -1,14 +1,21 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { MessageSquareText, Send, Loader2, Bot, User } from 'lucide-react';
+import { useAuth } from '@/components/AuthProvider';
+import { MessageSquareText, Send, User, Bot, AlertTriangle, Loader2 } from 'lucide-react';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export default function ChatPage() {
+  const { profile } = useAuth();
   const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Namaste! I am your CyberSiksha AI Mentor. Did you receive a suspicious message or call today? Ask me anything!' }
+    {
+      role: 'ai',
+      content: "Namaste! I am your Cyber Mentor. Received a suspicious WhatsApp message? Not sure if a UPI request is genuine? Ask me anything."
+    }
   ]);
   const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -17,101 +24,148 @@ export default function ChatPage() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [messages, isTyping]);
 
-  const sendMessage = async (e) => {
+  useEffect(() => {
+    const savedKey = localStorage.getItem('cybersiksha_gemini_key');
+    if (savedKey) setApiKey(savedKey);
+  }, []);
+
+  const handleSaveKey = (e) => {
+    const val = e.target.value;
+    setApiKey(val);
+    localStorage.setItem('cybersiksha_gemini_key', val);
+  };
+
+  const handleSend = async (e) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
+    if (!input.trim() || !apiKey) return;
 
-    const userMessage = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
+    const userMessage = input.trim();
     setInput('');
-    setIsLoading(true);
+    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setIsTyping(true);
 
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: [...messages, userMessage] })
-      });
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       
-      const data = await response.json();
-      if (data.content) {
-        setMessages(prev => [...prev, { role: 'assistant', content: data.content }]);
-      } else {
-        setMessages(prev => [...prev, { role: 'assistant', content: 'Sorry, I am having trouble connecting to my brain right now.' }]);
-      }
+      const prompt = `You are a cybersecurity expert mentor for an Indian platform called CyberSiksha. 
+Your goal is to help elderly people, parents, and youth spot scams.
+The user's question: "${userMessage}"
+
+Provide a clear, simple, and reassuring answer. Do not use complex technical jargon. 
+Give them direct advice on whether it's safe or a scam, and tell them exactly what to do next. Keep it under 150 words.`;
+
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      setMessages(prev => [...prev, { role: 'ai', content: text }]);
     } catch (error) {
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Network error. Please try again later.' }]);
+      setMessages(prev => [...prev, { role: 'error', content: `Error connecting to AI Mentor. Please check your API key.` }]);
+      console.error(error);
     } finally {
-      setIsLoading(false);
+      setIsTyping(false);
     }
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] md:h-[calc(100vh-10rem)] max-w-3xl mx-auto animate-fade-in">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold flex items-center gap-3">
-          <MessageSquareText className="text-cyan" /> 
-          Ask AI Mentor
+    <div className="animate-fade-in max-w-4xl mx-auto pb-12 h-[calc(100vh-140px)] flex flex-col">
+      <div className="mb-6 flex-shrink-0">
+        <h1 className="text-2xl md:text-3xl font-black font-['Outfit'] flex items-center gap-3 mb-2">
+          <MessageSquareText className="text-gold" size={28} />
+          AI Cyber Mentor
         </h1>
+        <p className="text-slate-400 text-sm">Your personal security advisor. Available 24/7.</p>
       </div>
 
-      <div className="flex-1 glass-card overflow-y-auto p-4 md:p-6 mb-4 space-y-4 border border-white/10 custom-scrollbar">
-        {messages.map((msg, i) => (
-          <div key={i} className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            {msg.role === 'assistant' && (
-              <div className="w-8 h-8 rounded-full bg-cyan/20 border border-cyan/50 flex items-center justify-center shrink-0">
-                <Bot size={16} className="text-cyan" />
-              </div>
-            )}
-            
-            <div className={`max-w-[80%] p-3 rounded-2xl ${
-              msg.role === 'user' 
-                ? 'bg-cyan text-navy rounded-tr-sm font-medium' 
-                : 'bg-navy/80 border border-white/10 text-slate-200 rounded-tl-sm'
-            }`}>
-              {msg.content}
-            </div>
+      {!apiKey && (
+        <div className="bg-gold/10 border border-gold/30 rounded-xl p-4 mb-6 flex-shrink-0 flex items-start gap-3">
+          <AlertTriangle className="text-gold mt-1 flex-shrink-0" size={20} />
+          <div className="flex-1">
+            <h3 className="text-gold font-bold mb-1">API Key Required</h3>
+            <p className="text-sm text-slate-300 mb-3">
+              To chat with the mentor, please enter your free Google Gemini API Key. This key is saved locally in your browser and never sent to our servers.
+            </p>
+            <input 
+              type="password" 
+              placeholder="Paste Gemini API Key here (AIza...)" 
+              value={apiKey}
+              onChange={handleSaveKey}
+              className="w-full bg-navy/50 border border-white/10 rounded-lg py-2 px-3 text-sm text-white focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all"
+            />
+          </div>
+        </div>
+      )}
 
-            {msg.role === 'user' && (
-              <div className="w-8 h-8 rounded-full bg-slate-700 border border-slate-500 flex items-center justify-center shrink-0">
-                <User size={16} className="text-white" />
+      <div className="flex-1 glass-card border-gold/20 flex flex-col overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full blur-3xl pointer-events-none"></div>
+        
+        {/* Chat Messages */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 scrollbar-thin">
+          {messages.map((msg, idx) => (
+            <div key={idx} className={`flex gap-4 max-w-[85%] ${msg.role === 'user' ? 'ml-auto flex-row-reverse' : ''}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                msg.role === 'user' ? 'bg-cyan/20 text-cyan' : 
+                msg.role === 'error' ? 'bg-rose/20 text-rose' : 'bg-gold/20 text-gold'
+              }`}>
+                {msg.role === 'user' ? (
+                  <span className="text-xs font-bold">{profile?.avatar_initial || 'U'}</span>
+                ) : msg.role === 'error' ? (
+                  <AlertTriangle size={16} />
+                ) : (
+                  <Bot size={16} />
+                )}
               </div>
-            )}
-          </div>
-        ))}
-        {isLoading && (
-          <div className="flex gap-3 justify-start">
-            <div className="w-8 h-8 rounded-full bg-cyan/20 border border-cyan/50 flex items-center justify-center shrink-0">
-              <Bot size={16} className="text-cyan" />
+              
+              <div className={`p-4 rounded-2xl ${
+                msg.role === 'user' 
+                  ? 'bg-cyan text-navy rounded-tr-none' 
+                  : msg.role === 'error'
+                  ? 'bg-rose/10 border border-rose/20 text-rose rounded-tl-none'
+                  : 'bg-navy-light border border-white/5 text-slate-200 rounded-tl-none'
+              }`}>
+                <p className="text-sm md:text-[15px] leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+              </div>
             </div>
-            <div className="bg-navy/80 border border-white/10 p-3 rounded-2xl rounded-tl-sm flex items-center gap-2">
-              <Loader2 size={16} className="animate-spin text-cyan" />
-              <span className="text-slate-400 text-sm">Thinking...</span>
+          ))}
+          
+          {isTyping && (
+            <div className="flex gap-4 max-w-[85%]">
+              <div className="w-8 h-8 rounded-full bg-gold/20 text-gold flex items-center justify-center flex-shrink-0 mt-1">
+                <Bot size={16} />
+              </div>
+              <div className="bg-navy-light border border-white/5 p-4 rounded-2xl rounded-tl-none flex items-center gap-2 text-gold">
+                <Loader2 className="animate-spin" size={16} />
+                <span className="text-sm font-semibold">Mentor is typing...</span>
+              </div>
             </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Chat Input */}
+        <div className="p-4 bg-navy-light border-t border-white/5">
+          <form onSubmit={handleSend} className="relative flex items-center">
+            <input 
+              type="text" 
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              disabled={!apiKey || isTyping}
+              placeholder="E.g. I got a call from 'FedEx' about a parcel..."
+              className="w-full bg-navy border border-white/10 rounded-full py-4 pl-6 pr-14 text-sm text-white focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all disabled:opacity-50"
+            />
+            <button 
+              type="submit"
+              disabled={!input.trim() || !apiKey || isTyping}
+              className="absolute right-2 w-10 h-10 bg-gold hover:bg-gold/90 text-navy rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_15px_rgba(245,158,11,0.3)]"
+            >
+              <Send size={18} className="ml-1" />
+            </button>
+          </form>
+        </div>
       </div>
-
-      <form onSubmit={sendMessage} className="flex gap-2">
-        <input 
-          type="text" 
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask me about a suspicious call or message..."
-          className="flex-1 bg-navy/80 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-cyan/50 text-white placeholder-slate-500"
-          disabled={isLoading}
-        />
-        <button 
-          type="submit" 
-          disabled={isLoading || !input.trim()}
-          className="bg-cyan text-navy px-4 py-3 rounded-xl font-bold hover:bg-cyan/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center w-14 shrink-0"
-        >
-          {isLoading ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
-        </button>
-      </form>
     </div>
   );
 }

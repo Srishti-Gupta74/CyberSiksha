@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, ShieldQuestion, Newspaper, MessageSquareText } from 'lucide-react';
+import { Home, BookOpen, ShieldQuestion, Newspaper, MessageSquareText, Users } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname();
   
   const navItems = [
     { name: 'Dashboard', path: '/', icon: <Home size={20} /> },
+    { name: 'Family', path: '/family', icon: <Users size={20} /> },
     { name: 'Learn', path: '/learn', icon: <BookOpen size={20} /> },
     { name: 'Quiz Game', path: '/quiz', icon: <ShieldQuestion size={20} /> },
     { name: 'Alerts', path: '/news', icon: <Newspaper size={20} /> },

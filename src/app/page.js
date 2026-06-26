@@ -369,7 +369,7 @@ export default function Home() {
             </h1>
             
             <p className="text-slate-300 text-base max-w-md leading-relaxed mb-8 font-normal">
-              CyberSiksha is India's award-winning digital defense ecosystem. Practice interactive cyber traps to keep your parents and family safe from financial fraud.
+              CyberSiksha is India's premier interactive digital defense ecosystem. Practice interactive cyber traps to keep your parents and family safe from financial fraud.
             </p>
 
             <div className="flex items-center gap-8">

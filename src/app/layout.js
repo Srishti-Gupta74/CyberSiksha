@@ -6,7 +6,7 @@ import FloatingChatbot from "@/components/FloatingChatbot";
 import DynamicBackground from "@/components/DynamicBackground";
 
 export const metadata = {
-  title: "CyberSiksha - India's Award-Winning Cyber Defense Hub",
+  title: "CyberSiksha - Interactive Family Cyber Defense Hub",
   description: "Learn to spot online banking scams before they happen. Gamified AI cybersecurity education for families.",
 };
 

@@ -101,46 +101,55 @@ export default function QuizPage() {
 
   if (gameState === 'intro') {
     return (
-      <div className="animate-fade-in max-w-3xl mx-auto text-center py-12 px-4">
-        <div className="w-24 h-24 mx-auto mb-8 bg-sky-100 border border-sky-200 rounded-3xl flex items-center justify-center shadow-sm animate-bounce text-5xl">
-          🕹️
+      <div className="animate-fade-in max-w-4xl mx-auto text-center py-12 px-4 select-none">
+        
+        {/* Levitating 3D Arcade Reactor Sphere */}
+        <div className="relative w-32 h-32 mx-auto mb-10 group">
+          <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 rounded-full blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
+          <div className="absolute inset-1 border-2 border-dashed border-cyan-400/80 rounded-full animate-spin duration-[14000ms]"></div>
+          <div className="absolute inset-3 border border-purple-400/50 rounded-full animate-ping duration-[3500ms]"></div>
+          
+          <div className="w-full h-full bg-gradient-to-tr from-slate-950 via-purple-950 to-slate-900 rounded-full border-[3px] border-cyan-400 flex items-center justify-center relative z-10 shadow-[0_0_60px_rgba(34,211,238,0.65)] group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+            <span className="text-6xl filter drop-shadow-[0_0_20px_#22d3ee]">🕹️</span>
+          </div>
         </div>
         
-        <div className="inline-flex items-center gap-2 bg-purple-50 border border-purple-200 px-4 py-1.5 rounded-full text-xs font-bold text-purple-700 uppercase tracking-widest mb-4">
-          <Sparkles size={14} /> Quick Practice Game
+        <div className="inline-flex items-center gap-2.5 bg-purple-500/20 border border-purple-400/50 px-6 py-2.5 rounded-full text-xs font-mono font-black text-purple-200 uppercase tracking-[0.25em] mb-8 shadow-[0_0_25px_rgba(168,85,247,0.3)] backdrop-blur-md">
+          <Sparkles size={15} className="text-purple-400 animate-spin" /> CYBER THREAT IDENTIFICATION ARENA
         </div>
 
-        <h1 className="text-4xl md:text-6xl font-black font-['Outfit'] mb-6 leading-tight text-slate-900">
-          Spot the Scam <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-600 via-purple-600 to-pink-600">
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-black font-['Outfit'] mb-8 tracking-tight drop-shadow-[0_0_35px_rgba(255,255,255,0.3)]">
+          <span className="text-white block mb-1">Spot the Scam</span>
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-400 inline-block">
             Quiz Challenge
           </span>
         </h1>
         
-        <p className="text-slate-600 text-base md:text-lg mb-12 max-w-xl mx-auto leading-relaxed font-normal">
-          Test your cyber safety skills! We will show you 5 everyday messages. Decide if each one is Safe or a Fraud to earn points and protect your family.
+        <p className="text-slate-200 text-lg sm:text-2xl mb-14 max-w-2xl mx-auto leading-relaxed font-normal opacity-95">
+          Test your cyber safety reflexes! We will show you 5 real-world intercepted messages. Decide instantly if each one is <b className="text-emerald-400 font-bold">Safe</b> or a <b className="text-rose-400 font-bold">Fraud</b> to earn clearance XP and defend your family.
         </p>
         
-        <div className="grid grid-cols-3 gap-4 max-w-lg mx-auto mb-12">
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
-            <div className="text-amber-600 font-black text-2xl font-['Outfit']">5</div>
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Quick Scenarios</div>
+        {/* Luminous Glassmorphism 3D Dossier Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto mb-16">
+          <div className="bg-slate-950/85 border border-white/15 hover:border-amber-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 group">
+            <div className="text-amber-400 font-black text-4xl font-['Outfit'] drop-shadow-[0_0_15px_#fbbf24] group-hover:scale-110 transition-transform">5</div>
+            <div className="text-xs text-slate-300 font-mono font-black uppercase tracking-widest mt-2">Quick Scenarios</div>
           </div>
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
-            <div className="text-sky-600 font-black text-2xl font-['Outfit']">+50</div>
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Max Safety Points</div>
+          <div className="bg-slate-950/85 border border-white/15 hover:border-cyan-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 group">
+            <div className="text-cyan-400 font-black text-4xl font-['Outfit'] drop-shadow-[0_0_15px_#22d3ee] group-hover:scale-110 transition-transform">+50</div>
+            <div className="text-xs text-slate-300 font-mono font-black uppercase tracking-widest mt-2">Max Safety XP</div>
           </div>
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-xs">
-            <div className="text-rose-600 font-black text-2xl font-['Outfit']">🔥</div>
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Streak Bonus</div>
+          <div className="bg-slate-950/85 border border-white/15 hover:border-rose-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 group">
+            <div className="text-rose-400 font-black text-4xl font-['Outfit'] drop-shadow-[0_0_15px_#f43f5e] group-hover:scale-110 transition-transform">🔥</div>
+            <div className="text-xs text-slate-300 font-mono font-black uppercase tracking-widest mt-2">Streak Bonus</div>
           </div>
         </div>
 
         <button 
           onClick={startGame}
-          className="btn-primary text-base md:text-lg px-12 py-4 w-full sm:w-auto font-bold shadow-lg"
+          className="py-5 px-14 rounded-full bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 hover:opacity-95 text-slate-950 font-black font-['Outfit'] text-base uppercase tracking-widest shadow-[0_0_50px_rgba(52,211,153,0.7)] transition-all transform hover:-translate-y-1 hover:scale-105 active:scale-95 cursor-pointer"
         >
-          <span>Start Quiz Challenge ➔</span>
+          <span>🚀 START QUIZ CHALLENGE ➔</span>
         </button>
       </div>
     );
@@ -301,9 +310,44 @@ export default function QuizPage() {
                   <span className="bg-gold/20 text-gold border border-gold/40 px-2.5 py-0.5 rounded text-xs font-black">+{streak * 2} COMBO XP</span>
                 )}
               </div>
-              <p className="text-slate-200 text-lg md:text-xl leading-relaxed font-normal">
-                {feedback.explanation}
-              </p>
+              {(() => {
+                const raw = feedback.explanation || '';
+                const parts = raw.split(/•|\n/).map(s => s.trim()).filter(Boolean);
+                const intro = parts[0];
+                const bullets = parts.slice(1);
+
+                return (
+                  <div className="flex flex-col gap-5 mt-4 text-left w-full">
+                    {intro && (
+                      <div className="text-slate-100 text-base md:text-lg font-bold font-['Outfit'] border-l-4 border-cyan-400 pl-4 py-2 bg-white/5 rounded-r-2xl shadow-inner">
+                        {intro.replace(/Red flags\s*:\s*/i, '').trim()}
+                      </div>
+                    )}
+
+                    {bullets.length > 0 ? (
+                      <div className="flex flex-col gap-3 mt-1">
+                        <span className="text-xs font-mono font-black uppercase tracking-widest text-amber-400 flex items-center gap-2">
+                          <ShieldAlert size={16} className="animate-pulse text-amber-400" /> INTERCEPT RED FLAG BREAKDOWN:
+                        </span>
+                        <div className="flex flex-col gap-3">
+                          {bullets.map((item, idx) => (
+                            <div key={idx} className="bg-slate-950/90 border border-white/10 p-4 sm:p-5 rounded-2xl shadow-xl flex items-start gap-4 hover:border-cyan-400/50 transition-all group/item">
+                              <span className="w-7 h-7 rounded-xl bg-rose-500/20 border border-rose-400/50 text-rose-300 flex items-center justify-center font-mono text-xs font-black shrink-0 mt-0.5 group-hover/item:scale-110 group-hover/item:bg-rose-500 group-hover/item:text-slate-950 transition-all shadow-md">
+                                {idx + 1}
+                              </span>
+                              <span className="text-slate-200 text-sm sm:text-base font-normal leading-relaxed">
+                                {item}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-slate-200 text-lg leading-relaxed">{raw}</p>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
           

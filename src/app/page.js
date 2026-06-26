@@ -51,20 +51,26 @@ function HeroSection() {
   return (
     <div className="max-w-5xl mx-auto px-4 py-12 md:py-20 text-center select-none overflow-hidden">
       
-      {/* Dynamic Evolving Holographic Radar Emblem */}
-      <div className="relative w-32 h-32 mx-auto mb-10 group">
-        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 via-purple-600 to-pink-500 rounded-[36px] blur-2xl opacity-70 group-hover:opacity-100 animate-pulse transition-opacity duration-700"></div>
-        <div className="relative w-full h-full bg-slate-950 border-2 border-cyan-400/70 rounded-[36px] p-2 flex items-center justify-center shadow-[0_0_50px_rgba(34,211,238,0.4)] overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(#22d3ee_1.5px,transparent_1.5px)] [background-size:14px_14px] opacity-30 animate-spin duration-[25s]"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent animate-pulse"></div>
-          <Shield size={56} className="text-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.9)] animate-bounce relative z-10" />
-          <div className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-300 to-transparent top-1/2 -translate-y-1/2 shadow-[0_0_12px_#22d3ee] animate-ping opacity-80"></div>
+      {/* Breathtaking Calligraphic Brand Typography Header */}
+      <div className="relative mx-auto mb-10 text-center select-none py-2">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-24 bg-gradient-to-r from-cyan-400/20 via-purple-500/25 to-pink-500/20 blur-3xl opacity-90 rounded-full animate-pulse pointer-events-none"></div>
+        
+        <div className="relative inline-flex flex-col items-center">
+          <span className="text-[11px] font-mono font-black tracking-[0.4em] uppercase text-cyan-400/90 mb-1 flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping"></span>
+            THE NATIONAL SHIELD INITIATIVE
+          </span>
+          <h2 className="text-5xl sm:text-7xl md:text-8xl font-black font-['Outfit'] tracking-tight drop-shadow-[0_0_40px_rgba(34,211,238,0.45)] select-none">
+            <span className="text-white">Cyber</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-purple-300 to-pink-400 font-serif italic pr-2 font-normal">Siksha</span>
+          </h2>
+          <div className="w-48 sm:w-64 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent mt-2 rounded-full shadow-[0_0_15px_#00f0ff] animate-pulse"></div>
         </div>
       </div>
 
       <ScrollReveal>
-        <div className="inline-flex items-center gap-2.5 bg-cyan-500/20 border border-cyan-400/50 px-6 py-2 rounded-full text-xs font-black text-cyan-300 mb-8 uppercase tracking-[0.25em] shadow-[0_0_35px_rgba(34,211,238,0.3)] backdrop-blur-md">
-          <Activity size={15} className="animate-pulse text-cyan-400" /> India's #1 Autonomous Defense Grid
+        <div className="inline-flex items-center gap-2.5 bg-cyan-500/20 border border-cyan-400/50 px-6 py-2.5 rounded-full text-xs font-black text-cyan-300 mb-8 uppercase tracking-[0.2em] shadow-[0_0_35px_rgba(34,211,238,0.3)] backdrop-blur-md font-mono">
+          <Activity size={15} className="animate-pulse text-cyan-400" /> NEXT-GEN HOUSEHOLD CYBER ARMOR • LIVE DEFENSE GRID
         </div>
       </ScrollReveal>
 

@@ -101,7 +101,7 @@ export default function QuizPage() {
 
   if (gameState === 'intro') {
     return (
-      <div className="animate-fade-in max-w-4xl mx-auto text-center py-12 px-4 select-none">
+      <div className="animate-fade-in max-w-4xl mx-auto text-center pt-8 pb-44 mb-16 px-4 select-none">
         
         {/* Levitating 3D Arcade Reactor Sphere */}
         <div className="relative w-32 h-32 mx-auto mb-10 group">

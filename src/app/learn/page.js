@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useAuth } from '@/components/AuthProvider';
 import { LESSONS } from '@/data/content';
 import ScrollReveal from '@/components/ScrollReveal';
@@ -17,6 +18,9 @@ function getLessonText(content) {
 
 export default function LearnPage() {
   const { completedLessons, markLessonComplete } = useAuth();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -291,10 +295,10 @@ export default function LearnPage() {
         {renderShowcaseSection("advanced", "Tier 3: Elite", "Cyber Warfare", advancedDeck.length ? advancedDeck : LESSONS.slice(6, 8), "rose", "🔴")}
       </div>
 
-      {/* Interactive Roadmap Modal (Fixed z-[1050] to sit above floating nav) */}
-      {selectedLesson && (
-        <div className="fixed inset-0 z-[1050] flex items-start justify-center p-4 sm:p-6 md:p-10 bg-slate-950/85 backdrop-blur-2xl animate-fade-in overflow-y-auto">
-          <div className="glass-card max-w-2xl w-full p-6 sm:p-10 relative overflow-hidden bg-slate-950 border border-purple-500/60 shadow-[0_0_90px_rgba(139,92,246,0.5)] rounded-3xl animate-scale-up mt-10 sm:mt-16 mb-28">
+      {/* Interactive Roadmap Modal - True Viewport Portal Overlay */}
+      {mounted && selectedLesson && createPortal(
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-2xl animate-fade-in select-none">
+          <div className="glass-card max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-10 relative bg-slate-950 border border-purple-500/60 shadow-[0_0_90px_rgba(139,92,246,0.5)] rounded-3xl animate-scale-up my-auto">
             <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
             
             {/* Modal Header */}
@@ -370,13 +374,14 @@ export default function LearnPage() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
-      {/* Gamified Level-Up Victory Modal (Fixed z-[1100]) */}
-      {victoryReward && (
-        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in">
-          <div className="glass-card max-w-md w-full p-8 text-center relative overflow-hidden bg-slate-950 border border-cyan-400 shadow-[0_0_90px_rgba(34,211,238,0.4)] rounded-3xl animate-scale-up">
+      {/* Gamified Level-Up Victory Modal - True Viewport Portal Overlay */}
+      {mounted && victoryReward && createPortal(
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in select-none">
+          <div className="glass-card max-w-md w-full p-8 text-center relative bg-slate-950 border border-cyan-400 shadow-[0_0_90px_rgba(34,211,238,0.4)] rounded-3xl animate-scale-up my-auto">
             <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-tr from-amber-400 to-cyan-400 p-1 shadow-lg animate-bounce flex items-center justify-center text-5xl">
               🏆
             </div>
@@ -400,8 +405,8 @@ export default function LearnPage() {
               </div>
               <div className="w-px h-10 bg-white/10"></div>
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Defense Roster</span>
-                <span className="text-2xl font-black text-emerald-400">LIVE SYNCED</span>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Threat Status</span>
+                <span className="text-2xl font-black text-emerald-400">NEUTRALIZED</span>
               </div>
             </div>
 
@@ -415,7 +420,8 @@ export default function LearnPage() {
               <span>✨ Collect Victory Reward ✨</span>
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

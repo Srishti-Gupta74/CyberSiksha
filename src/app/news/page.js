@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { NEWS_ARTICLES } from '@/data/content';
 import ScrollReveal from '@/components/ScrollReveal';
 import { Newspaper, ArrowRight, Calendar, ShieldAlert, Sparkles, ChevronDown, ArrowUpRight, Share2, Bookmark } from 'lucide-react';
 
 export default function NewsPage() {
   const [selectedArticle, setSelectedArticle] = useState(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   
   // Track which News Deck is actively being hovered/cascaded
   const [activeNewsDeck, setActiveNewsDeck] = useState(null);
@@ -122,15 +125,15 @@ export default function NewsPage() {
         {renderNewsShowcase("biometric", "Aadhaar Biometric & Identity Theft", "Critical Advisory", biometricNews, "rose", "🔒")}
       </div>
 
-      {/* Detailed Editorial Chronicle Modal - Ultra Luxury Online Newspaper with Calligraphy Drop Cap */}
-      {selectedArticle && (
+      {/* Detailed Editorial Chronicle Modal - True Viewport Portal Overlay */}
+      {mounted && selectedArticle && createPortal(
         <div 
           onClick={() => setSelectedArticle(null)}
-          className="fixed inset-0 z-[200] flex items-start justify-center p-3 sm:p-6 bg-slate-950/90 backdrop-blur-2xl animate-fade-in select-none overflow-y-auto pt-6 sm:pt-12 pb-20"
+          className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-2xl animate-fade-in select-none"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#faf9f5] text-[#1a1b18] rounded-3xl max-w-4xl w-full p-6 sm:p-14 relative overflow-hidden border border-[#d8d6cc] shadow-[0_45px_120px_rgba(0,0,0,0.95)] mt-4 sm:mt-8 mb-16 animate-scale-up"
+            className="bg-[#faf9f5] text-[#1a1b18] rounded-3xl max-w-4xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-14 relative border border-[#d8d6cc] shadow-[0_35px_100px_rgba(0,0,0,0.95)] animate-scale-up my-auto"
           >
             {/* Authentic Newspaper Masthead Banner */}
             <div className="text-center border-b-[3px] border-slate-900 pb-4 mb-8 font-serif">
@@ -220,7 +223,8 @@ export default function NewsPage() {
             </div>
 
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
     </div>

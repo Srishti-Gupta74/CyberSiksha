@@ -68,10 +68,19 @@ create table if not exists public.family_groups (
   id uuid default gen_random_uuid() primary key,
   name text not null default 'My Family',
   invite_code text unique not null default substr(md5(random()::text), 1, 6),
-  created_by uuid references public.profiles(id),
+  created_by uuid references public.profiles(id) on delete cascade,
   created_at timestamp with time zone default now()
 );
 alter table public.family_groups enable row level security;
+
+alter table public.family_groups
+  drop constraint if exists family_groups_created_by_fkey;
+
+alter table public.family_groups
+  add constraint family_groups_created_by_fkey
+  foreign key (created_by)
+  references public.profiles(id)
+  on delete cascade;
 
 drop policy if exists "Family group visible to members" on public.family_groups;
 create policy "Family group visible to members" on public.family_groups for select using (true);
@@ -106,13 +115,22 @@ create policy "Users can delete family members" on public.family_members for del
 create table if not exists public.family_invites (
   id uuid default gen_random_uuid() primary key,
   family_group_id uuid references public.family_groups(id) on delete cascade not null,
-  invited_by uuid references public.profiles(id) not null,
+  invited_by uuid references public.profiles(id) on delete cascade not null,
   invited_email text not null,
   invited_name text,
   status text default 'pending' check (status in ('pending', 'accepted', 'expired')),
   created_at timestamp with time zone default now()
 );
 alter table public.family_invites enable row level security;
+
+alter table public.family_invites
+  drop constraint if exists family_invites_invited_by_fkey;
+
+alter table public.family_invites
+  add constraint family_invites_invited_by_fkey
+  foreign key (invited_by)
+  references public.profiles(id)
+  on delete cascade;
 
 drop policy if exists "Inviters can view their invites" on public.family_invites;
 create policy "Inviters can view their invites" on public.family_invites for select using (true);

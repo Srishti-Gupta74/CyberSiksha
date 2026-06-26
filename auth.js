@@ -47,7 +47,7 @@ async function signUp(email, password, displayName) {
 
   // Check for pending invite codes in URL
   const params = new URLSearchParams(window.location.search);
-  const inviteCode = params.get('invite');
+  const inviteCode = params.get('code') || params.get('invite');
   if (inviteCode && data.user) {
     // Will be processed after email confirmation
     localStorage.setItem('cybersiksha_pending_invite', inviteCode);
@@ -242,7 +242,7 @@ async function sendFamilyInvite(groupId, email) {
     .eq('id', groupId)
     .single();
 
-  const inviteLink = `${window.location.origin}${window.location.pathname}?invite=${group.invite_code}`;
+  const inviteLink = `${window.location.origin}/family?code=${group.invite_code}`;
   return inviteLink;
 }
 

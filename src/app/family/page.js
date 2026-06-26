@@ -25,6 +25,8 @@ export default function FamilyPage() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteRelation, setInviteRelation] = useState('Elder (Grandparent)');
   const [inviteSuccess, setInviteSuccess] = useState(false);
+  const [inviteLoading, setInviteLoading] = useState(false);
+  const [inviteError, setInviteError] = useState('');
 
   // Persistent Hybrid Load Data
   // Realtime Supabase Database Sync Bridge across tabs
@@ -46,7 +48,7 @@ export default function FamilyPage() {
         if (payload?.payload?.userId) {
           setMembers(prev => {
             const updated = prev.map(m => {
-              if (m.profiles?.id === payload.payload.userId || (m.role !== 'admin' && payload.payload.userId?.includes('elder'))) {
+              if (m.profiles?.id === payload.payload.userId) {
                 return {
                   ...m,
                   profiles: {
@@ -87,7 +89,7 @@ export default function FamilyPage() {
         try { setFamilyGroup(JSON.parse(e.newValue)); } catch(err){}
       }
       if (e.key === 'cs_global_fam_mem' && e.newValue) {
-        try { setMembers(canonicalizeMembers(JSON.parse(e.newValue))); } catch(err){}
+        try { setMembers(normalizeRosterForViewer(JSON.parse(e.newValue))); } catch(err){}
       }
     };
     window.addEventListener('storage', handleStorageChange);
@@ -97,12 +99,9 @@ export default function FamilyPage() {
     const savedGroup = localStorage.getItem(`cs_global_fam_grp`);
     const savedMembers = localStorage.getItem(`cs_global_fam_mem`);
     
-    if (codeParam) {
-      setJoinCode(codeParam.toUpperCase());
-      if (user) {
-        performJoin(codeParam.toUpperCase());
-        return;
-      }
+    if (codeParam && user) {
+      performJoin(codeParam.toUpperCase());
+      return;
     }
 
     if (savedGroup) {
@@ -123,8 +122,10 @@ export default function FamilyPage() {
           }
         }
 
-        setFamilyGroup(parsedGrp);
-        if (parsedMems) setMembers(canonicalizeMembers(parsedMems));
+        window.setTimeout(() => {
+          setFamilyGroup(parsedGrp);
+          if (parsedMems) setMembers(normalizeRosterForViewer(parsedMems));
+        }, 0);
       } catch(e){}
     }
     
@@ -144,13 +145,13 @@ export default function FamilyPage() {
     };
   }, [user, profile]);
 
-  const canonicalizeMembers = (list) => {
+  function canonicalizeMembers(list) {
     if (!list || !Array.isArray(list)) return list;
-    const adminName = list[0]?.profiles?.display_name || "Neha";
-    const isMeElderAccount = user?.email?.includes('shei') || profile?.display_name?.toLowerCase().includes('grand');
+    const adminName = list.find(item => item.role === 'admin')?.profiles?.display_name || list[0]?.profiles?.display_name || "Neha";
+    const currentUserId = user?.id;
 
-    return list.map((item, idx) => {
-      const isAdminCard = item.role === 'admin' || idx === 0;
+    return list.map((item) => {
+      const isAdminCard = item.role === 'admin';
       let disp = item.profiles?.display_name;
       if (!isAdminCard) {
         if (!disp || disp === adminName || disp.toLowerCase() === 'demo') {
@@ -158,7 +159,7 @@ export default function FamilyPage() {
         }
       }
 
-      const isMeCard = item.profiles?.id === user?.id || (isAdminCard ? !isMeElderAccount : isMeElderAccount);
+      const isMeCard = item.profiles?.id === currentUserId;
 
       return {
         ...item,
@@ -173,7 +174,49 @@ export default function FamilyPage() {
         }
       };
     });
-  };
+  }
+
+  function dedupeMembers(list) {
+    if (!list || !Array.isArray(list)) return list;
+    const seen = new Set();
+
+    return list.filter((item, index) => {
+      const keyParts = [
+        item?.profiles?.id,
+        item?.email,
+        item?.profiles?.display_name?.toLowerCase(),
+        item?.role,
+      ].filter(Boolean);
+      const key = keyParts.join('|') || `idx:${index}`;
+
+      if (seen.has(key)) {
+        return false;
+      }
+
+      seen.add(key);
+      return true;
+    });
+  }
+
+  function normalizeRosterForViewer(list) {
+    if (!list || !Array.isArray(list)) return list;
+
+    const viewerId = user?.id;
+    return canonicalizeMembers(dedupeMembers(list))
+      .map((item, index) => ({ item, index }))
+      .sort((left, right) => {
+        const leftMine = left.item?.profiles?.id === viewerId ? 0 : 1;
+        const rightMine = right.item?.profiles?.id === viewerId ? 0 : 1;
+        if (leftMine !== rightMine) return leftMine - rightMine;
+
+        const leftAdmin = left.item?.role === 'admin' ? 0 : 1;
+        const rightAdmin = right.item?.role === 'admin' ? 0 : 1;
+        if (leftAdmin !== rightAdmin) return leftAdmin - rightAdmin;
+
+        return left.index - right.index;
+      })
+      .map(({ item }) => item);
+  }
 
   // Live Identity Synchronization
   useEffect(() => {
@@ -210,22 +253,24 @@ export default function FamilyPage() {
 
     if (needsGrpUpdate || needsMemsUpdate) {
       const updatedGrp = { ...familyGroup, name: updatedGrpName };
-      
-      if (needsGrpUpdate) {
-        setFamilyGroup(updatedGrp);
-        localStorage.setItem('cs_global_fam_grp', JSON.stringify(updatedGrp));
-        
-        // Push update to Supabase DB
-        const isRealUser = user && !String(user.id).startsWith('usr_') && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id);
-        if (isRealUser && supabase) {
-          supabase.from('family_groups').update({ name: updatedGrpName }).eq('id', familyGroup.id).then();
+
+      window.setTimeout(() => {
+        if (needsGrpUpdate) {
+          setFamilyGroup(updatedGrp);
+          localStorage.setItem('cs_global_fam_grp', JSON.stringify(updatedGrp));
+
+          // Push update to Supabase DB
+          const isRealUser = user && !String(user.id).startsWith('usr_') && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id);
+          if (isRealUser && supabase) {
+            supabase.from('family_groups').update({ name: updatedGrpName }).eq('id', familyGroup.id).then();
+          }
         }
-      }
-      
-      if (needsMemsUpdate) {
-        setMembers(updatedMembers);
-        localStorage.setItem('cs_global_fam_mem', JSON.stringify(updatedMembers));
-      }
+
+        if (needsMemsUpdate) {
+          setMembers(updatedMembers);
+          localStorage.setItem('cs_global_fam_mem', JSON.stringify(updatedMembers));
+        }
+      }, 0);
 
       // Broadcast update
       try {
@@ -313,7 +358,7 @@ export default function FamilyPage() {
     ];
   };
 
-  const loadFamilyData = async () => {
+  async function loadFamilyData() {
     const isRealUser = user && !String(user.id).startsWith('usr_') && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id);
     if (!isRealUser || guestMode || !supabase) {
       setLoading(false);
@@ -372,12 +417,12 @@ export default function FamilyPage() {
           })();
           const pendingInvites = localMems.filter(lm => lm.isPending === true);
 
-          const formattedRoster = membersList.map(m => ({
+          const formattedRoster = dedupeMembers(membersList.map(m => ({
             role: m.role,
             isPending: false,
             relation: m.role === 'admin' ? 'Circle Commander' : 'Protected Member',
             profiles: m.profiles || { id: m.user_id, display_name: "Family Defender", avatar_initial: "F", xp: 120, streak: 1 }
-          }));
+          })));
 
           const dbNames = membersList.map(m => m.profiles?.display_name?.toLowerCase() || '');
           const dbIds = membersList.map(m => m.profiles?.id || '');
@@ -403,11 +448,12 @@ export default function FamilyPage() {
             return !dbIds.includes(lm.profiles.id);
           });
 
-          const fullRoster = [...formattedRoster, ...unresolvedPendings, ...localOnlyMems];
+          const fullRoster = dedupeMembers([...formattedRoster, ...unresolvedPendings, ...localOnlyMems]);
 
+          const viewerRoster = normalizeRosterForViewer(fullRoster);
           setFamilyGroup(groupData);
-          setMembers(canonicalizeMembers(fullRoster));
-          syncStorage(groupData, fullRoster);
+          setMembers(viewerRoster);
+          syncStorage(groupData, viewerRoster);
           setLoading(false);
           return;
         }
@@ -416,9 +462,9 @@ export default function FamilyPage() {
       console.log("Supabase cloud load:", err.message);
     }
     setLoading(false);
-  };
+  }
 
-  const handleCreateFamily = async () => {
+  async function handleCreateFamily() {
     setActionLoading(true);
     setError('');
     try {
@@ -479,7 +525,7 @@ export default function FamilyPage() {
       }
 
       const newGrp = { id: "mock_grid_88", name: familyName, invite_code: generatedCode };
-      const newMems = getCanonicalRoster(user?.email, profile?.display_name);
+      const newMems = normalizeRosterForViewer(getCanonicalRoster(user?.email, profile?.display_name));
       setFamilyGroup(newGrp);
       setMembers(newMems);
       syncStorage(newGrp, newMems);
@@ -489,7 +535,7 @@ export default function FamilyPage() {
       // Fallback to local storage setup
       const familyName = `${profile?.display_name || user?.email?.split('@')[0] || 'Demo'}'s Cyber Circle`;
       const newGrp = { id: "mock_grid_88", name: familyName, invite_code: "A6B437" };
-      const newMems = getCanonicalRoster(user?.email, profile?.display_name);
+      const newMems = normalizeRosterForViewer(getCanonicalRoster(user?.email, profile?.display_name));
       setFamilyGroup(newGrp);
       setMembers(newMems);
       syncStorage(newGrp, newMems);
@@ -497,9 +543,9 @@ export default function FamilyPage() {
     } finally {
       setActionLoading(false);
     }
-  };
+  }
 
-  const performJoin = async (codeToJoin) => {
+  async function performJoin(codeToJoin) {
     const activeCode = codeToJoin || joinCode.toUpperCase() || "A6B437";
     setActionLoading(true);
 
@@ -549,7 +595,7 @@ export default function FamilyPage() {
           if (membersErr) throw membersErr;
 
           if (membersList) {
-            const canonical = canonicalizeMembers(membersList.map(m => ({
+            const canonical = normalizeRosterForViewer(membersList.map(m => ({
               role: m.role,
               isPending: false,
               relation: m.role === 'admin' ? 'Circle Commander' : 'Protected Member',
@@ -615,8 +661,9 @@ export default function FamilyPage() {
     
     // Set local state directly
     setFamilyGroup(jGrp);
-    setMembers(currentRoster);
-    syncStorage(jGrp, currentRoster);
+    const viewerRoster = normalizeRosterForViewer(currentRoster);
+    setMembers(viewerRoster);
+    syncStorage(jGrp, viewerRoster);
 
     if (typeof window !== 'undefined') {
       const url = new URL(window.location.href);
@@ -628,7 +675,7 @@ export default function FamilyPage() {
 
     setActionLoading(false);
     confetti({ particleCount: 80, spread: 60 });
-  };
+  }
 
   const handleJoinFamily = async (e) => {
     e.preventDefault();
@@ -640,25 +687,57 @@ export default function FamilyPage() {
   const handleDispatchInvite = async (e) => {
     e.preventDefault();
     if (!inviteName.trim() || !inviteEmail.trim()) return;
-    
-    // Trigger real Supabase Auth OTP Email Dispatch if connected
-    if (!guestMode && supabase) {
-      try {
-        await supabase.auth.signInWithOtp({
+
+    setInviteLoading(true);
+    setInviteError('');
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token;
+
+      if (!accessToken) {
+        throw new Error('Please sign in again before sending an invite.');
+      }
+
+      const response = await fetch('/api/family/invite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          familyGroupId: familyGroup?.id,
+          familyGroupName: familyGroup?.name,
+          inviteCode: familyGroup?.invite_code || 'A6B437',
+          inviteEmail: inviteEmail.trim(),
+          inviteName: inviteName.trim(),
+          inviteRelation: inviteRelation,
+          inviterName: profile?.display_name || user?.email?.split('@')[0] || 'Neha'
+        })
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result?.error || 'Failed to send the family invite.');
+      }
+
+      if (result?.fallbackEmailInvite) {
+        const { error: otpError } = await supabase.auth.signInWithOtp({
           email: inviteEmail.trim(),
           options: {
-            emailRedirectTo: `${window.location.origin}/family?code=${familyGroup?.invite_code || 'SHIELD88'}`
+            emailRedirectTo: result?.inviteLink || `${window.location.origin}/family?code=${familyGroup?.invite_code || 'A6B437'}`
           }
         });
-      } catch (err) {
-        console.log("Supabase email dispatch note:", err);
+
+        if (otpError) {
+          throw otpError;
+        }
       }
-    }
 
-    setInviteSuccess(true);
-    confetti({ particleCount: 60, spread: 50, colors: ['#22d3ee', '#10b981'] });
+      const inviteNote = result?.existingUserInvite
+        ? 'This email already exists in Supabase Auth, so the invite record was created and the direct join link is ready to share.'
+        : 'Invite sent successfully.';
 
-    setTimeout(() => {
       const updatedMembers = [
         ...members,
         {
@@ -675,14 +754,20 @@ export default function FamilyPage() {
           }
         }
       ];
-      setMembers(updatedMembers);
-      syncStorage(familyGroup, updatedMembers);
-      
-      setInviteSuccess(false);
-      setShowInviteModal(false);
-      setInviteName('');
-      setInviteEmail('');
-    }, 1200);
+
+      const cleanedMembers = normalizeRosterForViewer(updatedMembers);
+      setMembers(cleanedMembers);
+      syncStorage(familyGroup, cleanedMembers);
+      setInviteSuccess(true);
+      if (result?.existingUserInvite) {
+        setInviteError(inviteNote);
+      }
+      confetti({ particleCount: 60, spread: 50, colors: ['#22d3ee', '#10b981'] });
+    } catch (err) {
+      setInviteError(err?.message || 'Unable to send invite right now.');
+    } finally {
+      setInviteLoading(false);
+    }
   };
 
   const copyToClipboard = () => {
@@ -769,7 +854,7 @@ export default function FamilyPage() {
               </div>
               <h2 className="text-2xl font-black font-['Outfit'] mb-3 text-white">Create Family Circle</h2>
               <p className="text-slate-300 text-sm leading-relaxed mb-8 font-normal">
-                Initialize a private security umbrella. Generate an invite token to track your family's daily scam prevention practice.
+                Initialize a private security umbrella. Generate an invite token to track your family&apos;s daily scam prevention practice.
               </p>
             </div>
             <button 
@@ -881,7 +966,11 @@ export default function FamilyPage() {
           </div>
 
           <button 
-            onClick={() => setShowInviteModal(true)}
+            onClick={() => {
+              setInviteError('');
+              setInviteSuccess(false);
+              setShowInviteModal(true);
+            }}
             className="btn-primary w-full sm:w-auto py-5 px-6 text-sm font-black flex items-center justify-center gap-2 shrink-0 shadow-[0_0_25px_rgba(139,92,246,0.6)] cursor-pointer"
           >
             <Mail size={18} className="text-navy" />
@@ -1034,11 +1123,11 @@ export default function FamilyPage() {
                   ✔
                 </div>
                 <h4 className="text-2xl font-black font-['Outfit'] text-white mb-1">Invite Created!</h4>
-                <p className="text-slate-300 text-sm mb-5">Email dispatched to <b className="text-cyan-300">{inviteEmail}</b>.</p>
+                <p className="text-slate-300 text-sm mb-5">Email dispatched to <b className="text-cyan-300">{inviteEmail}</b>. If it doesn’t appear soon, share the direct link below.</p>
 
                 <div className="bg-slate-900 border border-purple-500/40 p-4 rounded-2xl text-left">
-                  <span className="text-xs font-black uppercase tracking-wider text-amber-400 block mb-1">📲 Instant WhatsApp / SMS Link</span>
-                  <p className="text-xs text-slate-300 mb-3">Supabase free servers rate-limit automated emails. Share this direct link with them immediately:</p>
+                  <span className="text-xs font-black uppercase tracking-wider text-amber-400 block mb-1">Direct family link</span>
+                  <p className="text-xs text-slate-300 mb-3">or share this link directly with them:</p>
                   <div className="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-white/10">
                     <input 
                       type="text" 
@@ -1060,6 +1149,11 @@ export default function FamilyPage() {
               </div>
             ) : (
               <form onSubmit={handleDispatchInvite} className="space-y-6">
+                {inviteError && (
+                  <div className="bg-rose-500/15 border border-rose-500/40 text-rose-200 text-sm font-medium rounded-2xl p-4">
+                    {inviteError}
+                  </div>
+                )}
                 <div>
                   <label className="text-xs font-black uppercase tracking-wider text-slate-300 block mb-2">Family Member Name</label>
                   <input
@@ -1073,7 +1167,7 @@ export default function FamilyPage() {
                 </div>
 
                 <div>
-                  <label className="text-xs font-black uppercase tracking-wider text-slate-300 block mb-2">Email Address / Mobile</label>
+                  <label className="text-xs font-black uppercase tracking-wider text-slate-300 block mb-2">Email Address</label>
                   <input
                     type="email"
                     required
@@ -1108,10 +1202,11 @@ export default function FamilyPage() {
                   </button>
                   <button
                     type="submit"
-                    className="btn-primary flex-1 py-4 text-sm font-black flex items-center justify-center gap-2 cursor-pointer"
+                    disabled={inviteLoading}
+                    className="btn-primary flex-1 py-4 text-sm font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    <Send size={16} className="text-navy" />
-                    <span>Dispatch Cyber Invite ➔</span>
+                    {inviteLoading ? <Loader2 size={16} className="text-navy animate-spin" /> : <Send size={16} className="text-navy" />}
+                    <span>{inviteLoading ? 'Sending Invite...' : 'Dispatch Cyber Invite ➔'}</span>
                   </button>
                 </div>
               </form>

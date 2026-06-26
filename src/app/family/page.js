@@ -988,7 +988,7 @@ export default function FamilyPage() {
       </div>
 
       {/* Majestic Cyberpunk Family Hierarchy Tree Showcase */}
-      <div className="flex flex-col items-center mb-16 select-none relative w-full">
+      <div className="flex flex-col items-center pb-36 mb-16 select-none relative w-full">
         {(() => {
           const commander = members.find(m => m.role === 'admin') || members[0];
           const subMembers = members.filter(m => m !== commander);
@@ -1000,32 +1000,55 @@ export default function FamilyPage() {
 
             if (isAdmin) {
               return (
-                <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 to-purple-600 rounded-2xl blur-md opacity-75 animate-pulse"></div>
-                  <div className="w-14 h-14 bg-slate-950 rounded-2xl border-2 border-cyan-400 flex items-center justify-center relative z-10 shadow-xl overflow-hidden">
-                    <span className="text-3xl filter drop-shadow">👩‍✈️</span>
-                    <span className="absolute bottom-0 inset-x-0 bg-cyan-500/90 text-[8px] font-black text-slate-950 uppercase tracking-tighter py-0.5 text-center font-mono">CMD</span>
+                <div className="relative w-28 h-28 sm:w-36 sm:h-36 shrink-0 flex items-center justify-center group/avatar select-none my-2">
+                  {/* Orbiting Hologram Radar Rings */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 rounded-full blur-2xl opacity-60 group-hover/avatar:opacity-100 transition-opacity animate-pulse"></div>
+                  <div className="absolute inset-1 border-2 border-dashed border-cyan-400/80 rounded-full animate-spin duration-[14000ms]"></div>
+                  <div className="absolute inset-3 border border-purple-400/50 rounded-full animate-ping duration-[3500ms]"></div>
+                  
+                  {/* Massive 3D Face Pod */}
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-tr from-slate-950 via-purple-950 to-slate-900 rounded-full border-[4px] border-cyan-400 flex flex-col items-center justify-center relative z-10 shadow-[0_0_60px_rgba(34,211,238,0.65)] group-hover/avatar:scale-110 group-hover/avatar:rotate-6 transition-all duration-300">
+                    <span className="text-5xl sm:text-6xl filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">👩‍✈️</span>
+                    
+                    {/* Glowing Cyber Pill Banner */}
+                    <span className="absolute -bottom-2 bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400 text-slate-950 font-mono text-[9px] sm:text-[10px] font-black px-3.5 py-1 rounded-full uppercase tracking-widest shadow-[0_0_20px_#22d3ee] border border-white whitespace-nowrap">
+                      ★ COMMANDER
+                    </span>
                   </div>
                 </div>
               );
             }
             if (isElder) {
               return (
-                <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
-                  <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 to-rose-500 rounded-2xl blur-md opacity-60 animate-pulse"></div>
-                  <div className="w-14 h-14 bg-slate-950 rounded-2xl border-2 border-amber-400 flex items-center justify-center relative z-10 shadow-xl overflow-hidden">
-                    <span className="text-3xl filter drop-shadow">👴</span>
-                    <span className="absolute bottom-0 inset-x-0 bg-amber-400/95 text-[8px] font-black text-slate-950 uppercase tracking-tighter py-0.5 text-center font-mono">ELDER</span>
+                <div className="relative w-28 h-28 sm:w-36 sm:h-36 shrink-0 flex items-center justify-center group/avatar select-none my-2">
+                  {/* Orbiting Gold Veteran Rings */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 via-rose-500 to-amber-400 rounded-full blur-2xl opacity-60 group-hover/avatar:opacity-100 transition-opacity animate-pulse"></div>
+                  <div className="absolute inset-1 border-2 border-dashed border-amber-400/80 rounded-full animate-spin duration-[16000ms]"></div>
+                  <div className="absolute inset-3 border border-rose-400/50 rounded-full animate-ping duration-[4000ms]"></div>
+                  
+                  {/* Massive 3D Elder Pod */}
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-tr from-slate-950 via-amber-950/80 to-slate-900 rounded-full border-[4px] border-amber-400 flex flex-col items-center justify-center relative z-10 shadow-[0_0_60px_rgba(251,191,36,0.65)] group-hover/avatar:scale-110 group-hover/avatar:-rotate-6 transition-all duration-300">
+                    <span className="text-5xl sm:text-6xl filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">👴</span>
+                    
+                    {/* Glowing Cyber Pill Banner */}
+                    <span className="absolute -bottom-2 bg-gradient-to-r from-amber-300 via-rose-500 to-amber-300 text-slate-950 font-mono text-[9px] sm:text-[10px] font-black px-3.5 py-1 rounded-full uppercase tracking-widest shadow-[0_0_20px_#fbbf24] border border-white whitespace-nowrap">
+                      👑 ELDER VETERAN
+                    </span>
                   </div>
                 </div>
               );
             }
             return (
-              <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
-                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-400 to-cyan-500 rounded-2xl blur-md opacity-50 animate-pulse"></div>
-                <div className="w-14 h-14 bg-slate-950 rounded-2xl border-2 border-emerald-400 flex items-center justify-center relative z-10 shadow-xl overflow-hidden">
-                  <span className="text-3xl filter drop-shadow">🧑‍💻</span>
-                  <span className="absolute bottom-0 inset-x-0 bg-emerald-400/90 text-[8px] font-black text-slate-950 uppercase tracking-tighter py-0.5 text-center font-mono">DEFENDER</span>
+              <div className="relative w-28 h-28 sm:w-36 sm:h-36 shrink-0 flex items-center justify-center group/avatar select-none my-2">
+                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-400 to-cyan-500 rounded-full blur-2xl opacity-50 group-hover/avatar:opacity-90 transition-opacity animate-pulse"></div>
+                <div className="absolute inset-1 border-2 border-dashed border-emerald-400/80 rounded-full animate-spin duration-[18000ms]"></div>
+                
+                <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-tr from-slate-950 via-emerald-950/60 to-slate-900 rounded-full border-[4px] border-emerald-400 flex flex-col items-center justify-center relative z-10 shadow-[0_0_60px_rgba(52,211,153,0.6)] group-hover/avatar:scale-110 transition-all duration-300">
+                  <span className="text-5xl sm:text-6xl filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">🧑‍🚀</span>
+                  
+                  <span className="absolute -bottom-2 bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-950 font-mono text-[9px] sm:text-[10px] font-black px-3.5 py-1 rounded-full uppercase tracking-widest shadow-[0_0_20px_#34d399] border border-white whitespace-nowrap">
+                    🛡️ DEFENDER
+                  </span>
                 </div>
               </div>
             );
@@ -1037,28 +1060,28 @@ export default function FamilyPage() {
 
             return (
               <div 
-                className={`glass-card p-6 relative overflow-hidden transition-all duration-300 w-full max-w-xl ${
+                className={`glass-card p-8 sm:p-10 relative overflow-hidden transition-all duration-300 w-full max-w-2xl rounded-[3rem] ${
                   isMaster 
-                    ? 'border-cyan-400/80 bg-gradient-to-r from-slate-950 via-purple-950/40 to-slate-950 shadow-[0_0_50px_rgba(34,211,238,0.25)] ring-2 ring-cyan-400/30' 
+                    ? 'border-cyan-400 bg-gradient-to-r from-slate-950 via-purple-950/50 to-slate-950 shadow-[0_0_70px_rgba(34,211,238,0.3)] ring-2 ring-cyan-400/40' 
                     : isPending 
                     ? 'border-amber-500/40 bg-amber-950/10 opacity-90' 
-                    : 'border-white/15 hover:border-cyan-400/50 bg-slate-900/80 shadow-xl hover:-translate-y-1'
+                    : 'border-white/20 hover:border-cyan-400/60 bg-slate-900/90 shadow-2xl hover:-translate-y-1.5'
                 }`}
               >
                 {isMaster && (
-                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"></div>
+                  <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"></div>
                 )}
                 
-                <div className="flex items-start justify-between gap-4 mb-5">
-                  <div className="flex items-center gap-4 text-left">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 mb-6 text-center sm:text-left">
+                  <div className="flex flex-col sm:flex-row items-center gap-6">
                     {renderChibiFace(m.profiles?.display_name, m.role)}
                     <div>
-                      <div className="flex items-center gap-2.5">
-                        <h3 className="text-xl font-black font-['Outfit'] text-white tracking-wide">{m.profiles?.display_name || "Family Defender"}</h3>
-                        {isMaster && <span className="bg-gradient-to-r from-amber-300 to-amber-500 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">★ CIRCLE COMMANDER</span>}
-                        {isMe && !isMaster && <span className="bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase font-mono">YOU</span>}
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+                        <h3 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white tracking-wide">{m.profiles?.display_name || "Family Defender"}</h3>
+                        {isMaster && <span className="bg-gradient-to-r from-amber-300 to-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">★ CIRCLE COMMANDER</span>}
+                        {isMe && !isMaster && <span className="bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase font-mono">YOU</span>}
                       </div>
-                      <span className="text-xs text-cyan-300/80 font-mono tracking-wider block mt-1 uppercase font-bold">{m.relation || (m.role === 'admin' ? 'Circle Commander' : 'Protected Member')}</span>
+                      <span className="text-xs text-cyan-300 font-mono tracking-wider block mt-1.5 uppercase font-bold">{m.relation || (m.role === 'admin' ? 'Circle Commander' : 'Protected Member')}</span>
                     </div>
                   </div>
 

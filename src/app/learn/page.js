@@ -108,12 +108,16 @@ export default function LearnPage() {
   const renderShowcaseSection = (tierKey, title, subtitle, deck, accentColor, icon) => {
     if (!deck || !deck.length) return null;
 
+    const doneCount = deck.filter(l => completedLessons.includes(l.id)).length;
+    const totalCount = deck.length;
+    const pct = Math.round((doneCount / totalCount) * 100) || 0;
+
     return (
       <div className="mb-16 select-none group/tier">
         {/* Tier Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-white/10 gap-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between pb-5 mb-6 border-b border-white/10 gap-6">
           <div className="flex items-center gap-4">
-            <span className="text-4xl filter drop-shadow animate-pulse">{icon}</span>
+            <span className="text-4xl sm:text-5xl filter drop-shadow animate-pulse">{icon}</span>
             <div>
               <span className={`text-[10px] font-mono font-black tracking-[0.3em] uppercase text-${accentColor}-400 block`}>3D CLASSIFIED CARD DECK</span>
               <h2 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white mt-0.5 flex flex-wrap items-center gap-3">
@@ -122,9 +126,30 @@ export default function LearnPage() {
               </h2>
             </div>
           </div>
-          <div className="bg-slate-950/90 px-5 py-2.5 rounded-2xl border border-white/10 text-xs font-mono font-bold text-slate-300 shadow-inner flex items-center gap-2.5 self-start sm:self-auto">
-            <span className={`w-2.5 h-2.5 rounded-full bg-${accentColor}-400 animate-ping`}></span>
-            <span>{deck.length} Modules in Deck</span>
+
+          {/* Gamified Cyber Deck Progress Bar Pill ("deck 1/15 completed") */}
+          <div className="bg-slate-950/95 p-4 sm:px-6 sm:py-4 rounded-3xl border border-white/15 shadow-2xl flex flex-col gap-2.5 w-full md:w-auto min-w-[280px]">
+            <div className="flex items-center justify-between text-xs font-mono font-black uppercase tracking-wider gap-4">
+              <span className="text-slate-300 flex items-center gap-2">
+                <span className={`w-2.5 h-2.5 rounded-full bg-${accentColor}-400 ${doneCount > 0 ? "animate-ping" : ""}`}></span>
+                <span>Deck Progress</span>
+              </span>
+              <span className={`text-${accentColor}-400 bg-white/5 px-3 py-1 rounded-xl border border-white/10 font-black`}>
+                {doneCount}/{totalCount} Completed ({pct}%)
+              </span>
+            </div>
+            
+            {/* High-Tech Glowing Laser Progress Bar Meter */}
+            <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden relative shadow-inner p-0.5">
+              <div 
+                style={{ width: `${pct}%` }}
+                className={`h-full rounded-full transition-all duration-700 ${
+                  pct === 100 
+                    ? "bg-gradient-to-r from-amber-400 via-emerald-400 to-cyan-400 shadow-[0_0_15px_#34d399]" 
+                    : `bg-gradient-to-r from-${accentColor}-500 via-purple-500 to-cyan-400 shadow-[0_0_12px_rgba(34,211,238,0.8)]`
+                }`}
+              ></div>
+            </div>
           </div>
         </div>
 

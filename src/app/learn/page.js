@@ -21,6 +21,7 @@ export default function LearnPage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
   const [victoryReward, setVictoryReward] = useState(null);
+  const [wheelDegrees, setWheelDegrees] = useState(0);
   
   // Track which Deck Tower is currently being hovered/expanded
   const [activeDeckTier, setActiveDeckTier] = useState(null);
@@ -38,19 +39,24 @@ export default function LearnPage() {
     });
   };
 
-  const spinRandomLesson = () => {
+  const startWheelSpin = () => {
+    if (isSpinning) return;
     setIsSpinning(true);
-    let counter = 0;
-    const interval = setInterval(() => {
+    // Add 1440 to 1800 degrees (4 to 5 full wheel rotations)
+    const extraSpins = 1440 + Math.floor(Math.random() * 360);
+    setWheelDegrees(prev => prev + extraSpins);
+
+    setTimeout(() => {
+      setIsSpinning(false);
       const randomIndex = Math.floor(Math.random() * LESSONS.length);
       setSelectedLesson(LESSONS[randomIndex]);
-      counter++;
-      if (counter > 12) {
-        clearInterval(interval);
-        setIsSpinning(false);
-        setActiveSlide(0);
-      }
-    }, 100);
+      setActiveSlide(0);
+      confetti({
+        particleCount: 80,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+    }, 2200);
   };
 
   const openRoadmapModal = (lesson) => {
@@ -183,12 +189,12 @@ export default function LearnPage() {
   return (
     <div className="max-w-7xl mx-auto pb-44 pt-4 px-4 sm:px-6 select-none animate-fade-in">
       
-      {/* Hero Banner */}
+      {/* Hero Banner with Interactive Fortune Wheel Roulette */}
       <ScrollReveal>
         <div className="glass-card p-8 md:p-14 mb-14 relative overflow-hidden bg-gradient-to-r from-purple-900/40 via-slate-900 to-slate-900 flex flex-col md:flex-row items-center justify-between gap-8 border-purple-500/30 shadow-2xl">
           <div className="absolute -top-32 -left-32 w-80 h-80 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="relative z-10 text-center md:text-left max-w-3xl">
+          <div className="relative z-10 text-center md:text-left max-w-2xl">
             <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/40 px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(139,92,246,0.3)] font-mono">
               <Sparkles size={16} className="text-cyan-400 animate-spin" /> Elite Dark Navy-Purple Ecosystem
             </div>
@@ -200,22 +206,56 @@ export default function LearnPage() {
               </span>
             </h1>
             
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal max-w-2xl">
-              Scroll down to explore the classified security card decks. Move your mouse left or right across any deck to smoothly pan through the cards!
+            <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
+              Scroll down to explore the classified security card decks. Move your mouse left or right across any deck to smoothly pan through the cards! Unsure where to begin? Spin the wheel on the right!
             </p>
           </div>
 
-          <div className="relative z-10 flex flex-col items-center shrink-0 w-full sm:w-auto">
-            <button 
-              onClick={spinRandomLesson}
-              disabled={isSpinning}
-              className="btn-primary w-full sm:w-auto py-5 px-8 text-base font-black flex items-center justify-center gap-3 group shadow-[0_0_35px_rgba(139,92,246,0.5)] cursor-pointer"
-            >
-              <Dices size={24} className={`text-navy ${isSpinning ? "animate-spin" : "group-hover:rotate-45 transition-transform"}`} />
-              <span>{isSpinning ? "🎰 Spinning Surprise..." : "🎰 Spin Surprise Lesson"}</span>
-            </button>
-            <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2.5 font-mono">Feeling lucky? Let AI pick for you!</span>
+          {/* Fun Interactive Cyber Fortune Wheel Roulette ("🎡 SPIN ME") */}
+          <div className="relative z-10 flex flex-col items-center shrink-0 w-full sm:w-auto mt-4 md:mt-0">
+            <div className="relative flex flex-col items-center select-none">
+              {/* Gold Bouncing Pointer Triangle */}
+              <div className="w-0 h-0 border-l-[14px] border-l-transparent border-r-[14px] border-r-transparent border-t-[22px] border-t-amber-400 absolute -top-4 z-30 filter drop-shadow-[0_2px_6px_rgba(251,191,36,0.9)] animate-bounce"></div>
+
+              {/* Rotating Circular Wheel */}
+              <div 
+                onClick={startWheelSpin}
+                style={{ transform: `rotate(${wheelDegrees}deg)` }}
+                className="w-44 h-44 sm:w-52 sm:h-52 rounded-full border-[6px] border-cyan-400 bg-gradient-to-tr from-slate-950 via-purple-950 to-slate-900 shadow-[0_0_60px_rgba(34,211,238,0.45)] flex items-center justify-center relative cursor-pointer overflow-hidden transition-transform duration-[2200ms] ease-out hover:scale-105 active:scale-95 ring-4 ring-purple-500/30"
+              >
+                {/* Decorative Wedge Grid & Rings */}
+                <div className="absolute inset-0 border border-white/10 rounded-full scale-75"></div>
+                <div className="absolute inset-0 border border-cyan-400/25 rounded-full scale-50"></div>
+                <div className="absolute w-full h-px bg-white/15"></div>
+                <div className="absolute h-full w-px bg-white/15"></div>
+                <div className="absolute w-full h-px bg-white/15 rotate-45"></div>
+                <div className="absolute h-full w-px bg-white/15 rotate-45"></div>
+
+                {/* Slices Icons */}
+                <span className="absolute top-3 text-xl filter drop-shadow">🛡️</span>
+                <span className="absolute bottom-3 text-xl filter drop-shadow">🚨</span>
+                <span className="absolute left-3 text-xl filter drop-shadow">💬</span>
+                <span className="absolute right-3 text-xl filter drop-shadow">💸</span>
+                <span className="absolute top-7 left-7 text-lg filter drop-shadow">🤖</span>
+                <span className="absolute bottom-7 right-7 text-lg filter drop-shadow">🔒</span>
+                <span className="absolute top-7 right-7 text-lg filter drop-shadow">🎣</span>
+                <span className="absolute bottom-7 left-7 text-lg filter drop-shadow">🛒</span>
+
+                {/* Center Hub Spin Button */}
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-400 via-purple-600 to-pink-500 p-1 z-20 shadow-2xl flex items-center justify-center">
+                  <div className="w-full h-full rounded-full bg-slate-950 flex flex-col items-center justify-center text-center p-1 group-hover:bg-slate-900 transition-colors">
+                    <span className="text-2xl animate-pulse">{isSpinning ? "💫" : "🎡"}</span>
+                    <span className="text-[9px] font-mono font-black text-cyan-300 uppercase tracking-tighter block mt-0.5">{isSpinning ? "SPINNING" : "SPIN ME"}</span>
+                  </div>
+                </div>
+              </div>
+
+              <span className="text-[11px] sm:text-xs font-mono font-black text-cyan-300 bg-slate-950/90 border border-cyan-400/50 px-4 py-2 rounded-full mt-4 shadow-xl tracking-wider text-center block max-w-[240px]">
+                {isSpinning ? "🎰 WHEEL PICKING..." : "🎡 CLICK WHEEL TO PICK RANDOM LESSON"}
+              </span>
+            </div>
           </div>
+
         </div>
       </ScrollReveal>
 
@@ -226,10 +266,10 @@ export default function LearnPage() {
         {renderShowcaseSection("advanced", "Tier 3: Elite", "Cyber Warfare", advancedDeck.length ? advancedDeck : LESSONS.slice(6, 8), "rose", "🔴")}
       </div>
 
-      {/* Interactive Roadmap Modal */}
+      {/* Interactive Roadmap Modal (Fixed z-[1050] to sit above floating nav) */}
       {selectedLesson && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-xl animate-fade-in">
-          <div className="glass-card max-w-2xl w-full p-6 sm:p-10 relative overflow-hidden bg-slate-950 border border-purple-500/50 shadow-[0_0_80px_rgba(139,92,246,0.4)] rounded-3xl animate-scale-up">
+        <div className="fixed inset-0 z-[1050] flex items-start justify-center p-4 sm:p-6 md:p-10 bg-slate-950/85 backdrop-blur-2xl animate-fade-in overflow-y-auto">
+          <div className="glass-card max-w-2xl w-full p-6 sm:p-10 relative overflow-hidden bg-slate-950 border border-purple-500/60 shadow-[0_0_90px_rgba(139,92,246,0.5)] rounded-3xl animate-scale-up mt-10 sm:mt-16 mb-28">
             <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
             
             {/* Modal Header */}
@@ -237,7 +277,7 @@ export default function LearnPage() {
               <div className="flex items-center gap-4">
                 <span className="text-4xl sm:text-5xl animate-bounce">{selectedLesson.icon || "🚨"}</span>
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Protocol Instruction #{selectedLesson.id}</span>
+                  <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest font-mono">Protocol Instruction #{selectedLesson.id}</span>
                   <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mt-1 leading-snug">{selectedLesson.title}</h2>
                 </div>
               </div>
@@ -259,7 +299,7 @@ export default function LearnPage() {
             </div>
 
             {/* Step Content Slide */}
-            <div className="min-h-[220px] sm:min-h-[240px] flex flex-col justify-center">
+            <div className="min-h-[200px] sm:min-h-[220px] flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-4">
                 <span className="text-3xl">{steps[activeSlide]?.icon}</span>
                 <h3 className="text-lg sm:text-xl font-black text-cyan-300 uppercase tracking-wider font-['Outfit']">
@@ -308,9 +348,9 @@ export default function LearnPage() {
         </div>
       )}
 
-      {/* Gamified Level-Up Victory Modal */}
+      {/* Gamified Level-Up Victory Modal (Fixed z-[1100]) */}
       {victoryReward && (
-        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in">
+        <div className="fixed inset-0 z-[1100] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in">
           <div className="glass-card max-w-md w-full p-8 text-center relative overflow-hidden bg-slate-950 border border-cyan-400 shadow-[0_0_90px_rgba(34,211,238,0.4)] rounded-3xl animate-scale-up">
             <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-tr from-amber-400 to-cyan-400 p-1 shadow-lg animate-bounce flex items-center justify-center text-5xl">
               🏆
@@ -345,7 +385,7 @@ export default function LearnPage() {
                 triggerVictory();
                 setTimeout(() => setVictoryReward(null), 1200);
               }}
-              className="w-full py-4 bg-gradient-to-r from-amber-400 via-emerald-400 to-cyan-400 text-slate-950 hover:opacity-95 text-xs font-mono font-black uppercase tracking-[0.2em] cursor-pointer rounded-2xl shadow-[0_0_40px_rgba(52,211,153,0.6)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
+              className="w-full py-4 bg-gradient-to-r from-amber-400 via-emerald-400 to-cyan-400 text-slate-950 hover:opacity-95 text-xs font-mono font-black uppercase tracking-wider cursor-pointer rounded-2xl shadow-[0_0_40px_rgba(52,211,153,0.6)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
             >
               <span>✨ Collect Victory Reward ✨</span>
             </button>

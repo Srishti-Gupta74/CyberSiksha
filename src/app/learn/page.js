@@ -70,28 +70,65 @@ export default function LearnPage() {
 
   const getRoadmapSteps = (lesson) => {
     if (!lesson) return [];
-    const fullText = getLessonText(lesson.content);
-    return [
-      {
+    const contentSlides = [];
+    
+    if (Array.isArray(lesson.content)) {
+      lesson.content.forEach((block, idx) => {
+        if (!block || !block.value) return;
+        let slideTitle = "Threat Vector Briefing";
+        let slideSubtitle = "How this cyber fraud operates";
+        let slideIcon = "🚨";
+        let isTerm = false;
+
+        if (block.type === 'example') {
+          slideTitle = "Intercepted Scam Trap";
+          slideSubtitle = "Real message example used by fraudsters";
+          slideIcon = "💬";
+          isTerm = true;
+        } else if (block.type === 'tip') {
+          slideTitle = "Crucial Safety Advisory";
+          slideSubtitle = "Emergency action protocol";
+          slideIcon = "⚠️";
+        } else if (idx > 0) {
+          slideTitle = "Step-By-Step Breakdown";
+          slideSubtitle = "Scammer execution mechanics";
+          slideIcon = "⚙️";
+        }
+
+        contentSlides.push({
+          title: slideTitle,
+          subtitle: slideSubtitle,
+          content: block.value,
+          icon: slideIcon,
+          isTerminal: isTerm
+        });
+      });
+    } else {
+      contentSlides.push({
         title: "Threat Vector Briefing",
         subtitle: "How this cyber fraud operates",
-        content: fullText,
-        icon: "🚨",
-      },
-      {
-        title: "Intercepted Scam Trap",
-        subtitle: "Real message example used by fraudsters",
-        content: lesson.example || "Dear Customer, your bank account is pending KYC verification. Click immediately to restore service...",
-        icon: "💬",
-        isTerminal: true
-      },
-      {
-        title: "Ironclad Defense Rule",
-        subtitle: "Your family's safety protocol",
-        content: lesson.tip || "Never click bank links sent via WhatsApp or SMS. Always verify on official bank apps.",
-        icon: "🛡️",
-      }
-    ];
+        content: getLessonText(lesson.content),
+        icon: "🚨"
+      });
+    }
+
+    if (lesson.redFlags && lesson.redFlags.length > 0) {
+      contentSlides.push({
+        title: "🚩 Critical Red Flags",
+        subtitle: "Warning signs to spot immediately",
+        content: lesson.redFlags.map(rf => `• ${rf}`).join('\n\n'),
+        icon: "🚩"
+      });
+    }
+
+    contentSlides.push({
+      title: "Ironclad Defense Rule",
+      subtitle: "Your family's safety protocol",
+      content: lesson.tip || "Never click bank links sent via WhatsApp or SMS. Always verify on official bank apps.",
+      icon: "🛡️"
+    });
+
+    return contentSlides;
   };
 
   const steps = selectedLesson ? getRoadmapSteps(selectedLesson) : [];
@@ -341,7 +378,7 @@ export default function LearnPage() {
               </p>
 
               {steps[activeSlide]?.isTerminal ? (
-                <div className="bg-slate-900 border border-purple-500/40 rounded-2xl p-6 font-mono text-xs sm:text-sm text-cyan-300 shadow-inner leading-relaxed overflow-x-auto relative group">
+                <div className="bg-slate-900 border border-purple-500/40 rounded-2xl p-6 font-mono text-xs sm:text-sm text-cyan-300 shadow-inner leading-relaxed overflow-x-auto relative group whitespace-pre-line">
                   <div className="flex items-center justify-between pb-3 mb-3 border-b border-purple-500/20 text-[10px] text-purple-400 font-bold uppercase tracking-widest">
                     <span>⚠️ INTERCEPTED SCAM TRAP</span>
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
@@ -349,7 +386,7 @@ export default function LearnPage() {
                   "{steps[activeSlide]?.content}"
                 </div>
               ) : (
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 text-slate-100 text-base sm:text-lg leading-relaxed font-normal">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 text-slate-100 text-base sm:text-lg leading-relaxed font-normal whitespace-pre-line">
                   {steps[activeSlide]?.content}
                 </div>
               )}

@@ -137,46 +137,50 @@ export default function NewsPage() {
         {renderNewsDeck("biometric", "Aadhaar Biometric & Identity Theft", "Critical Advisory", biometricNews, "rose", "🔒")}
       </div>
 
-      {/* Detailed Reading Modal */}
+      {/* Detailed Reading Modal - Ultra Elite Elegant Editorial Dossier */}
       {selectedArticle && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in">
-          <div className="glass-card max-w-3xl w-full p-6 sm:p-10 relative overflow-hidden bg-slate-950 border-cyan-400 shadow-[0_0_80px_rgba(34,211,238,0.3)] max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <div className="absolute top-0 right-0 w-80 h-80 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-xl animate-fade-in select-none">
+          <div className="bg-[#fcfdfa] text-[#1a1b18] rounded-3xl max-w-3xl w-full p-8 sm:p-14 relative overflow-hidden border-4 border-[#e5e7df] shadow-[0_35px_100px_rgba(0,0,0,0.8)] max-h-[90vh] overflow-y-auto">
             
-            <div className="flex items-center justify-between pb-6 mb-6 border-b border-white/10">
+            {/* Elegant Vintage Double Header Lines */}
+            <div className="border-b-4 border-double border-slate-900 pb-6 mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="bg-purple-600/30 border border-purple-500/40 text-cyan-300 px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider">
+                <span className="bg-slate-950 text-amber-300 font-mono text-[10px] sm:text-xs font-black tracking-[0.2em] px-4 py-1.5 rounded uppercase shadow-sm">
+                  ★ CLASSIFIED DOSSIER
+                </span>
+                <span className="font-serif italic text-slate-500 font-bold text-xs sm:text-sm">
                   {selectedArticle.source} • {selectedArticle.date}
                 </span>
               </div>
               <button 
                 onClick={() => setSelectedArticle(null)}
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold transition-colors text-lg"
+                className="w-11 h-11 rounded-full bg-[#f0f2eb] hover:bg-rose-500 hover:text-white text-slate-800 flex items-center justify-center font-bold transition-all text-lg cursor-pointer shadow-xs"
               >
                 ✕
               </button>
             </div>
 
-            <h2 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white mb-6 leading-tight">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-black font-serif text-slate-950 mb-8 leading-[1.1] tracking-tight">
               {selectedArticle.title}
             </h2>
 
-            <div className="space-y-6 text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
-              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 font-medium text-white italic">
+            <div className="space-y-8 text-slate-800 text-base sm:text-xl leading-[1.8] font-normal font-serif">
+              <div className="p-8 rounded-2xl bg-[#f4f1ea] border-l-6 border-amber-600 font-serif text-[#311062] text-lg sm:text-xl italic font-semibold leading-relaxed shadow-sm">
                 "{selectedArticle.summary}"
               </div>
 
-              <p>{selectedArticle.details || selectedArticle.summary}</p>
+              <p className="text-slate-800 leading-[1.85]">{selectedArticle.details || selectedArticle.summary}</p>
 
               {selectedArticle.protection && (
-                <div className="mt-8 p-6 rounded-2xl bg-cyan-950/40 border border-cyan-500/30">
-                  <h3 className="text-lg font-black font-['Outfit'] text-cyan-300 uppercase tracking-wider flex items-center gap-2 mb-4">
-                    🛡️ Official Defense Protocol
+                <div className="mt-10 p-8 rounded-3xl bg-gradient-to-br from-slate-950 via-[#0d1322] to-slate-900 text-white shadow-2xl border border-amber-500/40 relative overflow-hidden font-sans">
+                  <div className="absolute -right-10 -top-10 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                  <h3 className="text-sm sm:text-base font-black font-mono text-amber-400 uppercase tracking-[0.2em] flex items-center gap-3 mb-6 border-b border-white/15 pb-4 z-10 relative">
+                    <span>🛡️ OFFICIAL DEFENSE PROTOCOL</span>
                   </h3>
-                  <ul className="space-y-3">
+                  <ul className="space-y-4 relative z-10">
                     {selectedArticle.protection.map((prot, i) => (
-                      <li key={i} className="flex items-start gap-3 text-sm sm:text-base text-slate-200">
-                        <span className="text-cyan-400 shrink-0 mt-0.5">✔</span>
+                      <li key={i} className="flex items-start gap-4 text-sm sm:text-base text-slate-100 font-medium leading-relaxed">
+                        <span className="w-6 h-6 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-300 flex items-center justify-center shrink-0 mt-0.5 text-xs font-bold shadow-sm">✔</span>
                         <span>{prot}</span>
                       </li>
                     ))}
@@ -185,12 +189,16 @@ export default function NewsPage() {
               )}
             </div>
 
-            <div className="mt-8 pt-6 border-t border-white/10 flex justify-end">
+            {/* High-End Archival Footer CTA */}
+            <div className="mt-10 pt-8 border-t-2 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 font-sans">
+              <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 uppercase font-bold tracking-wider">
+                <span>⚡ SECURE HOME NETWORK ARCHIVE</span>
+              </div>
               <button 
                 onClick={() => setSelectedArticle(null)}
-                className="btn-primary py-4 px-10 text-sm cursor-pointer"
+                className="w-full sm:w-auto py-4 px-10 bg-slate-950 hover:bg-amber-500 hover:text-slate-950 text-white rounded-2xl font-mono font-black text-xs uppercase tracking-[0.15em] shadow-xl transition-all cursor-pointer transform hover:-translate-y-0.5"
               >
-                <span>Acknowledge & Close Dossier ➔</span>
+                <span>ACKNOWLEDGE & ARCHIVE DOSSIER ➔</span>
               </button>
             </div>
 

@@ -4,9 +4,15 @@
 @theme {
   --color-navy: #0a0f1d;
   --color-navy-card: #111827;
+  --color-navy-light: #1e293b;
   --color-purple-elite: #4c1d95;
   --color-violet-glow: #8b5cf6;
   --color-cyan-elite: #22d3ee;
+  --color-cyan: #22d3ee;
+  --color-emerald: #10b981;
+  --color-rose: #f43f5e;
+  --color-gold: #f59e0b;
+  --color-violet: #8b5cf6;
 }
 
 :root {

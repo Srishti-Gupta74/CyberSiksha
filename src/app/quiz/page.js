@@ -17,7 +17,7 @@ function shuffle(array) {
 }
 
 export default function QuizPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, addQuizReward } = useAuth();
   
   const [questions, setQuestions] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -85,15 +85,17 @@ export default function QuizPage() {
     triggerConfetti();
     
     if (user && score.correct > 0) {
-      const totalXp = (profile?.xp || 0) + score.xp + (score.correct === questions.length ? 25 : 0);
-      await supabase.from('profiles').update({ xp: totalXp }).eq('id', user.id);
+      const earnedXp = score.xp + (score.correct === questions.length ? 25 : 0);
+      if (addQuizReward) await addQuizReward(earnedXp);
       
-      await supabase.from('quiz_results').insert({
-        user_id: user.id,
-        total_questions: questions.length,
-        correct_answers: score.correct,
-        xp_earned: score.xp
-      });
+      try {
+        await supabase.from('quiz_results').insert({
+          user_id: user.id,
+          total_questions: questions.length,
+          correct_answers: score.correct,
+          xp_earned: score.xp
+        });
+      } catch(e){}
     }
   };
 

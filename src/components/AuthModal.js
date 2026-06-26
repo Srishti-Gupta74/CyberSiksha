@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from './AuthProvider';
 import { Shield, X, Mail, Lock, User as UserIcon } from 'lucide-react';
 
-export default function AuthModal({ isOpen, onClose }) {
-  const [isLogin, setIsLogin] = useState(true);
+export default function AuthModal({ isOpen, onClose, defaultIsLogin = true }) {
+  const [isLogin, setIsLogin] = useState(defaultIsLogin);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -13,6 +13,10 @@ export default function AuthModal({ isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
   
   const { signIn, signUp } = useAuth();
+
+  useEffect(() => {
+    setIsLogin(defaultIsLogin);
+  }, [defaultIsLogin, isOpen]);
 
   if (!isOpen) return null;
 
@@ -27,11 +31,14 @@ export default function AuthModal({ isOpen, onClose }) {
         if (signInErr) throw signInErr;
         onClose();
       } else {
-        const { error: signUpErr } = await signUp(email, password, name);
+        const { data, error: signUpErr } = await signUp(email, password, name);
         if (signUpErr) throw signUpErr;
-        // Supabase might require email confirmation depending on settings
-        setIsLogin(true);
-        setError("Account created! You can now log in.");
+        if (data?.user) {
+          onClose();
+        } else {
+          setIsLogin(true);
+          setError("Account created! You can now log in.");
+        }
       }
     } catch (err) {
       setError(err.message);

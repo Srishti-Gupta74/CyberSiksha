@@ -2,11 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, ShieldQuestion, Newspaper, MessageSquareText, Users, ShieldAlert } from 'lucide-react';
+import { Home, BookOpen, ShieldQuestion, Newspaper, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useAuth } from './AuthProvider';
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { user, loading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -16,6 +18,8 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  if (loading || !user) return null;
   
   const navItems = [
     { name: 'Dashboard', path: '/', icon: <Home size={22} /> },

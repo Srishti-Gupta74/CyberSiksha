@@ -20,6 +20,7 @@ export default function LearnPage() {
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
+  const [victoryReward, setVictoryReward] = useState(null);
   
   // Track which Deck Tower is currently being hovered/expanded
   const [activeDeckTier, setActiveDeckTier] = useState(null);
@@ -92,7 +93,10 @@ export default function LearnPage() {
       setActiveSlide(s => s + 1);
     } else {
       triggerVictory();
-      markLessonComplete(selectedLesson.id);
+      const diff = (selectedLesson?.difficulty || '').toLowerCase();
+      const earnedXp = diff.includes('hard') || diff.includes('elite') || diff.includes('adv') ? 100 : (diff.includes('med') || diff.includes('inter') || diff.includes('tactical') ? 50 : 25);
+      markLessonComplete(selectedLesson.id, earnedXp);
+      setVictoryReward({ title: selectedLesson.title, xp: earnedXp });
       setSelectedLesson(null);
     }
   };
@@ -157,8 +161,11 @@ export default function LearnPage() {
                 <div className="flex items-center gap-4">
                   <span className="text-3xl shrink-0 group-hover/item:scale-125 transition-transform">{lesson.icon || "🛡️"}</span>
                   <div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lesson #{lesson.id}</span>
+                      <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1 tracking-wider">
+                        🪙 +{tierKey === 'advanced' ? 100 : (tierKey === 'medium' ? 50 : 25)} XP
+                      </span>
                       {isDone && <CheckCircle2 size={15} className="text-emerald-400 drop-shadow" />}
                     </div>
                     <h3 className="text-base sm:text-lg font-black font-['Outfit'] text-white group-hover/item:text-cyan-300 transition-colors">
@@ -236,15 +243,13 @@ export default function LearnPage() {
               <div className="flex items-center gap-3">
                 <span className="text-4xl animate-bounce">{selectedLesson.icon || "🚨"}</span>
                 <div>
-                  <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400 px-2.5 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20">
-                    Classified Security Briefing
-                  </span>
-                  <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mt-1">{selectedLesson.title}</h2>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocol Instruction #{selectedLesson.id}</span>
+                  <h2 className="text-2xl font-black font-['Outfit'] text-white mt-1">{selectedLesson.title}</h2>
                 </div>
               </div>
               <button 
                 onClick={() => setSelectedLesson(null)}
-                className="w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center font-bold transition-colors text-lg"
+                className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all cursor-pointer"
               >
                 ✕
               </button>
@@ -259,27 +264,29 @@ export default function LearnPage() {
               ))}
             </div>
 
-            {/* Current Step Display */}
-            <div className="min-h-[220px] flex flex-col justify-center mb-8">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-3xl">{steps[activeSlide]?.icon}</span>
-                <div>
-                  <h3 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white">{steps[activeSlide]?.title}</h3>
-                  <span className="text-xs text-slate-400 font-medium">{steps[activeSlide]?.subtitle}</span>
-                </div>
+            {/* Step Content Slide */}
+            <div className="min-h-[220px] sm:min-h-[240px] flex flex-col justify-center">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">{steps[activeSlide]?.icon}</span>
+                <h3 className="text-lg font-black text-cyan-300 uppercase tracking-wider font-['Outfit']">
+                  {steps[activeSlide]?.title}
+                </h3>
               </div>
 
+              <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
+                {steps[activeSlide]?.subtitle}
+              </p>
+
               {steps[activeSlide]?.isTerminal ? (
-                <div className="chat-container my-2 animate-fade-in">
-                  <div className="chat-bubble scammer">
-                    {steps[activeSlide]?.content}
+                <div className="bg-slate-900 border border-purple-500/30 rounded-xl p-5 font-mono text-xs sm:text-sm text-cyan-300 shadow-inner leading-relaxed overflow-x-auto relative group">
+                  <div className="flex items-center justify-between pb-3 mb-3 border-b border-purple-500/20 text-[10px] text-purple-400 font-bold uppercase tracking-widest">
+                    <span>⚠️ Intercepted Message</span>
+                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
                   </div>
-                  <div className="chat-bubble victim">
-                    ⚠️ INTERCEPTED: Fraudulent Communication Vector
-                  </div>
+                  "{steps[activeSlide]?.content}"
                 </div>
               ) : (
-                <div className={`p-6 rounded-2xl border bg-white/5 border-white/10 text-slate-200 text-base sm:text-lg leading-relaxed animate-fade-in ${steps[activeSlide]?.badgeColor || ""}`}>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-slate-200 text-base sm:text-lg leading-relaxed font-normal">
                   {steps[activeSlide]?.content}
                 </div>
               )}
@@ -303,6 +310,51 @@ export default function LearnPage() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* Gamified Level-Up Victory Modal */}
+      {victoryReward && (
+        <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in">
+          <div className="glass-card max-w-md w-full p-8 text-center relative overflow-hidden bg-slate-950 border-cyan-400 shadow-[0_0_90px_rgba(34,211,238,0.4)] animate-scale-up">
+            <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-tr from-amber-400 to-cyan-400 p-1 shadow-lg animate-bounce flex items-center justify-center text-5xl">
+              🏆
+            </div>
+            
+            <span className="bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-widest block w-fit mx-auto mb-4">
+              ✨ Security Clearance Secured
+            </span>
+
+            <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mb-2">
+              {victoryReward.title}
+            </h2>
+
+            <p className="text-slate-300 text-sm mb-6 font-medium">
+              You mastered this threat vector and upgraded your family network defense shield!
+            </p>
+
+            <div className="bg-slate-900/90 border border-amber-500/40 p-4 rounded-2xl mb-8 flex items-center justify-around">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Reward</span>
+                <span className="text-2xl font-black font-['Outfit'] text-amber-400">+{victoryReward.xp} XP</span>
+              </div>
+              <div className="w-px h-10 bg-white/10"></div>
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Defense Roster</span>
+                <span className="text-2xl font-black font-['Outfit'] text-emerald-400">LIVE SYNCED</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => {
+                triggerVictory();
+                setTimeout(() => setVictoryReward(null), 1200);
+              }}
+              className="w-full py-4 bg-gradient-to-r from-amber-400 via-emerald-400 to-cyan-400 text-slate-950 hover:opacity-95 text-base font-black uppercase tracking-wider cursor-pointer rounded-2xl shadow-[0_0_40px_rgba(52,211,153,0.6)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 font-['Outfit']"
+            >
+              <span>✨ Collect Victory Reward ✨</span>
+            </button>
           </div>
         </div>
       )}

@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { MessageSquareText, X, Send, Sparkles, Bot, ShieldCheck, Loader2, Minimize2 } from 'lucide-react';
+import { useAuth } from './AuthProvider';
 
 const MOCK_AI_RESPONSES = {
   default: "Namaste! I am CyberAI, your 24/7 digital protection officer. Send me any suspicious SMS, UPI request, WhatsApp link, or phone number and I will instantly analyze if it's a scam!",
@@ -19,6 +20,7 @@ const QUICK_PROMPTS = [
 ];
 
 export default function FloatingChatbot() {
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     { sender: 'ai', text: MOCK_AI_RESPONSES.default, time: 'Just now' }
@@ -47,17 +49,17 @@ export default function FloatingChatbot() {
     // AI Intelligence Analysis Simulation
     setTimeout(() => {
       const lower = query.toLowerCase();
-      let reply = MOCK_AI_RESPONSES.default;
+      let reply = "⚠️ SUSPICIOUS PATTERN DETECTED: Scammers frequently use urgent pressure tactics and promises of quick rewards. Do not share OTPs, click unknown links, or transfer funds. Verify independently!";
       
-      if (lower.includes('apk') || lower.includes('download') || lower.includes('yono') || lower.includes('electricity')) {
+      if (lower.includes('apk') || lower.includes('yono') || lower.includes('download')) {
         reply = MOCK_AI_RESPONSES.apk;
-      } else if (lower.includes('arrest') || lower.includes('police') || lower.includes('cbi') || lower.includes('video call') || lower.includes('fedex')) {
+      } else if (lower.includes('arrest') || lower.includes('police') || lower.includes('cbi') || lower.includes('video call')) {
         reply = MOCK_AI_RESPONSES.arrest;
-      } else if (lower.includes('lottery') || lower.includes('kbc') || lower.includes('won') || lower.includes('prize')) {
+      } else if (lower.includes('lottery') || lower.includes('kbc') || lower.includes('prize') || lower.includes('won')) {
         reply = MOCK_AI_RESPONSES.lottery;
-      } else if (lower.includes('job') || lower.includes('part time') || lower.includes('telegram') || lower.includes('like youtube')) {
+      } else if (lower.includes('job') || lower.includes('telegram') || lower.includes('part time') || lower.includes('youtube like')) {
         reply = MOCK_AI_RESPONSES.job;
-      } else if (lower.includes('aadhaar') || lower.includes('biometric')) {
+      } else if (lower.includes('aadhaar') || lower.includes('biometric') || lower.includes('lock')) {
         reply = "🛡️ PROTOCOL: Visit myaadhaar.uidai.gov.in right now, log in with OTP, and click 'Lock/Unlock Biometrics'. This stops scammers from using your cloned fingerprints at customer service centres!";
       } else if (lower.includes('upi') || lower.includes('pin') || lower.includes('qr') || lower.includes('receive')) {
         reply = "🛑 IRONCLAD RULE: You NEVER need to enter your UPI PIN to RECEIVE money. Entering your PIN always DEDUCTS money from your bank account!";
@@ -67,6 +69,8 @@ export default function FloatingChatbot() {
       setIsTyping(false);
     }, 1000);
   };
+
+  if (!user) return null;
 
   return (
     <div className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-[200]">

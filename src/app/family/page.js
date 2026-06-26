@@ -1193,8 +1193,8 @@ export default function FamilyPage() {
 
       {/* Email Invitation Modal - True Viewport Portal Overlay */}
       {mounted && showInviteModal && createPortal(
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in select-none">
-          <div className="glass-card max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-10 relative bg-slate-950 border-cyan-400 shadow-[0_0_80px_rgba(34,211,238,0.3)] my-auto">
+        <div className="fixed inset-0 z-[999999] overflow-y-auto bg-black/85 backdrop-blur-2xl animate-fade-in select-none p-4 sm:p-6 flex">
+          <div className="glass-card max-w-lg w-full p-6 sm:p-10 relative bg-slate-950 border-cyan-400 shadow-[0_0_80px_rgba(34,211,238,0.3)] m-auto">
             
             <div className="flex items-center justify-between pb-6 mb-8 border-b border-white/10">
               <div className="flex items-center gap-3">

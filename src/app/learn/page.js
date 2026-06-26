@@ -297,8 +297,8 @@ export default function LearnPage() {
 
       {/* Interactive Roadmap Modal - True Viewport Portal Overlay */}
       {mounted && selectedLesson && createPortal(
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-2xl animate-fade-in select-none">
-          <div className="glass-card max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 sm:p-10 relative bg-slate-950 border border-purple-500/60 shadow-[0_0_90px_rgba(139,92,246,0.5)] rounded-3xl animate-scale-up my-auto">
+        <div className="fixed inset-0 z-[999999] overflow-y-auto bg-slate-950/85 backdrop-blur-2xl animate-fade-in select-none p-4 sm:p-6 md:p-10 flex">
+          <div className="glass-card max-w-2xl w-full p-6 sm:p-10 relative bg-slate-950 border border-purple-500/60 shadow-[0_0_90px_rgba(139,92,246,0.5)] rounded-3xl animate-scale-up m-auto">
             <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
             
             {/* Modal Header */}
@@ -380,8 +380,8 @@ export default function LearnPage() {
 
       {/* Gamified Level-Up Victory Modal - True Viewport Portal Overlay */}
       {mounted && victoryReward && createPortal(
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in select-none">
-          <div className="glass-card max-w-md w-full p-8 text-center relative bg-slate-950 border border-cyan-400 shadow-[0_0_90px_rgba(34,211,238,0.4)] rounded-3xl animate-scale-up my-auto">
+        <div className="fixed inset-0 z-[999999] overflow-y-auto bg-black/85 backdrop-blur-2xl animate-fade-in select-none p-4 sm:p-6 flex">
+          <div className="glass-card max-w-md w-full p-8 text-center relative bg-slate-950 border border-cyan-400 shadow-[0_0_90px_rgba(34,211,238,0.4)] rounded-3xl animate-scale-up m-auto">
             <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-tr from-amber-400 to-cyan-400 p-1 shadow-lg animate-bounce flex items-center justify-center text-5xl">
               🏆
             </div>

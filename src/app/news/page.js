@@ -16,163 +16,170 @@ export default function NewsPage() {
   const aiSocialNews = NEWS_ARTICLES.filter((_, idx) => idx === 1 || idx === 4);
   const biometricNews = NEWS_ARTICLES.filter((_, idx) => idx === 2);
 
-  const renderNewsDeck = (deckKey, title, subtitle, articles, accentColor, badgeIcon) => {
-    const isOpen = activeNewsDeck === deckKey;
-
+  // Permanent Editorial Grid Showcase (No abrupt hover jumping, clean spacious cards)
+  const renderNewsShowcase = (categoryKey, title, subtitle, articles, accentColor, badgeIcon) => {
     return (
-      <div 
-        onMouseEnter={() => setActiveNewsDeck(deckKey)}
-        onMouseLeave={() => setActiveNewsDeck(null)}
-        className={`glass-card p-6 md:p-8 transition-all duration-500 relative overflow-hidden select-none mb-8 ${
-          isOpen 
-            ? `border-${accentColor}-400 bg-slate-900/95 shadow-[0_25px_60px_rgba(0,0,0,0.9),0_0_40px_rgba(139,92,246,0.3)]` 
-            : 'border-purple-500/20 hover:border-purple-500/40 bg-slate-900/60'
-        }`}
-      >
-        {/* Closed Deck Header (Always visible) */}
-        <div className="flex items-center justify-between cursor-pointer">
-          <div className="flex items-center gap-4">
-            <div className={`w-14 h-14 rounded-2xl bg-${accentColor}-500/20 border border-${accentColor}-500/40 text-${accentColor}-400 flex items-center justify-center font-black text-3xl shadow-lg animate-pulse`}>
-              {badgeIcon}
+      <div className="mb-24">
+        {/* Category Header Banner */}
+        <ScrollReveal>
+          <div className={`p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-${accentColor}-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 mb-10 shadow-[0_20px_60px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] relative overflow-hidden`}>
+            <div className={`absolute -top-24 -left-24 w-60 h-60 bg-${accentColor}-500/15 rounded-full blur-3xl pointer-events-none`}></div>
+            <div className="flex items-center gap-5 relative z-10">
+              <div className={`w-16 h-16 rounded-2xl bg-${accentColor}-500/20 border border-${accentColor}-500/40 text-${accentColor}-400 flex items-center justify-center font-black text-4xl shadow-lg shrink-0`}>
+                {badgeIcon}
+              </div>
+              <div>
+                <span className={`text-[10px] font-black uppercase tracking-widest text-${accentColor}-400 px-3 py-1 rounded-full bg-${accentColor}-500/10 border border-${accentColor}-500/20 font-mono`}>
+                  {subtitle}
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mt-1.5">{title}</h2>
+              </div>
             </div>
-            <div>
-              <span className={`text-[10px] font-black uppercase tracking-widest text-${accentColor}-400 px-3 py-1 rounded-full bg-${accentColor}-500/10 border border-${accentColor}-500/20`}>
-                {subtitle} Dossier Deck
-              </span>
-              <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mt-1.5">{title}</h2>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-400 hidden sm:inline">{articles.length} Classified Dispatches</span>
-            <div className={`w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-slate-300 transition-transform duration-500 ${isOpen ? 'rotate-180 bg-cyan-400 text-navy font-black' : ''}`}>
-              <ChevronDown size={20} />
+            <div className="relative z-10 bg-slate-950/80 px-4 py-2.5 rounded-2xl border border-white/10 text-xs font-bold text-slate-300 shadow-inner flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full bg-${accentColor}-400 animate-pulse`}></span>
+              <span>{articles.length} Dispatches</span>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
-        {/* Closed Hint Preview */}
-        {!isOpen && (
-          <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between text-xs font-bold text-slate-400">
-            <span className="flex items-center gap-2">📰 Hover cursor here to cascade open live news dispatches</span>
-            <ArrowUpRight size={16} className="text-cyan-400 animate-bounce" />
-          </div>
-        )}
-
-        {/* Cascaded Articles Container (Deals out downwards on hover) */}
-        <div className={`transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isOpen ? 'max-h-[1500px] opacity-100 mt-8 space-y-6' : 'max-h-0 opacity-0 mt-0'}`}>
+        {/* Spacious Articles Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {articles.map((article, idx) => (
-            <div 
-              key={idx}
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedArticle(article);
-              }}
-              className="p-6 rounded-2xl bg-slate-800/80 hover:bg-gradient-to-r hover:from-purple-900/50 hover:to-slate-800 border border-white/10 hover:border-cyan-400 transition-all duration-300 cursor-pointer group/card flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-lg hover:translate-x-2"
-            >
-              <div className="max-w-2xl">
-                <div className="flex flex-wrap items-center gap-3 mb-3">
-                  <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-lg text-xs font-bold text-cyan-300">
-                    {article.source}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-slate-400 text-xs font-medium">
-                    <Calendar size={13} className="text-purple-400" /> {article.date}
-                  </span>
+            <ScrollReveal key={idx} delay={(idx % 2) * 150}>
+              <div 
+                onClick={() => {
+                  setSelectedArticle(article);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="p-8 sm:p-9 rounded-3xl bg-gradient-to-br from-slate-800/90 via-slate-900/95 to-slate-950 backdrop-blur-2xl border border-white/10 hover:border-cyan-400 transition-all duration-300 cursor-pointer group/card flex flex-col justify-between gap-6 shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_25px_60px_rgba(34,211,238,0.25),inset_0_1px_1px_rgba(255,255,255,0.35)] hover:-translate-y-2 relative z-10 hover:z-50 h-full"
+              >
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                    <span className="bg-white/10 border border-white/15 px-3 py-1 rounded-lg text-xs font-bold text-cyan-300 font-mono">
+                      {article.source}
+                    </span>
+                    <span className="flex items-center gap-1.5 text-slate-400 text-xs font-medium font-serif italic">
+                      <Calendar size={13} className="text-purple-400 not-italic" /> {article.date}
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white group-hover/card:text-cyan-300 transition-colors mb-3 leading-snug">
+                    {article.title}
+                  </h3>
+                  
+                  <p className="text-slate-300 text-xs sm:text-sm line-clamp-3 leading-relaxed font-normal opacity-80 group-hover/card:opacity-100 transition-opacity">
+                    {article.summary}
+                  </p>
                 </div>
 
-                <h3 className="text-xl font-black font-['Outfit'] text-white group-hover/card:text-cyan-300 transition-colors mb-2 leading-snug">
-                  {article.title}
-                </h3>
-                
-                <p className="text-slate-300 text-xs sm:text-sm line-clamp-2 leading-relaxed font-normal">
-                  {article.summary}
-                </p>
-              </div>
-
-              <div className="flex md:flex-col items-center justify-end shrink-0 gap-3 border-t md:border-t-0 pt-4 md:pt-0 border-white/10">
-                <div className="w-10 h-10 rounded-xl bg-white/5 group-hover/card:bg-cyan-400 group-hover/card:text-navy text-slate-400 flex items-center justify-center font-black transition-all shadow-md">
-                  ➔
+                <div className="flex items-center justify-between border-t pt-5 border-white/10 mt-2">
+                  <span className="text-[11px] font-black uppercase tracking-widest text-cyan-400 group-hover/card:underline flex items-center gap-1.5">
+                    <span>Read Chronicle</span>
+                  </span>
+                  <div className="w-10 h-10 rounded-xl bg-white/5 group-hover/card:bg-cyan-400 group-hover/card:text-navy text-slate-400 flex items-center justify-center font-black transition-all shadow-md group-hover/card:rotate-45">
+                    ➔
+                  </div>
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400">Read Intelligence</span>
               </div>
-            </div>
+            </ScrollReveal>
           ))}
         </div>
-
       </div>
     );
   };
 
   return (
-    <div className="max-w-6xl mx-auto pb-44 pt-4 px-4 sm:px-6 animate-fade-in">
+    <div className="max-w-7xl mx-auto pb-44 pt-4 px-4 sm:px-6 animate-fade-in">
       
       {/* Hero Banner */}
       <ScrollReveal>
-        <div className="glass-card p-8 md:p-12 mb-12 relative overflow-hidden bg-gradient-to-r from-purple-900/40 via-slate-900 to-slate-900 flex flex-col md:flex-row items-center justify-between gap-8 border-purple-500/30 shadow-2xl">
+        <div className="glass-card p-8 md:p-14 mb-14 relative overflow-hidden bg-gradient-to-r from-purple-900/40 via-slate-900 to-slate-900 flex flex-col md:flex-row items-center justify-between gap-8 border-purple-500/30 shadow-2xl">
           <div className="absolute -top-32 -left-32 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="relative z-10 max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/40 px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
-              <Sparkles size={16} className="text-cyan-400 animate-spin" /> Live Intelligence Dossier Decks
+          <div className="relative z-10 text-center md:text-left max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-cyan-500/20 border border-cyan-500/40 px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(34,211,238,0.3)] font-mono">
+              <Newspaper size={16} className="text-cyan-400 animate-pulse" /> National Threat Intelligence Feed
             </div>
             
-            <h1 className="text-4xl sm:text-6xl font-black font-['Outfit'] mb-4 leading-[1.08] text-white">
-              National Threat <br />
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black font-['Outfit'] mb-6 leading-[1.06] text-white">
+              Real-Time Cyber <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500">
-                News Dispatches
+                News Chronicles
               </span>
             </h1>
             
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
-              Glide your mouse over the classified news decks below. Watch India's latest digital scam dispatches cascade open without needing a click!
+            <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal max-w-2xl">
+              Survey verified digital scam dispatches across India. Organized into clean, spacious showcase dossiers with zero abrupt jumping.
             </p>
           </div>
         </div>
       </ScrollReveal>
 
-      {/* 3 Interactive News Dispatches Decks */}
-      <div>
-        {renderNewsDeck("finance", "Financial & Banking Frauds", "High Priority", financialNews, "cyan", "💸")}
-        {renderNewsDeck("ai", "AI Deepfakes & Social Impersonation", "Emerging Vector", aiSocialNews, "purple", "🤖")}
-        {renderNewsDeck("biometric", "Aadhaar Biometric & Identity Theft", "Critical Advisory", biometricNews, "rose", "🔒")}
+      {/* Spacious On-Scroll Showcase Sections */}
+      <div className="pt-4">
+        {renderNewsShowcase("finance", "Financial & Banking Frauds", "High Priority", financialNews, "cyan", "💸")}
+        {renderNewsShowcase("ai", "AI Deepfakes & Social Impersonation", "Emerging Vector", aiSocialNews, "purple", "🤖")}
+        {renderNewsShowcase("biometric", "Aadhaar Biometric & Identity Theft", "Critical Advisory", biometricNews, "rose", "🔒")}
       </div>
 
-      {/* Detailed Reading Modal - Ultra Elite Elegant Editorial Dossier */}
+      {/* Detailed Editorial Chronicle Modal - Ultra Luxury Online Newspaper with Calligraphy Drop Cap */}
       {selectedArticle && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-slate-950/85 backdrop-blur-xl animate-fade-in select-none">
-          <div className="bg-[#fcfdfa] text-[#1a1b18] rounded-3xl max-w-3xl w-full p-8 sm:p-14 relative overflow-hidden border-4 border-[#e5e7df] shadow-[0_35px_100px_rgba(0,0,0,0.8)] max-h-[90vh] overflow-y-auto">
+        <div 
+          onClick={() => setSelectedArticle(null)}
+          className="fixed inset-0 z-[200] flex items-start justify-center p-4 sm:p-6 bg-slate-950/90 backdrop-blur-2xl animate-fade-in select-none overflow-y-auto pt-8 sm:pt-16 pb-20"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#faf9f5] text-[#1a1b18] rounded-3xl max-w-4xl w-full p-8 sm:p-16 relative overflow-hidden border border-[#d8d6cc] shadow-[0_45px_120px_rgba(0,0,0,0.95)] my-auto animate-scale-up"
+          >
             
             {/* Elegant Vintage Double Header Lines */}
             <div className="border-b-4 border-double border-slate-900 pb-6 mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="bg-slate-950 text-amber-300 font-mono text-[10px] sm:text-xs font-black tracking-[0.2em] px-4 py-1.5 rounded uppercase shadow-sm">
-                  ★ CLASSIFIED DOSSIER
+                  ★ CLASSIFIED DISPATCH
                 </span>
-                <span className="font-serif italic text-slate-500 font-bold text-xs sm:text-sm">
+                <span className="font-serif italic text-slate-600 font-bold text-xs sm:text-sm">
                   {selectedArticle.source} • {selectedArticle.date}
                 </span>
               </div>
               <button 
                 onClick={() => setSelectedArticle(null)}
-                className="w-11 h-11 rounded-full bg-[#f0f2eb] hover:bg-rose-500 hover:text-white text-slate-800 flex items-center justify-center font-bold transition-all text-lg cursor-pointer shadow-xs"
+                className="w-11 h-11 rounded-full bg-[#ebeee3] hover:bg-rose-600 hover:text-white text-slate-800 flex items-center justify-center font-bold transition-all text-lg cursor-pointer shadow-sm shrink-0"
               >
                 ✕
               </button>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl md:text-6xl font-black font-serif text-slate-950 mb-8 leading-[1.1] tracking-tight">
+            {/* Calligraphy Editorial Headline */}
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-black font-serif italic text-[#181223] mb-8 leading-[1.08] tracking-tight">
               {selectedArticle.title}
             </h2>
 
-            <div className="space-y-8 text-slate-800 text-base sm:text-xl leading-[1.8] font-normal font-serif">
-              <div className="p-8 rounded-2xl bg-[#f4f1ea] border-l-6 border-amber-600 font-serif text-[#311062] text-lg sm:text-xl italic font-semibold leading-relaxed shadow-sm">
-                "{selectedArticle.summary}"
+            {/* Editorial Body with Calligraphy Pull Quote and Luxury Drop Cap */}
+            <div className="space-y-8 text-slate-800 text-base sm:text-xl leading-[1.85] font-normal font-serif">
+              
+              {/* Calligraphy Pull Quote Box */}
+              <div className="p-8 sm:p-10 rounded-2xl bg-[#f0ede6] border-l-4 border-[#6d28d9] font-serif text-[#311062] text-xl sm:text-2xl italic font-normal leading-relaxed shadow-inner relative">
+                <span className="absolute top-2 left-4 text-6xl text-purple-900/15 font-serif font-black select-none pointer-events-none">“</span>
+                <span className="relative z-10">{selectedArticle.summary}</span>
               </div>
 
-              <p className="text-slate-800 leading-[1.85]">{selectedArticle.details || selectedArticle.summary}</p>
+              {/* Calligraphic Section Divider */}
+              <div className="text-center text-purple-900/40 tracking-[0.5em] select-none py-2 text-xl">
+                ✦ ❦ ✦
+              </div>
+
+              {/* Luxury Calligraphy Drop Cap Paragraph */}
+              <p className="text-slate-800 leading-[1.9] font-serif text-lg sm:text-xl">
+                <span className="float-left text-6xl sm:text-7xl font-serif italic font-black text-[#581c87] mr-3.5 pr-2 pt-1 pb-1 leading-none border-b-2 border-[#8b5cf6] shadow-xs select-none">
+                  {(selectedArticle.details || selectedArticle.summary).charAt(0)}
+                </span>
+                {(selectedArticle.details || selectedArticle.summary).slice(1)}
+              </p>
 
               {selectedArticle.protection && (
-                <div className="mt-10 p-8 rounded-3xl bg-gradient-to-br from-slate-950 via-[#0d1322] to-slate-900 text-white shadow-2xl border border-amber-500/40 relative overflow-hidden font-sans">
+                <div className="mt-12 p-8 sm:p-10 rounded-3xl bg-gradient-to-br from-slate-950 via-[#0d1322] to-slate-900 text-white shadow-2xl border border-amber-500/40 relative overflow-hidden font-sans">
                   <div className="absolute -right-10 -top-10 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
                   <h3 className="text-sm sm:text-base font-black font-mono text-amber-400 uppercase tracking-[0.2em] flex items-center gap-3 mb-6 border-b border-white/15 pb-4 z-10 relative">
                     <span>🛡️ OFFICIAL DEFENSE PROTOCOL</span>
@@ -190,7 +197,7 @@ export default function NewsPage() {
             </div>
 
             {/* High-End Archival Footer CTA */}
-            <div className="mt-10 pt-8 border-t-2 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 font-sans">
+            <div className="mt-12 pt-8 border-t-2 border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4 font-sans">
               <div className="flex items-center gap-2 text-[11px] font-mono text-slate-400 uppercase font-bold tracking-wider">
                 <span>⚡ SECURE HOME NETWORK ARCHIVE</span>
               </div>

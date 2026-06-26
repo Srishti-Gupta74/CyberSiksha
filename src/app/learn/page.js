@@ -101,87 +101,68 @@ export default function LearnPage() {
     }
   };
 
-  // Interactive Cascading Accordion Deck
-  const renderInteractiveDeck = (tierKey, title, subtitle, deck, accentColor, badgeIcon) => {
-    const isDeckOpen = activeDeckTier === tierKey;
-    
+  // Interactive On-Scroll Showcase Deck
+  const renderShowcaseSection = (tierKey, title, subtitle, deck, accentColor, badgeIcon) => {
     return (
-      <div 
-        onMouseEnter={() => setActiveDeckTier(tierKey)}
-        onMouseLeave={() => setActiveDeckTier(null)}
-        className={`glass-card p-6 md:p-8 transition-all duration-500 relative overflow-hidden select-none ${
-          isDeckOpen 
-            ? `border-${accentColor}-400 bg-slate-900/95 shadow-[0_30px_70px_rgba(0,0,0,0.9),0_0_40px_rgba(139,92,246,0.3)]` 
-            : 'border-purple-500/20 hover:border-purple-500/40 bg-slate-900/60'
-        }`}
-      >
-        {/* Closed Deck Cover Badge (Always visible at top) */}
-        <div className="flex items-center justify-between cursor-pointer">
-          <div className="flex items-center gap-4">
-            <div className={`w-14 h-14 rounded-2xl bg-${accentColor}-500/20 border border-${accentColor}-500/40 text-${accentColor}-400 flex items-center justify-center font-black text-3xl shadow-lg animate-pulse`}>
-              {badgeIcon}
+      <div className="mb-20">
+        {/* Tier Section Header Banner */}
+        <ScrollReveal>
+          <div className={`p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-${accentColor}-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 mb-8 shadow-[0_20px_60px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] relative overflow-hidden`}>
+            <div className={`absolute -top-24 -left-24 w-60 h-60 bg-${accentColor}-500/15 rounded-full blur-3xl pointer-events-none`}></div>
+            <div className="flex items-center gap-5 relative z-10">
+              <div className={`w-16 h-16 rounded-2xl bg-${accentColor}-500/20 border border-${accentColor}-500/40 text-${accentColor}-400 flex items-center justify-center font-black text-4xl shadow-lg animate-pulse shrink-0`}>
+                {badgeIcon}
+              </div>
+              <div>
+                <span className={`text-[10px] font-black uppercase tracking-widest text-${accentColor}-400 px-3 py-1 rounded-full bg-${accentColor}-500/10 border border-${accentColor}-500/20`}>
+                  {subtitle}
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mt-1.5">{title}</h2>
+              </div>
             </div>
-            <div>
-              <span className={`text-[10px] font-black uppercase tracking-widest text-${accentColor}-400 px-3 py-1 rounded-full bg-${accentColor}-500/10 border border-${accentColor}-500/20`}>
-                {subtitle}
-              </span>
-              <h2 className="text-2xl font-black font-['Outfit'] text-white mt-1">{title}</h2>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-slate-400 hidden sm:inline">{deck.length} Dossiers</span>
-            <div className={`w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center text-slate-300 transition-transform duration-500 ${isDeckOpen ? 'rotate-180 bg-purple-600 text-white' : ''}`}>
-              <ChevronDown size={20} />
+            <div className="relative z-10 bg-slate-950/80 px-4 py-2.5 rounded-2xl border border-white/10 text-xs font-bold text-slate-300 shadow-inner flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full bg-${accentColor}-400 animate-ping`}></span>
+              <span>{deck.length} Interactive Modules</span>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
-        {/* Closed Deck Hint Preview */}
-        {!isDeckOpen && (
-          <div className="mt-6 pt-5 border-t border-white/10 flex items-center justify-between text-xs font-bold text-slate-400">
-            <span className="flex items-center gap-2">🃏 Hover cursor here to cascade open {deck.length} modules</span>
-            <ArrowUpRight size={16} className="text-cyan-400 animate-bounce" />
-          </div>
-        )}
-
-        {/* Dealt Cards Container (Smoothly expands downwards on hover) */}
-        <div className={`transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] overflow-hidden ${isDeckOpen ? 'max-h-[1200px] opacity-100 mt-8 space-y-4' : 'max-h-0 opacity-0 mt-0'}`}>
+        {/* Lesson Cards Grid (Smoothly emerges one after another as we scroll) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {deck.map((lesson, idx) => {
             const isDone = completedLessons.includes(lesson.id);
             return (
-              <div 
-                key={lesson.id}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  openRoadmapModal(lesson);
-                }}
-                className="p-5 rounded-2xl bg-slate-800/80 hover:bg-gradient-to-r hover:from-purple-900/60 hover:to-slate-800 border border-white/10 hover:border-cyan-400 transition-all duration-300 cursor-pointer group/item flex items-center justify-between gap-4 shadow-md hover:translate-x-1.5"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="text-3xl shrink-0 group-hover/item:scale-125 transition-transform">{lesson.icon || "🛡️"}</span>
-                  <div>
-                    <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Lesson #{lesson.id}</span>
-                      <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1 tracking-wider">
-                        🪙 +{tierKey === 'advanced' ? 100 : (tierKey === 'medium' ? 50 : 25)} XP
-                      </span>
-                      {isDone && <CheckCircle2 size={15} className="text-emerald-400 drop-shadow" />}
+              <ScrollReveal key={lesson.id} delay={(idx % 2) * 150}>
+                <div 
+                  onClick={() => openRoadmapModal(lesson)}
+                  className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/85 via-slate-900/95 to-slate-950 backdrop-blur-2xl border border-white/10 hover:border-cyan-400/80 transition-all duration-300 cursor-pointer group/item flex items-center justify-between gap-5 shadow-[0_15px_35px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_20px_50px_rgba(34,211,238,0.25),inset_0_1px_1px_rgba(255,255,255,0.35)] hover:-translate-y-2 hover:scale-[1.02] relative z-10 hover:z-50 h-full"
+                >
+                  <div className="flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl shrink-0 group-hover/item:scale-110 group-hover/item:border-cyan-400/40 transition-all shadow-inner">
+                      {lesson.icon || "🛡️"}
                     </div>
-                    <h3 className="text-base sm:text-lg font-black font-['Outfit'] text-white group-hover/item:text-cyan-300 transition-colors">
-                      {lesson.title}
-                    </h3>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap mb-1.5">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">Lesson #{lesson.id}</span>
+                        <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1 tracking-wider">
+                          🪙 +{tierKey === 'advanced' ? 100 : (tierKey === 'medium' ? 50 : 25)} XP
+                        </span>
+                        {isDone && <CheckCircle2 size={15} className="text-emerald-400 drop-shadow" />}
+                      </div>
+                      <h3 className="text-lg font-black font-['Outfit'] text-white group-hover/item:text-cyan-300 transition-colors leading-snug">
+                        {lesson.title}
+                      </h3>
+                    </div>
+                  </div>
+
+                  <div className="w-10 h-10 rounded-xl bg-white/5 group-hover/item:bg-cyan-400 group-hover/item:text-navy text-slate-400 flex items-center justify-center font-black transition-all shrink-0 shadow-md group-hover/item:rotate-45">
+                    ➔
                   </div>
                 </div>
-
-                <div className="w-9 h-9 rounded-xl bg-white/5 group-hover/item:bg-cyan-400 group-hover/item:text-navy text-slate-400 flex items-center justify-center font-black transition-all shrink-0">
-                  ➔
-                </div>
-              </div>
+              </ScrollReveal>
             );
           })}
         </div>
-
       </div>
     );
   };
@@ -207,7 +188,7 @@ export default function LearnPage() {
             </h1>
             
             <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
-              Rest your cursor over any of the 3 compact classified decks below. Watch the cards smoothly deal out downward into view!
+              Scroll down to explore the classified security tiers. Watch modules emerge from shadowy glass blur into crisp 3D focus!
             </p>
           </div>
 
@@ -225,11 +206,11 @@ export default function LearnPage() {
         </div>
       </ScrollReveal>
 
-      {/* 3 Interactive Dealing Deck Columns */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {renderInteractiveDeck("beginner", "Tier 1: Basics", "Everyday Shield", beginnerDeck, "emerald", "🟢")}
-        {renderInteractiveDeck("medium", "Tier 2: Tactical", "Scam Interception", mediumDeck, "amber", "🟡")}
-        {renderInteractiveDeck("advanced", "Tier 3: Elite", "Cyber Warfare", advancedDeck.length ? advancedDeck : LESSONS.slice(6, 8), "rose", "🔴")}
+      {/* 3 On-Scroll Showcase Sections Stacked Down Page */}
+      <div className="space-y-6 pt-4">
+        {renderShowcaseSection("beginner", "Tier 1: Basics", "Everyday Shield", beginnerDeck, "emerald", "🟢")}
+        {renderShowcaseSection("medium", "Tier 2: Tactical", "Scam Interception", mediumDeck, "amber", "🟡")}
+        {renderShowcaseSection("advanced", "Tier 3: Elite", "Cyber Warfare", advancedDeck.length ? advancedDeck : LESSONS.slice(6, 8), "rose", "🔴")}
       </div>
 
       {/* Interactive Roadmap Modal */}

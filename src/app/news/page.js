@@ -126,17 +126,27 @@ export default function NewsPage() {
       {selectedArticle && (
         <div 
           onClick={() => setSelectedArticle(null)}
-          className="fixed inset-0 z-[200] flex items-start justify-center p-4 sm:p-6 bg-slate-950/90 backdrop-blur-2xl animate-fade-in select-none overflow-y-auto pt-8 sm:pt-16 pb-20"
+          className="fixed inset-0 z-[200] flex items-start justify-center p-3 sm:p-6 bg-slate-950/90 backdrop-blur-2xl animate-fade-in select-none overflow-y-auto pt-6 sm:pt-12 pb-20"
         >
           <div 
             onClick={(e) => e.stopPropagation()}
-            className="bg-[#faf9f5] text-[#1a1b18] rounded-3xl max-w-4xl w-full p-8 sm:p-16 relative overflow-hidden border border-[#d8d6cc] shadow-[0_45px_120px_rgba(0,0,0,0.95)] my-auto animate-scale-up"
+            className="bg-[#faf9f5] text-[#1a1b18] rounded-3xl max-w-4xl w-full p-6 sm:p-14 relative overflow-hidden border border-[#d8d6cc] shadow-[0_45px_120px_rgba(0,0,0,0.95)] mt-4 sm:mt-8 mb-16 animate-scale-up"
           >
+            {/* Authentic Newspaper Masthead Banner */}
+            <div className="text-center border-b-[3px] border-slate-900 pb-4 mb-8 font-serif">
+              <p className="text-[10px] sm:text-xs font-mono tracking-[0.35em] uppercase text-slate-500 mb-1 font-bold">National Cyber Intelligence Chronicle</p>
+              <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-slate-950 font-serif uppercase">THE CYBER SENTINEL</h1>
+              <div className="flex items-center justify-between border-t border-b border-slate-400 mt-3 py-1.5 px-2 text-[10px] sm:text-xs font-mono uppercase tracking-wider text-slate-700">
+                <span>VOL. CXLIV NO. 48,012</span>
+                <span className="font-bold text-rose-700 bg-rose-100/80 px-2 py-0.5 rounded">★ EXCLUSIVE REPORT ★</span>
+                <span>NEW DELHI • EDITION</span>
+              </div>
+            </div>
             
-            {/* Elegant Vintage Double Header Lines */}
-            <div className="border-b-4 border-double border-slate-900 pb-6 mb-8 flex items-center justify-between">
+            {/* Elegant Dispatch Header */}
+            <div className="border-b-2 border-slate-300 pb-4 mb-8 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="bg-slate-950 text-amber-300 font-mono text-[10px] sm:text-xs font-black tracking-[0.2em] px-4 py-1.5 rounded uppercase shadow-sm">
+                <span className="bg-slate-950 text-amber-300 font-mono text-[10px] sm:text-xs font-black tracking-[0.2em] px-3.5 py-1 rounded uppercase shadow-sm">
                   ★ CLASSIFIED DISPATCH
                 </span>
                 <span className="font-serif italic text-slate-600 font-bold text-xs sm:text-sm">

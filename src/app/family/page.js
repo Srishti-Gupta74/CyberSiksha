@@ -987,111 +987,182 @@ export default function FamilyPage() {
         <span className="text-xs font-bold text-slate-400">Live Status Updates</span>
       </div>
 
-      {/* Members Grid Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        {members.map((m, idx) => {
-          const isMe = m.profiles?.id === user?.id;
-          const isPending = m.isPending;
+      {/* Majestic Cyberpunk Family Hierarchy Tree Showcase */}
+      <div className="flex flex-col items-center mb-16 select-none relative w-full">
+        {(() => {
+          const commander = members.find(m => m.role === 'admin') || members[0];
+          const subMembers = members.filter(m => m !== commander);
 
-          return (
-            <div 
-              key={idx}
-              className={`glass-card p-6 relative overflow-hidden transition-all duration-300 ${
-                isPending 
-                  ? 'border-amber-500/40 bg-amber-950/10 opacity-90' 
-                  : 'border-white/10 hover:border-cyan-400/50 bg-slate-900/60 shadow-lg hover:-translate-y-1'
-              }`}
-            >
-              <div className="flex items-start justify-between gap-4 mb-6">
-                <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-black shadow-md ${
-                    isPending 
-                      ? 'bg-amber-500/20 border border-amber-500/40 text-amber-300 animate-pulse' 
-                      : 'bg-gradient-to-tr from-cyan-400 to-purple-600 text-navy font-black'
-                  }`}>
-                    {m.profiles?.avatar_initial || "F"}
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-black font-['Outfit'] text-white">{m.profiles?.display_name || "Family Member"}</h3>
-                      {isMe && <span className="bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase">YOU</span>}
-                    </div>
-                    <span className="text-xs text-slate-400 font-medium">{m.relation || (m.role === 'admin' ? 'Circle Commander' : 'Family Member')}</span>
+          const renderChibiFace = (name, role) => {
+            const lower = (name || '').toLowerCase();
+            const isAdmin = role === 'admin' || lower.includes('neha');
+            const isElder = lower.includes('grand') || lower.includes('papa') || lower.includes('sharma') || lower.includes('elder');
+
+            if (isAdmin) {
+              return (
+                <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 to-purple-600 rounded-2xl blur-md opacity-75 animate-pulse"></div>
+                  <div className="w-14 h-14 bg-slate-950 rounded-2xl border-2 border-cyan-400 flex items-center justify-center relative z-10 shadow-xl overflow-hidden">
+                    <span className="text-3xl filter drop-shadow">👩‍✈️</span>
+                    <span className="absolute bottom-0 inset-x-0 bg-cyan-500/90 text-[8px] font-black text-slate-950 uppercase tracking-tighter py-0.5 text-center font-mono">CMD</span>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  {isPending ? (
-                    <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1 rounded-full">
-                      <Clock size={12} className="animate-spin" /> Pending Invite
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-3 py-1 rounded-full shadow-sm">
-                      <CheckCircle2 size={12} /> Shield Protected
-                    </span>
-                  )}
-
-                  {m.role !== 'admin' && (
-                    <button
-                      onClick={() => {
-                        if (!isViewerCommander) {
-                          if (confirm(`Leave ${familyGroup?.name || "Family Umbrella"}?`)) {
-                            setFamilyGroup(null);
-                            localStorage.removeItem('cs_global_fam_grp');
-                            localStorage.removeItem('cs_global_fam_mem');
-                            confetti({ particleCount: 70 });
-                          }
-                        } else {
-                          handleRemoveMember(m);
-                        }
-                      }}
-                      className="w-7 h-7 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-navy rounded-full border border-rose-500/30 font-black text-xs flex items-center justify-center transition-all cursor-pointer shadow-sm"
-                      title={!isViewerCommander ? "Leave Family Umbrella" : "Remove Member"}
-                    >
-                      ✕
-                    </button>
-                  )}
+              );
+            }
+            if (isElder) {
+              return (
+                <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                  <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 to-rose-500 rounded-2xl blur-md opacity-60 animate-pulse"></div>
+                  <div className="w-14 h-14 bg-slate-950 rounded-2xl border-2 border-amber-400 flex items-center justify-center relative z-10 shadow-xl overflow-hidden">
+                    <span className="text-3xl filter drop-shadow">👴</span>
+                    <span className="absolute bottom-0 inset-x-0 bg-amber-400/95 text-[8px] font-black text-slate-950 uppercase tracking-tighter py-0.5 text-center font-mono">ELDER</span>
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-400 to-cyan-500 rounded-2xl blur-md opacity-50 animate-pulse"></div>
+                <div className="w-14 h-14 bg-slate-950 rounded-2xl border-2 border-emerald-400 flex items-center justify-center relative z-10 shadow-xl overflow-hidden">
+                  <span className="text-3xl filter drop-shadow">🧑‍💻</span>
+                  <span className="absolute bottom-0 inset-x-0 bg-emerald-400/90 text-[8px] font-black text-slate-950 uppercase tracking-tighter py-0.5 text-center font-mono">DEFENDER</span>
                 </div>
               </div>
+            );
+          };
 
-              {!isPending && (
-                <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 text-center">
-                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">XP Points</span>
-                    <span className="text-xl font-black font-['Outfit'] text-cyan-300">{m.profiles?.xp || 0} XP</span>
+          const renderMemberCard = (m, isMaster) => {
+            const isMe = m.profiles?.id === user?.id;
+            const isPending = m.isPending;
+
+            return (
+              <div 
+                className={`glass-card p-6 relative overflow-hidden transition-all duration-300 w-full max-w-xl ${
+                  isMaster 
+                    ? 'border-cyan-400/80 bg-gradient-to-r from-slate-950 via-purple-950/40 to-slate-950 shadow-[0_0_50px_rgba(34,211,238,0.25)] ring-2 ring-cyan-400/30' 
+                    : isPending 
+                    ? 'border-amber-500/40 bg-amber-950/10 opacity-90' 
+                    : 'border-white/15 hover:border-cyan-400/50 bg-slate-900/80 shadow-xl hover:-translate-y-1'
+                }`}
+              >
+                {isMaster && (
+                  <div className="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"></div>
+                )}
+                
+                <div className="flex items-start justify-between gap-4 mb-5">
+                  <div className="flex items-center gap-4 text-left">
+                    {renderChibiFace(m.profiles?.display_name, m.role)}
+                    <div>
+                      <div className="flex items-center gap-2.5">
+                        <h3 className="text-xl font-black font-['Outfit'] text-white tracking-wide">{m.profiles?.display_name || "Family Defender"}</h3>
+                        {isMaster && <span className="bg-gradient-to-r from-amber-300 to-amber-500 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow">★ CIRCLE COMMANDER</span>}
+                        {isMe && !isMaster && <span className="bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-black px-2 py-0.5 rounded-full uppercase font-mono">YOU</span>}
+                      </div>
+                      <span className="text-xs text-cyan-300/80 font-mono tracking-wider block mt-1 uppercase font-bold">{m.relation || (m.role === 'admin' ? 'Circle Commander' : 'Protected Member')}</span>
+                    </div>
                   </div>
-                  <div className="bg-white/5 p-3 rounded-xl border border-white/5">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Streak</span>
-                    <span className="text-xl font-black font-['Outfit'] text-amber-400 flex items-center justify-center gap-1">
-                      🔥 {m.profiles?.streak || 0}
-                    </span>
+
+                  <div className="flex items-center gap-2">
+                    {isPending ? (
+                      <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1 rounded-full font-mono">
+                        <Clock size={12} className="animate-spin" /> Pending
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-3 py-1 rounded-full shadow-sm font-mono">
+                        <CheckCircle2 size={12} /> Protected
+                      </span>
+                    )}
+
+                    {m.role !== 'admin' && (
+                      <button
+                        onClick={() => {
+                          if (!isViewerCommander) {
+                            if (confirm(`Leave ${familyGroup?.name || "Family Umbrella"}?`)) {
+                              setFamilyGroup(null);
+                              localStorage.removeItem('cs_global_fam_grp');
+                              localStorage.removeItem('cs_global_fam_mem');
+                              confetti({ particleCount: 70 });
+                            }
+                          } else {
+                            handleRemoveMember(m);
+                          }
+                        }}
+                        className="w-7 h-7 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-navy rounded-full border border-rose-500/30 font-black text-xs flex items-center justify-center transition-all cursor-pointer shadow-sm ml-1"
+                        title={!isViewerCommander ? "Leave Family Umbrella" : "Remove Member"}
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
+                </div>
+
+                {!isPending ? (
+                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 text-center">
+                    <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-mono">Clearance XP</span>
+                      <span className="text-xl font-black font-['Outfit'] text-cyan-300">{m.profiles?.xp || 0} XP</span>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-mono">Daily Streak</span>
+                      <span className="text-xl font-black font-['Outfit'] text-amber-400 flex items-center justify-center gap-1.5">
+                        🔥 {m.profiles?.streak || 0} Days
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="pt-4 border-t border-white/10 text-xs text-slate-300 flex flex-col gap-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-400">Invite sent to: <b className="text-white">{m.email}</b></span>
+                      <span className="text-cyan-400 font-bold hover:underline cursor-pointer" onClick={() => alert("Resent invitation email!")}>Resend</span>
+                    </div>
+                    <div className="bg-slate-950 p-2.5 rounded-xl border border-cyan-400/30 flex items-center justify-between gap-2">
+                      <span className="font-mono text-[11px] text-cyan-300 truncate">{`${typeof window !== 'undefined' ? window.location.origin : ''}/family?code=${familyGroup?.invite_code || 'SHIELD88'}`}</span>
+                      <button 
+                        onClick={() => {
+                          navigator.clipboard.writeText(`${window.location.origin}/family?code=${familyGroup?.invite_code || 'SHIELD88'}`);
+                          alert("Direct Invite Link copied to clipboard!");
+                        }}
+                        className="bg-cyan-500 hover:bg-cyan-400 text-navy px-2.5 py-1 rounded-lg font-black text-[10px] uppercase tracking-wider shrink-0 cursor-pointer transition-all"
+                      >
+                        📋 Copy Link
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          };
+
+          return (
+            <>
+              {/* Master Root Node: Neha */}
+              {commander && renderMemberCard(commander, true)}
+
+              {/* Glowing Cyberpunk Circuit Laser Trunk Pipeline Flowing Down */}
+              {subMembers.length > 0 && (
+                <div className="flex flex-col items-center my-3">
+                  <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 via-purple-500 to-amber-400 rounded-full shadow-[0_0_15px_#00f0ff]"></div>
+                  <div className="px-4 py-1.5 rounded-full bg-slate-950 border border-purple-500/60 text-[10px] font-mono font-black text-purple-300 tracking-[0.2em] uppercase shadow-lg my-1.5 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> PROTECTED FAMILY BRANCHES
+                  </div>
+                  <div className="w-1 h-6 bg-gradient-to-b from-amber-400 to-cyan-400 rounded-full shadow-[0_0_15px_#fbbf24]"></div>
                 </div>
               )}
 
-              {isPending && (
-                <div className="pt-4 border-t border-white/10 text-xs text-slate-300 flex flex-col gap-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Invite sent to: <b className="text-white">{m.email}</b></span>
-                    <span className="text-cyan-400 font-bold hover:underline cursor-pointer" onClick={() => alert("Resent invitation email!")}>Resend</span>
+              {/* Connected Sub-Members / Elders Stacked in Hierarchy Tree */}
+              <div className="flex flex-col items-center gap-6 w-full">
+                {subMembers.map((sm, idx) => (
+                  <div key={idx} className="relative flex flex-col items-center w-full">
+                    {idx > 0 && (
+                      <div className="w-0.5 h-6 bg-cyan-400/50 border-l border-dashed border-cyan-400 my-1"></div>
+                    )}
+                    {renderMemberCard(sm, false)}
                   </div>
-                  <div className="bg-slate-950 p-2.5 rounded-xl border border-cyan-400/30 flex items-center justify-between gap-2">
-                    <span className="font-mono text-[11px] text-cyan-300 truncate">{`${typeof window !== 'undefined' ? window.location.origin : ''}/family?code=${familyGroup?.invite_code || 'SHIELD88'}`}</span>
-                    <button 
-                      onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}/family?code=${familyGroup?.invite_code || 'SHIELD88'}`);
-                        alert("Direct Invite Link copied to clipboard! Send this on WhatsApp or SMS.");
-                      }}
-                      className="bg-cyan-500 hover:bg-cyan-400 text-navy px-2.5 py-1 rounded-lg font-black text-[10px] uppercase tracking-wider shrink-0 cursor-pointer transition-all"
-                    >
-                      📋 Copy Link
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+                ))}
+              </div>
+            </>
           );
-        })}
+        })()}
       </div>
 
       {/* Email Invitation Modal */}

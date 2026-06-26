@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { MessageSquareText, X, Send, Sparkles, Bot, ShieldCheck, Loader2, Minimize2 } from 'lucide-react';
 import { useAuth } from './AuthProvider';
 
@@ -20,8 +21,22 @@ const QUICK_PROMPTS = [
 ];
 
 export default function FloatingChatbot() {
+  const pathname = usePathname();
+  const isHomepage = pathname === '/';
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const normX = (e.clientX / window.innerWidth - 0.5) * 12;
+      const normY = (e.clientY / window.innerHeight - 0.5) * 8;
+      setMousePos({ x: normX, y: normY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   const [messages, setMessages] = useState([
     { sender: 'ai', text: MOCK_AI_RESPONSES.default, time: 'Just now' }
   ]);
@@ -75,23 +90,161 @@ export default function FloatingChatbot() {
   return (
     <div className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-[200]">
       
-      {/* Floating Launcher Button */}
+      {/* Cheerful Animated Cyber Mascot Character (Visible on ALL pages) */}
       {!isOpen && (
-        <button
+        <div 
           onClick={() => setIsOpen(true)}
-          className="group relative flex items-center gap-3 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 p-1 rounded-full shadow-[0_10px_35px_rgba(34,211,238,0.5)] hover:scale-105 transition-all duration-300 cursor-pointer"
+          className="flex flex-col items-end cursor-pointer group select-none animate-fade-in"
         >
-          <div className="bg-slate-950 px-5 py-3 rounded-full flex items-center gap-3">
-            <div className="relative">
-              <Bot className="text-cyan-400 animate-bounce" size={24} />
-              <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-emerald-400 rounded-full shadow-[0_0_8px_#10b981]"></span>
-            </div>
-            <span className="font-black font-['Outfit'] text-sm tracking-wider uppercase text-white hidden sm:inline">
-              Ask AI Mentor
-            </span>
-            <Sparkles size={16} className="text-amber-400 animate-spin" />
+          {/* Cheerful Speech Bubble */}
+          <div className="mb-3 bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 text-white p-4 sm:p-5 rounded-3xl rounded-br-xs border-2 border-cyan-400/80 shadow-[0_20px_50px_rgba(34,211,238,0.45)] max-w-[280px] transform transition-all group-hover:-translate-y-2 group-hover:scale-105 relative overflow-hidden backdrop-blur-2xl">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-cyan-400/15 rounded-full blur-xl pointer-events-none"></div>
+            <p className="text-[10px] font-black font-mono text-cyan-400 mb-1.5 tracking-widest uppercase flex items-center gap-1.5">
+              <Sparkles size={13} className="text-amber-400 animate-spin" /> Cyber Companion
+            </p>
+            <p className="text-xs sm:text-sm font-medium text-slate-100 leading-snug font-['Outfit']">
+              "Hi I'm <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-teal-300 to-pink-400 font-black text-sm">Cyber</span>, your learning companion, ask me anything!"
+            </p>
           </div>
-        </button>
+
+          {/* Illustrated Full Figure Humanoid Robot Mascot (AAA Game Style) */}
+          <div className="relative w-48 h-52 flex items-center justify-center transform transition-transform group-hover:scale-110 duration-300">
+            
+            {/* Custom Self-Contained Keyframe Animations */}
+            <style jsx>{`
+              @keyframes mascotGentleHover {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-7px); }
+              }
+              @keyframes mascotWaveHand {
+                0%, 100% { transform: rotate(0deg); }
+                25% { transform: rotate(18deg); }
+                75% { transform: rotate(-8deg); }
+              }
+              @keyframes mascotBlinkEyes {
+                0%, 92%, 100% { transform: scaleY(1); }
+                96% { transform: scaleY(0.08); }
+              }
+              .mascot-container {
+                animation: mascotGentleHover 4s ease-in-out infinite;
+              }
+              .mascot-waving-arm {
+                transform-origin: 148px 115px;
+                animation: mascotWaveHand 2.2s ease-in-out infinite;
+              }
+              .mascot-eyes {
+                transform-origin: 100px 64px;
+                animation: mascotBlinkEyes 4.5s infinite;
+              }
+            `}</style>
+
+            {/* Holographic Orbital Rings around Cyber */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div className="w-48 h-48 border border-cyan-400/30 rounded-full absolute animate-[spin_18s_linear_infinite] border-dashed"></div>
+              <div className="w-40 h-40 border border-purple-500/25 rounded-full absolute animate-[spin_25s_linear_infinite_reverse]"></div>
+            </div>
+
+            {/* Swirling Holographic Ground Portal Ring Shadow (Clean static glow, no shooting balls) */}
+            <div className="absolute bottom-2 w-36 h-6 bg-gradient-to-r from-cyan-500/40 via-purple-500/50 to-pink-500/40 rounded-full blur-md animate-pulse"></div>
+            <div className="absolute bottom-3 w-28 h-3 border border-cyan-400/70 rounded-full opacity-80"></div>
+
+            {/* Complete Humanoid Robot Mascot SVG */}
+            <svg viewBox="0 0 200 240" className="w-full h-full drop-shadow-[0_20px_35px_rgba(34,211,238,0.4)] mascot-container">
+              <defs>
+                <linearGradient id="armorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="60%" stopColor="#e2e8f0" />
+                  <stop offset="100%" stopColor="#94a3b8" />
+                </linearGradient>
+                <linearGradient id="darkVisor" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#0f172a" />
+                  <stop offset="100%" stopColor="#020617" />
+                </linearGradient>
+                <linearGradient id="neonGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#22d3ee" />
+                  <stop offset="50%" stopColor="#a855f7" />
+                  <stop offset="100%" stopColor="#ec4899" />
+                </linearGradient>
+              </defs>
+
+              {/* Floating Holographic Antenna Diamond */}
+              <polygon points="100,5 107,15 100,25 93,15" fill="url(#neonGlow)" className="animate-pulse" />
+              <line x1="100" y1="25" x2="100" y2="40" stroke="#22d3ee" strokeWidth="3" />
+
+              {/* Jetpack Wings peeking behind */}
+              <path d="M50,100 Q20,110 30,145 Q50,135 65,115 Z" fill="url(#neonGlow)" opacity="0.85" />
+              <path d="M150,100 Q180,110 170,145 Q150,135 135,115 Z" fill="url(#neonGlow)" opacity="0.85" />
+
+              {/* Left Arm & Shoulder Pad (Resting casually on hip) */}
+              <g className="transition-transform duration-500 hover:rotate-6" style={{ transformOrigin: '52px 115px' }}>
+                <rect x="42" y="102" width="22" height="16" rx="8" fill="url(#armorGrad)" />
+                <path d="M52,115 Q35,135 48,160" stroke="url(#armorGrad)" strokeWidth="12" strokeLinecap="round" fill="none" />
+                <circle cx="48" cy="160" r="9" fill="#22d3ee" className="shadow-[0_0_15px_#22d3ee]" />
+              </g>
+
+              {/* Right Arm & Waving Hand (Continuous smooth waving animation) */}
+              <g className="mascot-waving-arm">
+                <rect x="136" y="102" width="22" height="16" rx="8" fill="url(#armorGrad)" />
+                <path d="M148,115 Q175,100 170,75" stroke="url(#armorGrad)" strokeWidth="12" strokeLinecap="round" fill="none" />
+                <circle cx="170" cy="75" r="10" fill="#ec4899" className="animate-pulse" />
+                {/* Waving motion energy arcs */}
+                <path d="M185,65 Q192,75 185,85" stroke="#22d3ee" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+                <path d="M191,70 Q196,75 191,80" stroke="#ec4899" strokeWidth="2" strokeLinecap="round" fill="none" />
+              </g>
+
+              {/* Left Leg & Hover Boot */}
+              <rect x="75" y="175" width="16" height="30" rx="8" fill="url(#armorGrad)" />
+              <path d="M68,200 L98,200 L94,215 L72,215 Z" fill="#1e293b" stroke="#22d3ee" strokeWidth="2" />
+              <ellipse cx="83" cy="218" rx="10" ry="3.5" fill="#22d3ee" opacity="0.9" />
+
+              {/* Right Leg & Hover Boot */}
+              <rect x="109" y="175" width="16" height="30" rx="8" fill="url(#armorGrad)" />
+              <path d="M102,200 L132,200 L128,215 L106,215 Z" fill="#1e293b" stroke="#22d3ee" strokeWidth="2" />
+              <ellipse cx="117" cy="218" rx="10" ry="3.5" fill="#22d3ee" opacity="0.9" />
+
+              {/* Main Humanoid Torso / Chassis */}
+              <path d="M65,95 L135,95 L125,175 L75,175 Z" fill="url(#armorGrad)" stroke="#64748b" strokeWidth="2" />
+              {/* Glowing Chest Breastplate Trim */}
+              <path d="M72,105 L128,105 L120,150 L80,150 Z" fill="#0f172a" stroke="url(#neonGlow)" strokeWidth="2.5" />
+              {/* Glowing Energy Core Heart inside chest */}
+              <polygon points="100,115 110,125 100,140 90,125" fill="#22d3ee" />
+              <circle cx="100" cy="126" r="4.5" fill="#ffffff" className="animate-pulse" />
+
+              {/* Mecha Waist Belt */}
+              <rect x="70" y="165" width="60" height="12" rx="6" fill="#334155" stroke="#22d3ee" strokeWidth="1.5" />
+              <circle cx="100" cy="171" r="4" fill="#ec4899" />
+
+              {/* Robot Head / Helmet with Cursor Tracking Parallax */}
+              <g style={{ transform: `translate(${mousePos.x * 0.45}px, ${mousePos.y * 0.45}px)`, transition: 'transform 0.08s ease-out' }}>
+                <rect x="60" y="38" width="80" height="60" rx="28" fill="url(#armorGrad)" stroke="#ffffff" strokeWidth="2.5" />
+                {/* Mecha Ear Orbs */}
+                <circle cx="56" cy="68" r="8" fill="#ec4899" />
+                <circle cx="144" cy="68" r="8" fill="#22d3ee" />
+
+                {/* Curved Dark LED Visor */}
+                <rect x="68" y="48" width="64" height="40" rx="18" fill="url(#darkVisor)" stroke="url(#neonGlow)" strokeWidth="2" />
+
+                {/* Expressive Glowing Visor Anime Mascot Eyes with Natural Blinking & Mouse Parallax Tracking */}
+                <g className="mascot-eyes" style={{ transform: `translate(${mousePos.x * 0.65}px, ${mousePos.y * 0.65}px)` }}>
+                  {/* Left Eye */}
+                  <ellipse cx="85" cy="64" rx="6.5" ry="8.5" fill="#22d3ee" />
+                  <circle cx="83" cy="61" r="3" fill="#ffffff" />
+                  {/* Right Eye */}
+                  <ellipse cx="115" cy="64" rx="6.5" ry="8.5" fill="#22d3ee" />
+                  <circle cx="113" cy="61" r="3" fill="#ffffff" />
+                </g>
+
+                {/* Cute Digital Rosy Cheeks */}
+                <rect x="74" y="76" width="8" height="3" rx="1.5" fill="#f43f5e" opacity="0.85" />
+                <rect x="118" y="76" width="8" height="3" rx="1.5" fill="#f43f5e" opacity="0.85" />
+
+                {/* Cheerful Visor Smile Line */}
+                <path d="M92,75 Q100,83 108,75" stroke="#22d3ee" strokeWidth="3" strokeLinecap="round" fill="none" />
+              </g>
+            </svg>
+
+          </div>
+        </div>
       )}
 
       {/* Expanded Chatbot Window Modal */}

@@ -67,7 +67,6 @@ export default function LearnPage() {
         subtitle: "How this cyber fraud operates",
         content: fullText.slice(0, 180) + (fullText.length > 180 ? "..." : ""),
         icon: "🚨",
-        badgeColor: "bg-rose-500/20 text-rose-300 border-rose-500/40"
       },
       {
         title: "Intercepted Scam Trap",
@@ -79,9 +78,8 @@ export default function LearnPage() {
       {
         title: "Ironclad Defense Rule",
         subtitle: "Your family's safety protocol",
-        content: lesson.tip || "Never click bank links sent via WhatsApp or SMS. Always check on official bank apps.",
+        content: lesson.tip || "Never click bank links sent via WhatsApp or SMS. Always verify on official bank apps.",
         icon: "🛡️",
-        badgeColor: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40"
       }
     ];
   };
@@ -101,65 +99,80 @@ export default function LearnPage() {
     }
   };
 
-  // Interactive On-Scroll Showcase Deck
-  const renderShowcaseSection = (tierKey, title, subtitle, deck, accentColor, badgeIcon) => {
+  const renderShowcaseSection = (tierKey, title, subtitle, deck, accentColor, icon) => {
+    if (!deck || !deck.length) return null;
+
     return (
-      <div className="mb-20">
-        {/* Tier Section Header Banner */}
-        <ScrollReveal>
-          <div className={`p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-slate-900 via-slate-900 to-slate-950 border border-${accentColor}-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 mb-8 shadow-[0_20px_60px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.1)] relative overflow-hidden`}>
-            <div className={`absolute -top-24 -left-24 w-60 h-60 bg-${accentColor}-500/15 rounded-full blur-3xl pointer-events-none`}></div>
-            <div className="flex items-center gap-5 relative z-10">
-              <div className={`w-16 h-16 rounded-2xl bg-${accentColor}-500/20 border border-${accentColor}-500/40 text-${accentColor}-400 flex items-center justify-center font-black text-4xl shadow-lg animate-pulse shrink-0`}>
-                {badgeIcon}
-              </div>
-              <div>
-                <span className={`text-[10px] font-black uppercase tracking-widest text-${accentColor}-400 px-3 py-1 rounded-full bg-${accentColor}-500/10 border border-${accentColor}-500/20`}>
-                  {subtitle}
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mt-1.5">{title}</h2>
-              </div>
-            </div>
-            <div className="relative z-10 bg-slate-950/80 px-4 py-2.5 rounded-2xl border border-white/10 text-xs font-bold text-slate-300 shadow-inner flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full bg-${accentColor}-400 animate-ping`}></span>
-              <span>{deck.length} Interactive Modules</span>
+      <div className="mb-16 select-none group/tier">
+        {/* Tier Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 mb-6 border-b border-white/10 gap-4">
+          <div className="flex items-center gap-4">
+            <span className="text-4xl filter drop-shadow animate-pulse">{icon}</span>
+            <div>
+              <span className={`text-[10px] font-mono font-black tracking-[0.3em] uppercase text-${accentColor}-400 block`}>3D CLASSIFIED CARD DECK</span>
+              <h2 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white mt-0.5 flex flex-wrap items-center gap-3">
+                <span>{title}</span>
+                <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-500/15 px-3 py-1 rounded-full border border-cyan-400/30">✨ Hover Left/Right to Pan Deck</span>
+              </h2>
             </div>
           </div>
-        </ScrollReveal>
+          <div className="bg-slate-950/90 px-5 py-2.5 rounded-2xl border border-white/10 text-xs font-mono font-bold text-slate-300 shadow-inner flex items-center gap-2.5 self-start sm:self-auto">
+            <span className={`w-2.5 h-2.5 rounded-full bg-${accentColor}-400 animate-ping`}></span>
+            <span>{deck.length} Modules in Deck</span>
+          </div>
+        </div>
 
-        {/* Lesson Cards Grid (Smoothly emerges one after another as we scroll) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {deck.map((lesson, idx) => {
+        {/* 3D Interactive Horizontal Card Deck Track (Cursor Pan Left/Right) */}
+        <div 
+          onMouseMove={(e) => {
+            const el = e.currentTarget;
+            const rect = el.getBoundingClientRect();
+            const norm = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+            el.scrollLeft = norm * (el.scrollWidth - rect.width);
+          }}
+          className="flex gap-6 overflow-x-auto pb-10 pt-4 px-3 scrollbar-none no-scrollbar select-none cursor-ew-resize"
+          style={{ scrollBehavior: 'auto' }}
+        >
+          {deck.map((lesson) => {
             const isDone = completedLessons.includes(lesson.id);
             return (
-              <ScrollReveal key={lesson.id} delay={(idx % 2) * 150}>
-                <div 
-                  onClick={() => openRoadmapModal(lesson)}
-                  className="p-6 rounded-2xl bg-gradient-to-br from-slate-800/85 via-slate-900/95 to-slate-950 backdrop-blur-2xl border border-white/10 hover:border-cyan-400/80 transition-all duration-300 cursor-pointer group/item flex items-center justify-between gap-5 shadow-[0_15px_35px_rgba(0,0,0,0.7),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_20px_50px_rgba(34,211,238,0.25),inset_0_1px_1px_rgba(255,255,255,0.35)] hover:-translate-y-2 hover:scale-[1.02] relative z-10 hover:z-50 h-full"
-                >
-                  <div className="flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-3xl shrink-0 group-hover/item:scale-110 group-hover/item:border-cyan-400/40 transition-all shadow-inner">
+              <div 
+                key={lesson.id}
+                onClick={() => openRoadmapModal(lesson)}
+                className="w-[340px] sm:w-[390px] shrink-0 p-8 rounded-3xl bg-gradient-to-br from-slate-800/95 via-slate-900/95 to-slate-950 backdrop-blur-2xl border border-white/15 hover:border-cyan-400 transition-all duration-300 cursor-pointer group flex flex-col justify-between gap-6 shadow-[0_20px_50px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.15)] hover:shadow-[0_30px_70px_rgba(34,211,238,0.35),inset_0_1px_1px_rgba(255,255,255,0.4)] hover:-translate-y-3.5 hover:rotate-1 relative z-10 hover:z-50"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-3 mb-6">
+                    <span className="w-16 h-16 rounded-2xl bg-slate-950 border border-white/15 flex items-center justify-center text-4xl shadow-inner group-hover:scale-110 group-hover:border-cyan-400/50 transition-transform duration-200 shrink-0">
                       {lesson.icon || "🛡️"}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider font-mono">Lesson #{lesson.id}</span>
-                        <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-black px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1 tracking-wider">
-                          🪙 +{tierKey === 'advanced' ? 100 : (tierKey === 'medium' ? 50 : 25)} XP
-                        </span>
-                        {isDone && <CheckCircle2 size={15} className="text-emerald-400 drop-shadow" />}
-                      </div>
-                      <h3 className="text-lg font-black font-['Outfit'] text-white group-hover/item:text-cyan-300 transition-colors leading-snug">
-                        {lesson.title}
-                      </h3>
+                    </span>
+                    <div className="flex flex-col items-end gap-1.5">
+                      <span className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest">DECK CARD #{lesson.id}</span>
+                      <span className="bg-amber-500/20 border border-amber-500/40 text-amber-300 text-[10px] font-mono font-black px-3 py-1 rounded-full shadow-sm flex items-center gap-1">
+                        🪙 +{tierKey === 'advanced' ? 100 : (tierKey === 'medium' ? 50 : 25)} XP
+                      </span>
                     </div>
                   </div>
 
-                  <div className="w-10 h-10 rounded-xl bg-white/5 group-hover/item:bg-cyan-400 group-hover/item:text-navy text-slate-400 flex items-center justify-center font-black transition-all shrink-0 shadow-md group-hover/item:rotate-45">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white group-hover:text-cyan-300 transition-colors leading-snug">
+                      {lesson.title}
+                    </h3>
+                    {isDone && <CheckCircle2 size={20} className="text-emerald-400 shrink-0 drop-shadow ml-1" />}
+                  </div>
+
+                  <p className="text-slate-300 text-xs sm:text-sm line-clamp-3 leading-relaxed font-normal opacity-85 group-hover:opacity-100 transition-opacity">
+                    {getLessonText(lesson.content).slice(0, 140)}...
+                  </p>
+                </div>
+
+                <div className="pt-5 border-t border-white/10 flex items-center justify-between text-xs font-mono font-black uppercase tracking-wider text-cyan-400 group-hover:underline">
+                  <span>{isDone ? "🔄 Re-Deal Protocol" : "⚡ Deal & Inspect Card"}</span>
+                  <div className="w-10 h-10 rounded-xl bg-white/5 group-hover:bg-cyan-400 group-hover:text-slate-950 text-slate-400 flex items-center justify-center font-black transition-all shadow-md group-hover:rotate-45 text-sm">
                     ➔
                   </div>
                 </div>
-              </ScrollReveal>
+              </div>
             );
           })}
         </div>
@@ -168,27 +181,27 @@ export default function LearnPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto pb-44 pt-4 px-4 sm:px-6">
+    <div className="max-w-7xl mx-auto pb-44 pt-4 px-4 sm:px-6 select-none animate-fade-in">
       
       {/* Hero Banner */}
       <ScrollReveal>
-        <div className="glass-card p-8 md:p-12 mb-10 relative overflow-hidden bg-gradient-to-r from-purple-900/40 via-slate-900 to-slate-900 flex flex-col md:flex-row items-center justify-between gap-8 border-purple-500/30 shadow-2xl">
+        <div className="glass-card p-8 md:p-14 mb-14 relative overflow-hidden bg-gradient-to-r from-purple-900/40 via-slate-900 to-slate-900 flex flex-col md:flex-row items-center justify-between gap-8 border-purple-500/30 shadow-2xl">
           <div className="absolute -top-32 -left-32 w-80 h-80 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
           
-          <div className="relative z-10 text-center md:text-left max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/40 px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
+          <div className="relative z-10 text-center md:text-left max-w-3xl">
+            <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/40 px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(139,92,246,0.3)] font-mono">
               <Sparkles size={16} className="text-cyan-400 animate-spin" /> Elite Dark Navy-Purple Ecosystem
             </div>
             
-            <h1 className="text-4xl sm:text-6xl font-black font-['Outfit'] mb-4 leading-[1.08] text-white">
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-black font-['Outfit'] mb-4 leading-[1.06] text-white">
               Tactile Dealing <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500">
                 Security Decks
               </span>
             </h1>
             
-            <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal">
-              Scroll down to explore the classified security tiers. Watch modules emerge from shadowy glass blur into crisp 3D focus!
+            <p className="text-slate-300 text-base sm:text-lg leading-relaxed font-normal max-w-2xl">
+              Scroll down to explore the classified security card decks. Move your mouse left or right across any deck to smoothly pan through the cards!
             </p>
           </div>
 
@@ -201,13 +214,13 @@ export default function LearnPage() {
               <Dices size={24} className={`text-navy ${isSpinning ? "animate-spin" : "group-hover:rotate-45 transition-transform"}`} />
               <span>{isSpinning ? "🎰 Spinning Surprise..." : "🎰 Spin Surprise Lesson"}</span>
             </button>
-            <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2.5">Feeling lucky? Let AI pick for you!</span>
+            <span className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2.5 font-mono">Feeling lucky? Let AI pick for you!</span>
           </div>
         </div>
       </ScrollReveal>
 
-      {/* 3 On-Scroll Showcase Sections Stacked Down Page */}
-      <div className="space-y-6 pt-4">
+      {/* 3 3D Horizontal Card Deck Rows (Pan Left/Right on Hover) */}
+      <div className="space-y-4 pt-2">
         {renderShowcaseSection("beginner", "Tier 1: Basics", "Everyday Shield", beginnerDeck, "emerald", "🟢")}
         {renderShowcaseSection("medium", "Tier 2: Tactical", "Scam Interception", mediumDeck, "amber", "🟡")}
         {renderShowcaseSection("advanced", "Tier 3: Elite", "Cyber Warfare", advancedDeck.length ? advancedDeck : LESSONS.slice(6, 8), "rose", "🔴")}
@@ -215,22 +228,22 @@ export default function LearnPage() {
 
       {/* Interactive Roadmap Modal */}
       {selectedLesson && (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in">
-          <div className="glass-card max-w-2xl w-full p-6 sm:p-10 relative overflow-hidden bg-slate-950 border-purple-500/50 shadow-[0_0_80px_rgba(139,92,246,0.4)]">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-xl animate-fade-in">
+          <div className="glass-card max-w-2xl w-full p-6 sm:p-10 relative overflow-hidden bg-slate-950 border border-purple-500/50 shadow-[0_0_80px_rgba(139,92,246,0.4)] rounded-3xl animate-scale-up">
             <div className="absolute top-0 right-0 w-80 h-80 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
             
             {/* Modal Header */}
             <div className="flex items-center justify-between pb-6 mb-8 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <span className="text-4xl animate-bounce">{selectedLesson.icon || "🚨"}</span>
+              <div className="flex items-center gap-4">
+                <span className="text-4xl sm:text-5xl animate-bounce">{selectedLesson.icon || "🚨"}</span>
                 <div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Protocol Instruction #{selectedLesson.id}</span>
-                  <h2 className="text-2xl font-black font-['Outfit'] text-white mt-1">{selectedLesson.title}</h2>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest font-mono">Protocol Instruction #{selectedLesson.id}</span>
+                  <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mt-1 leading-snug">{selectedLesson.title}</h2>
                 </div>
               </div>
               <button 
                 onClick={() => setSelectedLesson(null)}
-                className="w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-all cursor-pointer"
+                className="w-11 h-11 rounded-full bg-white/5 hover:bg-rose-500 hover:text-white flex items-center justify-center text-slate-400 transition-all cursor-pointer font-bold text-lg shrink-0"
               >
                 ✕
               </button>
@@ -240,52 +253,52 @@ export default function LearnPage() {
             <div className="flex items-center gap-2 mb-8">
               {steps.map((st, i) => (
                 <div key={i} className="flex-1 h-2 rounded-full overflow-hidden bg-white/10">
-                  <div className={`h-full transition-all duration-500 ${i <= activeSlide ? "bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 shadow-[0_0_12px_rgba(139,92,246,0.8)]" : "w-0"}`}></div>
+                  <div className={`h-full transition-all duration-300 ${i <= activeSlide ? "bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 shadow-[0_0_12px_rgba(139,92,246,0.8)]" : "w-0"}`}></div>
                 </div>
               ))}
             </div>
 
             {/* Step Content Slide */}
             <div className="min-h-[220px] sm:min-h-[240px] flex flex-col justify-center">
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-2xl">{steps[activeSlide]?.icon}</span>
-                <h3 className="text-lg font-black text-cyan-300 uppercase tracking-wider font-['Outfit']">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-3xl">{steps[activeSlide]?.icon}</span>
+                <h3 className="text-lg sm:text-xl font-black text-cyan-300 uppercase tracking-wider font-['Outfit']">
                   {steps[activeSlide]?.title}
                 </h3>
               </div>
 
-              <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4">
+              <p className="text-slate-400 text-xs font-bold uppercase tracking-wider mb-4 font-mono">
                 {steps[activeSlide]?.subtitle}
               </p>
 
               {steps[activeSlide]?.isTerminal ? (
-                <div className="bg-slate-900 border border-purple-500/30 rounded-xl p-5 font-mono text-xs sm:text-sm text-cyan-300 shadow-inner leading-relaxed overflow-x-auto relative group">
+                <div className="bg-slate-900 border border-purple-500/40 rounded-2xl p-6 font-mono text-xs sm:text-sm text-cyan-300 shadow-inner leading-relaxed overflow-x-auto relative group">
                   <div className="flex items-center justify-between pb-3 mb-3 border-b border-purple-500/20 text-[10px] text-purple-400 font-bold uppercase tracking-widest">
-                    <span>⚠️ Intercepted Message</span>
+                    <span>⚠️ INTERCEPTED SCAM TRAP</span>
                     <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
                   </div>
                   "{steps[activeSlide]?.content}"
                 </div>
               ) : (
-                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 text-slate-200 text-base sm:text-lg leading-relaxed font-normal">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6 sm:p-8 text-slate-100 text-base sm:text-lg leading-relaxed font-normal">
                   {steps[activeSlide]?.content}
                 </div>
               )}
             </div>
 
             {/* Modal Actions */}
-            <div className="flex items-center justify-between pt-6 border-t border-white/10">
+            <div className="flex items-center justify-between pt-8 mt-4 border-t border-white/10 font-mono">
               <button 
                 onClick={() => setActiveSlide(s => Math.max(0, s - 1))}
                 disabled={activeSlide === 0}
-                className="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 disabled:opacity-20 font-bold text-sm uppercase transition-all cursor-pointer"
+                className="px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 disabled:opacity-20 font-black text-xs uppercase transition-all cursor-pointer tracking-wider"
               >
                 ← Back
               </button>
 
               <button 
                 onClick={handleFinishStep}
-                className="btn-primary py-4 px-10 text-base font-black flex items-center gap-2 cursor-pointer"
+                className="btn-primary py-4 px-10 text-xs sm:text-sm font-black flex items-center gap-2 cursor-pointer shadow-[0_0_30px_rgba(34,211,238,0.5)]"
               >
                 <span>{activeSlide === steps.length - 1 ? "🎉 Secure Clearance XP" : "Next Protocol ➔"}</span>
               </button>
@@ -298,12 +311,12 @@ export default function LearnPage() {
       {/* Gamified Level-Up Victory Modal */}
       {victoryReward && (
         <div className="fixed inset-0 z-[250] flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-2xl animate-fade-in">
-          <div className="glass-card max-w-md w-full p-8 text-center relative overflow-hidden bg-slate-950 border-cyan-400 shadow-[0_0_90px_rgba(34,211,238,0.4)] animate-scale-up">
+          <div className="glass-card max-w-md w-full p-8 text-center relative overflow-hidden bg-slate-950 border border-cyan-400 shadow-[0_0_90px_rgba(34,211,238,0.4)] rounded-3xl animate-scale-up">
             <div className="w-24 h-24 mx-auto mb-6 rounded-3xl bg-gradient-to-tr from-amber-400 to-cyan-400 p-1 shadow-lg animate-bounce flex items-center justify-center text-5xl">
               🏆
             </div>
             
-            <span className="bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-widest block w-fit mx-auto mb-4">
+            <span className="bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-[11px] font-mono font-black px-3.5 py-1 rounded-full uppercase tracking-widest block w-fit mx-auto mb-4">
               ✨ Security Clearance Secured
             </span>
 
@@ -315,15 +328,15 @@ export default function LearnPage() {
               You mastered this threat vector and upgraded your family network defense shield!
             </p>
 
-            <div className="bg-slate-900/90 border border-amber-500/40 p-4 rounded-2xl mb-8 flex items-center justify-around">
+            <div className="bg-slate-900/90 border border-amber-500/40 p-4 rounded-2xl mb-8 flex items-center justify-around font-mono">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Reward</span>
-                <span className="text-2xl font-black font-['Outfit'] text-amber-400">+{victoryReward.xp} XP</span>
+                <span className="text-2xl font-black text-amber-400">+{victoryReward.xp} XP</span>
               </div>
               <div className="w-px h-10 bg-white/10"></div>
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Defense Roster</span>
-                <span className="text-2xl font-black font-['Outfit'] text-emerald-400">LIVE SYNCED</span>
+                <span className="text-2xl font-black text-emerald-400">LIVE SYNCED</span>
               </div>
             </div>
 
@@ -332,7 +345,7 @@ export default function LearnPage() {
                 triggerVictory();
                 setTimeout(() => setVictoryReward(null), 1200);
               }}
-              className="w-full py-4 bg-gradient-to-r from-amber-400 via-emerald-400 to-cyan-400 text-slate-950 hover:opacity-95 text-base font-black uppercase tracking-wider cursor-pointer rounded-2xl shadow-[0_0_40px_rgba(52,211,153,0.6)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2 font-['Outfit']"
+              className="w-full py-4 bg-gradient-to-r from-amber-400 via-emerald-400 to-cyan-400 text-slate-950 hover:opacity-95 text-xs font-mono font-black uppercase tracking-[0.2em] cursor-pointer rounded-2xl shadow-[0_0_40px_rgba(52,211,153,0.6)] transition-all transform hover:-translate-y-1 flex items-center justify-center gap-2"
             >
               <span>✨ Collect Victory Reward ✨</span>
             </button>

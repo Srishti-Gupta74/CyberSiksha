@@ -49,13 +49,19 @@ export default function GlobalAuthWrapper({ children }) {
             if (!user) localStorage.removeItem('cs_explored_guest');
             window.location.href = '/';
           }}
-          className="flex items-center gap-2.5 cursor-pointer group hover:opacity-90 transition-opacity"
+          className="flex items-center gap-3 cursor-pointer group hover:opacity-95 transition-all"
         >
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 flex items-center justify-center shadow-[0_0_15px_rgba(139,92,246,0.6)] group-hover:scale-105 transition-transform">
-            <span className="text-white font-bold text-base">🛡️</span>
+          <div className="relative w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 via-purple-600 to-pink-500 p-[2px] shadow-[0_0_25px_rgba(34,211,238,0.6)] group-hover:scale-110 transition-transform duration-300">
+            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/30 to-purple-500/30 animate-pulse"></div>
+              <span className="text-cyan-300 font-black text-base relative z-10 animate-bounce">🛡️</span>
+            </div>
           </div>
-          <div className="font-black font-['Outfit'] text-xl tracking-tight text-white">
-            Cyber<span className="text-cyan-400">Siksha</span>
+          <div className="font-black font-['Outfit'] text-xl tracking-tight text-white flex items-center gap-2">
+            <span>Cyber<span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-300 to-pink-400">Siksha</span></span>
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-mono font-black uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-ping"></span> Active Grid
+            </span>
           </div>
         </div>
         

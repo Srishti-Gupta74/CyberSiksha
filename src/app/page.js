@@ -18,6 +18,260 @@ const CYBER_FACTS = [
   "Enabling 2-Factor Authentication stops 99.9% of automated social media hacking attempts."
 ];
 
+const HERO_THREATS = [
+  "Digital Arrest & Voice Fraud",
+  "Fake WhatsApp CBI Notices",
+  "Cloned AI Family Extortion",
+  "Malicious UPI Payment Links",
+  "Sideloaded APK Loan Traps"
+];
+
+function HeroSection() {
+  const [threatIdx, setThreatIdx] = useState(0);
+  const [typed, setTyped] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    const target = HERO_THREATS[threatIdx];
+    const speed = deleting ? 35 : 65;
+
+    const t = setTimeout(() => {
+      if (!deleting && typed === target) {
+        setTimeout(() => setDeleting(true), 3200);
+      } else if (deleting && typed === "") {
+        setDeleting(false);
+        setThreatIdx((prev) => (prev + 1) % HERO_THREATS.length);
+      } else {
+        setTyped(target.substring(0, typed.length + (deleting ? -1 : 1)));
+      }
+    }, speed);
+    return () => clearTimeout(t);
+  }, [typed, deleting, threatIdx]);
+
+  return (
+    <div className="max-w-5xl mx-auto px-4 py-12 md:py-20 text-center select-none overflow-hidden">
+      
+      {/* Dynamic Evolving Holographic Radar Emblem */}
+      <div className="relative w-32 h-32 mx-auto mb-10 group">
+        <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 via-purple-600 to-pink-500 rounded-[36px] blur-2xl opacity-70 group-hover:opacity-100 animate-pulse transition-opacity duration-700"></div>
+        <div className="relative w-full h-full bg-slate-950 border-2 border-cyan-400/70 rounded-[36px] p-2 flex items-center justify-center shadow-[0_0_50px_rgba(34,211,238,0.4)] overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(#22d3ee_1.5px,transparent_1.5px)] [background-size:14px_14px] opacity-30 animate-spin duration-[25s]"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/10 to-transparent animate-pulse"></div>
+          <Shield size={56} className="text-cyan-300 drop-shadow-[0_0_20px_rgba(34,211,238,0.9)] animate-bounce relative z-10" />
+          <div className="absolute w-full h-[2px] bg-gradient-to-r from-transparent via-cyan-300 to-transparent top-1/2 -translate-y-1/2 shadow-[0_0_12px_#22d3ee] animate-ping opacity-80"></div>
+        </div>
+      </div>
+
+      <ScrollReveal>
+        <div className="inline-flex items-center gap-2.5 bg-cyan-500/20 border border-cyan-400/50 px-6 py-2 rounded-full text-xs font-black text-cyan-300 mb-8 uppercase tracking-[0.25em] shadow-[0_0_35px_rgba(34,211,238,0.3)] backdrop-blur-md">
+          <Activity size={15} className="animate-pulse text-cyan-400" /> India's #1 Autonomous Defense Grid
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black font-['Outfit'] text-white tracking-tight mb-8 leading-[1.15]">
+          Shield Your Family From <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-emerald-300 to-purple-400 inline-block min-h-[1.25em] drop-shadow-sm">
+            {typed || "Digital Arrest"}
+          </span>
+          <span className="text-cyan-400 font-mono animate-pulse font-normal ml-1 inline-block">|</span>
+        </h1>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <p className="text-slate-200 text-lg sm:text-2xl max-w-3xl mx-auto font-normal leading-relaxed mb-14 opacity-95">
+          CyberSiksha gamifies cybersecurity for the Indian household. Train parents and grandparents to spot fake CBI investigations, WhatsApp extortion, and UPI traps before money leaves their bank.
+        </p>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 max-w-lg mx-auto mb-24">
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
+            className="w-full sm:w-auto flex-1 py-4 px-10 bg-gradient-to-r from-cyan-400 via-teal-300 to-emerald-400 hover:opacity-95 text-slate-950 font-black font-['Outfit'] rounded-full text-sm uppercase tracking-wider shadow-[0_0_40px_rgba(52,211,153,0.6)] transition-all transform hover:-translate-y-1 cursor-pointer"
+          >
+            🚀 Sign Up Free
+          </button>
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: true } }))}
+            className="w-full sm:w-auto flex-1 py-4 px-10 bg-slate-900/90 hover:bg-slate-800 text-white font-black font-['Outfit'] rounded-full border border-cyan-400/40 text-sm uppercase tracking-wider transition-all cursor-pointer shadow-2xl hover:border-cyan-300"
+          >
+            🔑 Sign In
+          </button>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal>
+        <div className="border-t border-white/10 pt-20 text-left">
+          <h2 className="text-3xl sm:text-5xl font-black font-['Outfit'] text-center text-white mb-4 tracking-tight">
+            CyberSiksha — Learn to Outsmart Scams
+          </h2>
+          <p className="text-center text-slate-300 text-base sm:text-xl mb-14 max-w-2xl mx-auto font-normal">
+            India's most comprehensive gamified digital defense curriculum designed for the entire household.
+          </p>
+
+          {/* Interactive Magnetic Parallax Cursor-Tracked Floating Deck */}
+          <div 
+            onMouseMove={(e) => {
+              const el = e.currentTarget;
+              const rect = el.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const pct = Math.max(0, Math.min(1, x / rect.width));
+              el.scrollLeft = pct * (el.scrollWidth - el.clientWidth);
+            }}
+            className="flex overflow-x-auto gap-8 pb-16 pt-8 px-4 sm:px-8 select-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden cursor-ew-resize transition-all duration-75"
+          >
+            {/* Card 1: LEARN */}
+            <div 
+              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
+              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-cyan-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-cyan-400 hover:shadow-[0_25px_60px_rgba(34,211,238,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl cursor-pointer"
+            >
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_15px_rgba(34,211,238,0.8)]"></div>
+              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-cyan-500/25 transition-all"></div>
+              <div>
+                <div className="flex items-center gap-3.5 mb-6 pt-2">
+                  <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(34,211,238,0.4)] shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all">
+                    📖
+                  </div>
+                  <div>
+                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-cyan-300 transition-colors">LEARN</h3>
+                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Bite-Sized Lessons</span>
+                  </div>
+                </div>
+                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
+                  <li className="flex items-start gap-3"><span className="text-cyan-400 font-black shrink-0 mt-0.5">✔</span> Story-driven lessons showing how scams work step by step</li>
+                  <li className="flex items-start gap-3"><span className="text-cyan-400 font-black shrink-0 mt-0.5">✔</span> Categories: SMS traps, UPI fraud, calls, job offers</li>
+                  <li className="flex items-start gap-3"><span className="text-cyan-400 font-black shrink-0 mt-0.5">✔</span> Simple plain language designed for beginners</li>
+                  <li className="flex items-start gap-3"><span className="text-cyan-400 font-black shrink-0 mt-0.5">✔</span> 3–5 min per lesson with clear protection tips</li>
+                </ul>
+              </div>
+              <div className="pt-4 border-t border-white/10 text-xs font-black text-cyan-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
+                <span>🔒 Sign Up Free to Unlock</span> ➔
+              </div>
+            </div>
+
+            {/* Card 2: QUIZ */}
+            <div 
+              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
+              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-purple-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-purple-400 hover:shadow-[0_25px_60px_rgba(168,85,247,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl cursor-pointer"
+            >
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-400 to-pink-500 shadow-[0_0_15px_rgba(168,85,247,0.8)]"></div>
+              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-500/25 transition-all"></div>
+              <div>
+                <div className="flex items-center gap-3.5 mb-6 pt-2">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/50 text-purple-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(168,85,247,0.4)] shrink-0 group-hover:scale-110 group-hover:-rotate-6 transition-all">
+                    🎮
+                  </div>
+                  <div>
+                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-purple-300 transition-colors">QUIZ</h3>
+                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Gamified Challenges</span>
+                  </div>
+                </div>
+                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
+                  <li className="flex items-start gap-3"><span className="text-purple-400 font-black shrink-0 mt-0.5">✔</span> Realistic Indian scam scenarios (SMS, UPI, voice calls)</li>
+                  <li className="flex items-start gap-3"><span className="text-purple-400 font-black shrink-0 mt-0.5">✔</span> Choose "Safe" or "Scam?" with instant feedback</li>
+                  <li className="flex items-start gap-3"><span className="text-purple-400 font-black shrink-0 mt-0.5">✔</span> Earn XP points, Scam IQ, streaks & levels</li>
+                  <li className="flex items-start gap-3"><span className="text-purple-400 font-black shrink-0 mt-0.5">✔</span> Wrong answers teach red flag identification</li>
+                </ul>
+              </div>
+              <div className="pt-4 border-t border-white/10 text-xs font-black text-purple-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
+                <span>🔒 Sign Up Free to Play</span> ➔
+              </div>
+            </div>
+
+            {/* Card 3: NEWS */}
+            <div 
+              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
+              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-pink-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-pink-400 hover:shadow-[0_25px_60px_rgba(236,72,153,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl cursor-pointer"
+            >
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-pink-400 to-rose-500 shadow-[0_0_15px_rgba(236,72,153,0.8)]"></div>
+              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-pink-500/25 transition-all"></div>
+              <div>
+                <div className="flex items-center gap-3.5 mb-6 pt-2">
+                  <div className="w-12 h-12 rounded-2xl bg-pink-500/20 border border-pink-400/50 text-pink-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(236,72,153,0.4)] shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all">
+                    📰
+                  </div>
+                  <div>
+                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-pink-300 transition-colors">NEWS</h3>
+                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Scam Alerts Feed</span>
+                  </div>
+                </div>
+                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
+                  <li className="flex items-start gap-3"><span className="text-pink-400 font-black shrink-0 mt-0.5">✔</span> Curated feed of latest cyber scam trends across India</li>
+                  <li className="flex items-start gap-3"><span className="text-pink-400 font-black shrink-0 mt-0.5">✔</span> Explains what it is, how it works, and prevention</li>
+                  <li className="flex items-start gap-3"><span className="text-pink-400 font-black shrink-0 mt-0.5">✔</span> Written in plain language, zero jargon</li>
+                  <li className="flex items-start gap-3"><span className="text-pink-400 font-black shrink-0 mt-0.5">✔</span> Links directly to related scenario testing</li>
+                </ul>
+              </div>
+              <div className="pt-4 border-t border-white/10 text-xs font-black text-pink-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
+                <span>🔒 Sign Up Free to Read</span> ➔
+              </div>
+            </div>
+
+            {/* Card 4: ASK AI */}
+            <div 
+              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
+              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-amber-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-amber-400 hover:shadow-[0_25px_60px_rgba(245,158,11,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl cursor-pointer"
+            >
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 to-orange-500 shadow-[0_0_15px_rgba(245,158,11,0.8)]"></div>
+              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/25 transition-all"></div>
+              <div>
+                <div className="flex items-center gap-3.5 mb-6 pt-2">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/50 text-amber-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(245,158,11,0.4)] shrink-0 group-hover:scale-110 group-hover:-rotate-6 transition-all">
+                    🤖
+                  </div>
+                  <div>
+                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-amber-300 transition-colors">ASK AI</h3>
+                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Doubt Clearance Bot</span>
+                  </div>
+                </div>
+                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
+                  <li className="flex items-start gap-3"><span className="text-amber-400 font-black shrink-0 mt-0.5">✔</span> AI mentor powered by Google Gemini 2.0</li>
+                  <li className="flex items-start gap-3"><span className="text-amber-400 font-black shrink-0 mt-0.5">✔</span> Instant answers to any cybersecurity doubt</li>
+                  <li className="flex items-start gap-3"><span className="text-amber-400 font-black shrink-0 mt-0.5">✔</span> Warm, simple analogies for everyday clarity</li>
+                  <li className="flex items-start gap-3"><span className="text-amber-400 font-black shrink-0 mt-0.5">✔</span> Handles Hindi, English & Hinglish naturally</li>
+                </ul>
+              </div>
+              <div className="pt-4 border-t border-white/10 text-xs font-black text-amber-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
+                <span>🔒 Sign Up Free to Ask</span> ➔
+              </div>
+            </div>
+
+            {/* Card 5: FAMILY DASHBOARD */}
+            <div 
+              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
+              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-emerald-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-emerald-400 hover:shadow-[0_25px_60px_rgba(16,185,129,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl cursor-pointer"
+            >
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 shadow-[0_0_15px_rgba(16,185,129,0.8)]"></div>
+              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/25 transition-all"></div>
+              <div>
+                <div className="flex items-center gap-3.5 mb-6 pt-2">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(16,185,129,0.4)] shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all">
+                    👨‍👩‍👧‍👦
+                  </div>
+                  <div>
+                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-emerald-300 transition-colors">FAMILY</h3>
+                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Defense Roster</span>
+                  </div>
+                </div>
+                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
+                  <li className="flex items-start gap-3"><span className="text-emerald-400 font-black shrink-0 mt-0.5">✔</span> Invite parents and elders via private copy link</li>
+                  <li className="flex items-start gap-3"><span className="text-emerald-400 font-black shrink-0 mt-0.5">✔</span> Track everyone's Scam IQ and quiz accuracy</li>
+                  <li className="flex items-start gap-3"><span className="text-emerald-400 font-black shrink-0 mt-0.5">✔</span> Realtime Supabase live network sync</li>
+                  <li className="flex items-start gap-3"><span className="text-emerald-400 font-black shrink-0 mt-0.5">✔</span> Nudge family members to complete daily lessons</li>
+                </ul>
+              </div>
+              <div className="pt-4 border-t border-white/10 text-xs font-black text-emerald-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
+                <span>🔒 Sign Up Free to Join</span> ➔
+              </div>
+            </div>
+          </div>
+        </div>
+      </ScrollReveal>
+    </div>
+  );
+}
+
 export default function Home() {
   const { profile, user, completedLessons, loading } = useAuth();
   const [scamIq, setScamIq] = useState(0);
@@ -72,206 +326,7 @@ export default function Home() {
   }
 
   if (!user) {
-    return (
-      <div className="max-w-5xl mx-auto px-4 py-12 md:py-20 text-center animate-fade-in select-none">
-        <div className="w-24 h-24 bg-gradient-to-tr from-cyan-400 via-purple-600 to-pink-500 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-[0_0_50px_rgba(34,211,238,0.5)] border border-white/20 animate-bounce">
-          <Shield size={48} className="text-slate-950 font-black" />
-        </div>
-        <div className="inline-flex items-center gap-2 bg-cyan-500/20 border border-cyan-400/40 px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 mb-6 uppercase tracking-widest shadow-sm">
-          <Activity size={14} className="animate-pulse text-cyan-400" /> India's #1 Digital Defense Grid
-        </div>
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black font-['Outfit'] text-white tracking-tight mb-6 leading-[1.1]">
-          Shield Your Family From <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-emerald-400 to-purple-400">
-            Digital Arrest & Voice Fraud
-          </span>
-        </h1>
-        <p className="text-slate-200 text-lg sm:text-xl max-w-2xl mx-auto font-normal leading-relaxed mb-10">
-          CyberSiksha gamifies cybersecurity for the Indian household. Train parents and grandparents to spot fake CBI investigations, WhatsApp extortion, and UPI traps before money leaves their bank.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-5 max-w-lg mx-auto mb-16">
-          <button
-            onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
-            className="w-full sm:w-auto flex-1 py-4 px-8 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:opacity-95 text-slate-950 font-black font-['Outfit'] rounded-full text-sm uppercase tracking-wider shadow-[0_0_30px_rgba(52,211,153,0.5)] transition-all transform hover:-translate-y-1 cursor-pointer"
-          >
-            🚀 Sign Up Free
-          </button>
-          <button
-            onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: true } }))}
-            className="w-full sm:w-auto flex-1 py-4 px-8 bg-slate-900/90 hover:bg-slate-800 text-white font-black font-['Outfit'] rounded-full border border-cyan-400/30 text-sm uppercase tracking-wider transition-all cursor-pointer shadow-lg"
-          >
-            🔑 Sign In
-          </button>
-        </div>
-
-        <div className="border-t border-white/10 pt-16 text-left">
-          <h2 className="text-3xl sm:text-5xl font-black font-['Outfit'] text-center text-white mb-3 tracking-tight">
-            CyberSiksha — Learn to Outsmart Scams
-          </h2>
-          <p className="text-center text-slate-300 text-base sm:text-lg mb-12 max-w-2xl mx-auto font-normal">
-            India's most comprehensive gamified digital defense curriculum designed for the entire household.
-          </p>
-
-          {/* Interactive Magnetic Parallax Cursor-Tracked Floating Deck */}
-          <div 
-            onMouseMove={(e) => {
-              const el = e.currentTarget;
-              const rect = el.getBoundingClientRect();
-              const x = e.clientX - rect.left;
-              const pct = Math.max(0, Math.min(1, x / rect.width));
-              el.scrollLeft = pct * (el.scrollWidth - el.clientWidth);
-            }}
-            className="flex overflow-x-auto gap-8 pb-16 pt-8 px-4 sm:px-8 select-none [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden cursor-ew-resize transition-all duration-75"
-          >
-            {/* Card 1: LEARN */}
-            <div 
-              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
-              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-cyan-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-cyan-400 hover:shadow-[0_25px_60px_rgba(34,211,238,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl animate-fade-in cursor-pointer" style={{ animationDelay: '100ms' }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-cyan-400 to-blue-500 shadow-[0_0_15px_rgba(34,211,238,0.8)]"></div>
-              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-cyan-500/25 transition-all"></div>
-              <div>
-                <div className="flex items-center gap-3.5 mb-6 pt-2">
-                  <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/50 text-cyan-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(34,211,238,0.4)] shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all">
-                    📖
-                  </div>
-                  <div>
-                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-cyan-300 transition-colors">LEARN</h3>
-                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Bite-Sized Lessons</span>
-                  </div>
-                </div>
-                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
-                  <li className="flex items-start gap-3"><span className="text-cyan-400 font-black shrink-0 mt-0.5">✔</span> Story-driven lessons showing how scams work step by step</li>
-                  <li className="flex items-start gap-3"><span className="text-cyan-400 font-black shrink-0 mt-0.5">✔</span> Categories: SMS traps, UPI fraud, calls, job offers</li>
-                  <li className="flex items-start gap-3"><span className="text-cyan-400 font-black shrink-0 mt-0.5">✔</span> Simple plain language designed for beginners</li>
-                  <li className="flex items-start gap-3"><span className="text-cyan-400 font-black shrink-0 mt-0.5">✔</span> 3–5 min per lesson with clear protection tips</li>
-                </ul>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-xs font-black text-cyan-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
-                <span>🔒 Sign Up Free to Unlock</span> ➔
-              </div>
-            </div>
-
-            {/* Card 2: QUIZ */}
-            <div 
-              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
-              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-purple-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-purple-400 hover:shadow-[0_25px_60px_rgba(168,85,247,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl animate-fade-in cursor-pointer" style={{ animationDelay: '250ms' }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-400 to-pink-500 shadow-[0_0_15px_rgba(168,85,247,0.8)]"></div>
-              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-purple-500/25 transition-all"></div>
-              <div>
-                <div className="flex items-center gap-3.5 mb-6 pt-2">
-                  <div className="w-12 h-12 rounded-2xl bg-purple-500/20 border border-purple-400/50 text-purple-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(168,85,247,0.4)] shrink-0 group-hover:scale-110 group-hover:-rotate-6 transition-all">
-                    🎮
-                  </div>
-                  <div>
-                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-purple-300 transition-colors">QUIZ</h3>
-                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Gamified Challenges</span>
-                  </div>
-                </div>
-                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
-                  <li className="flex items-start gap-3"><span className="text-purple-400 font-black shrink-0 mt-0.5">✔</span> Realistic Indian scam scenarios (SMS, UPI, voice calls)</li>
-                  <li className="flex items-start gap-3"><span className="text-purple-400 font-black shrink-0 mt-0.5">✔</span> Choose "Safe" or "Scam?" with instant feedback</li>
-                  <li className="flex items-start gap-3"><span className="text-purple-400 font-black shrink-0 mt-0.5">✔</span> Earn XP points, Scam IQ, streaks & levels</li>
-                  <li className="flex items-start gap-3"><span className="text-purple-400 font-black shrink-0 mt-0.5">✔</span> Wrong answers teach red flag identification</li>
-                </ul>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-xs font-black text-purple-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
-                <span>🔒 Sign Up Free to Play</span> ➔
-              </div>
-            </div>
-
-            {/* Card 3: NEWS */}
-            <div 
-              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
-              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-pink-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-pink-400 hover:shadow-[0_25px_60px_rgba(236,72,153,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl animate-fade-in cursor-pointer" style={{ animationDelay: '400ms' }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-pink-400 to-rose-500 shadow-[0_0_15px_rgba(236,72,153,0.8)]"></div>
-              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-pink-500/25 transition-all"></div>
-              <div>
-                <div className="flex items-center gap-3.5 mb-6 pt-2">
-                  <div className="w-12 h-12 rounded-2xl bg-pink-500/20 border border-pink-400/50 text-pink-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(236,72,153,0.4)] shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all">
-                    📰
-                  </div>
-                  <div>
-                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-pink-300 transition-colors">NEWS</h3>
-                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Scam Alerts Feed</span>
-                  </div>
-                </div>
-                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
-                  <li className="flex items-start gap-3"><span className="text-pink-400 font-black shrink-0 mt-0.5">✔</span> Curated feed of latest cyber scam trends across India</li>
-                  <li className="flex items-start gap-3"><span className="text-pink-400 font-black shrink-0 mt-0.5">✔</span> Explains what it is, how it works, and prevention</li>
-                  <li className="flex items-start gap-3"><span className="text-pink-400 font-black shrink-0 mt-0.5">✔</span> Written in plain language, zero jargon</li>
-                  <li className="flex items-start gap-3"><span className="text-pink-400 font-black shrink-0 mt-0.5">✔</span> Links directly to related scenario testing</li>
-                </ul>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-xs font-black text-pink-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
-                <span>🔒 Sign Up Free to Read</span> ➔
-              </div>
-            </div>
-
-            {/* Card 4: ASK AI */}
-            <div 
-              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
-              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-amber-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-amber-400 hover:shadow-[0_25px_60px_rgba(245,158,11,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl animate-fade-in cursor-pointer" style={{ animationDelay: '550ms' }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-amber-400 to-orange-500 shadow-[0_0_15px_rgba(245,158,11,0.8)]"></div>
-              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-amber-500/25 transition-all"></div>
-              <div>
-                <div className="flex items-center gap-3.5 mb-6 pt-2">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-400/50 text-amber-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(245,158,11,0.4)] shrink-0 group-hover:scale-110 group-hover:-rotate-6 transition-all">
-                    🤖
-                  </div>
-                  <div>
-                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-amber-300 transition-colors">ASK AI</h3>
-                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Doubt Clearance Bot</span>
-                  </div>
-                </div>
-                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
-                  <li className="flex items-start gap-3"><span className="text-amber-400 font-black shrink-0 mt-0.5">✔</span> AI mentor powered by Google Gemini 2.0</li>
-                  <li className="flex items-start gap-3"><span className="text-amber-400 font-black shrink-0 mt-0.5">✔</span> Instant answers to any cybersecurity doubt</li>
-                  <li className="flex items-start gap-3"><span className="text-amber-400 font-black shrink-0 mt-0.5">✔</span> Warm, simple analogies for everyday clarity</li>
-                  <li className="flex items-start gap-3"><span className="text-amber-400 font-black shrink-0 mt-0.5">✔</span> Handles Hindi, English & Hinglish naturally</li>
-                </ul>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-xs font-black text-amber-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
-                <span>🔒 Sign Up Free to Ask</span> ➔
-              </div>
-            </div>
-
-            {/* Card 5: FAMILY DASHBOARD */}
-            <div 
-              onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
-              className="w-[300px] sm:w-[340px] shrink-0 glass-card p-8 bg-slate-900/90 border-emerald-500/50 flex flex-col justify-between transition-all duration-300 hover:-translate-y-3 hover:border-emerald-400 hover:shadow-[0_25px_60px_rgba(16,185,129,0.3)] shadow-2xl relative group overflow-hidden border-2 rounded-3xl animate-fade-in cursor-pointer" style={{ animationDelay: '700ms' }}
-            >
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-emerald-400 to-teal-500 shadow-[0_0_15px_rgba(16,185,129,0.8)]"></div>
-              <div className="absolute -right-12 -bottom-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none group-hover:bg-emerald-500/25 transition-all"></div>
-              <div>
-                <div className="flex items-center gap-3.5 mb-6 pt-2">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(16,185,129,0.4)] shrink-0 group-hover:scale-110 group-hover:rotate-6 transition-all">
-                    👨‍👩‍👧‍👦
-                  </div>
-                  <div>
-                    <h3 className="font-black text-2xl font-['Outfit'] text-white group-hover:text-emerald-300 transition-colors">FAMILY</h3>
-                    <span className="text-[11px] font-bold text-slate-400 block uppercase tracking-wider font-mono">Defense Roster</span>
-                  </div>
-                </div>
-                <ul className="space-y-3.5 text-sm text-slate-200 font-medium mb-8 leading-relaxed">
-                  <li className="flex items-start gap-3"><span className="text-emerald-400 font-black shrink-0 mt-0.5">✔</span> Invite parents and elders via private copy link</li>
-                  <li className="flex items-start gap-3"><span className="text-emerald-400 font-black shrink-0 mt-0.5">✔</span> Track everyone's Scam IQ and quiz accuracy</li>
-                  <li className="flex items-start gap-3"><span className="text-emerald-400 font-black shrink-0 mt-0.5">✔</span> Realtime Supabase live network sync</li>
-                  <li className="flex items-start gap-3"><span className="text-emerald-400 font-black shrink-0 mt-0.5">✔</span> Nudge family members to complete daily lessons</li>
-                </ul>
-              </div>
-              <div className="pt-4 border-t border-white/10 text-xs font-black text-emerald-300 inline-flex items-center gap-1.5 group-hover:translate-x-2 transition-transform uppercase tracking-wider">
-                <span>🔒 Sign Up Free to Join</span> ➔
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <HeroSection />;
   }
 
   const nextLesson = LESSONS.find(l => !completedLessons.includes(l.id));

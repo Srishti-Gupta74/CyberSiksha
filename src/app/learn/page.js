@@ -75,7 +75,7 @@ export default function LearnPage() {
       {
         title: "Threat Vector Briefing",
         subtitle: "How this cyber fraud operates",
-        content: fullText.slice(0, 180) + (fullText.length > 180 ? "..." : ""),
+        content: fullText,
         icon: "🚨",
       },
       {

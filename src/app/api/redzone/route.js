@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/navigation';
+import { NextResponse } from 'next/server';
 import { PHISH_SEEDS } from '@/lib/phishSeeds';
 
 export async function GET() {

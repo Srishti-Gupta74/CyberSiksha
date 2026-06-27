@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/navigation';
+import { NextResponse } from 'next/server';
 import { CURATED_NEWS_SEEDS } from '@/lib/newsSeeds';
 
 export async function GET() {

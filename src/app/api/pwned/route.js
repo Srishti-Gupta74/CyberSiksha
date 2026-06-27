@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/navigation';
+import { NextResponse } from 'next/server';
 import { BREACH_DB } from '@/lib/breachData';
 
 export async function GET(request) {

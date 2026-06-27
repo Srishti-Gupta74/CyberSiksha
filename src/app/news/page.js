@@ -4,12 +4,27 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { NEWS_ARTICLES } from '@/data/content';
 import ScrollReveal from '@/components/ScrollReveal';
-import { Newspaper, ArrowRight, Calendar, ShieldAlert, Sparkles, ChevronDown, ArrowUpRight, Share2, Bookmark } from 'lucide-react';
+import { Newspaper, ArrowRight, Calendar, ShieldAlert, Sparkles, ChevronDown, ArrowUpRight, Share2, Bookmark, Zap } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function NewsPage() {
+  const router = useRouter();
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  
+  const [liveThreats, setLiveThreats] = useState([]);
+  const [intelSource, setIntelSource] = useState("Synchronizing Threat Feed...");
+
+  useEffect(() => {
+    setMounted(true);
+    fetch('/api/threats')
+      .then(r => r.json())
+      .then(d => {
+        setLiveThreats(d.articles || []);
+        setIntelSource(d.sourceLabel || "National Cyber Desk");
+      })
+      .catch(() => setIntelSource("Curated Threat Archives"));
+  }, []);
   
   // Track which News Deck is actively being hovered/cascaded
   const [activeNewsDeck, setActiveNewsDeck] = useState(null);
@@ -120,6 +135,7 @@ export default function NewsPage() {
 
       {/* Spacious On-Scroll Showcase Sections */}
       <div className="pt-4">
+        {liveThreats.length > 0 && renderNewsShowcase("live", "🔴 Live Indian Threat Feed", intelSource, liveThreats, "rose", "🚨")}
         {renderNewsShowcase("finance", "Financial & Banking Frauds", "High Priority", financialNews, "cyan", "💸")}
         {renderNewsShowcase("ai", "AI Deepfakes & Social Impersonation", "Emerging Vector", aiSocialNews, "purple", "🤖")}
         {renderNewsShowcase("biometric", "Aadhaar Biometric & Identity Theft", "Critical Advisory", biometricNews, "rose", "🔒")}

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, ShieldQuestion, Newspaper, Users } from 'lucide-react';
+import { Home, BookOpen, ShieldQuestion, Newspaper, Users, Crosshair, Sparkles, Radar } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from './AuthProvider';
 
@@ -22,11 +22,14 @@ export default function Navbar() {
   if (loading || !user) return null;
   
   const navItems = [
-    { name: 'Dashboard', path: '/', icon: <Home size={22} /> },
-    { name: 'Family', path: '/family', icon: <Users size={22} /> },
-    { name: 'Learn', path: '/learn', icon: <BookOpen size={22} /> },
-    { name: 'Quiz', path: '/quiz', icon: <ShieldQuestion size={22} /> },
-    { name: 'News', path: '/news', icon: <Newspaper size={22} /> },
+    { name: 'Home', path: '/', icon: <Home size={20} /> },
+    { name: 'RedZone', path: '/redzone', icon: <Crosshair size={20} className="text-rose-400" /> },
+    { name: 'Report', path: '/report', icon: <Radar size={20} className="text-cyan-400" /> },
+    { name: 'Studio', path: '/create', icon: <Sparkles size={20} className="text-pink-400" /> },
+    { name: 'Learn', path: '/learn', icon: <BookOpen size={20} /> },
+    { name: 'Quiz', path: '/quiz', icon: <ShieldQuestion size={20} /> },
+    { name: 'News', path: '/news', icon: <Newspaper size={20} /> },
+    { name: 'Family', path: '/family', icon: <Users size={20} /> },
   ];
 
   return (

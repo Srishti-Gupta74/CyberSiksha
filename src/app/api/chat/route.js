@@ -47,14 +47,23 @@ CRITICAL MANDATE: Output ONLY your direct response to the user. Do not output yo
     }
 
     if (!text) {
-      text = "🚨 Security Mentor Advisory: Always pause and verify unasked financial requests or suspicious links independently. Never share your bank OTP, passwords, or UPI PIN over phone calls. If you suspect fraud, report immediately to the National Helpline at 1930 or visit cybercrime.gov.in.";
+      const lower = (message || "").toLowerCase();
+      if (lower.includes('phishing')) {
+        text = "🎣 PHISHING DEFINITION: Phishing is a digital scam where attackers disguise themselves as trusted institutions (like banks, courier companies, or government officials) via email, SMS, or WhatsApp. Their main goal is to trick you into clicking malicious links or revealing sensitive data like passwords, OTPs, or credit card details. Always double-check sender details!";
+      } else if (lower.includes('deepfake') || lower.includes('ai voice') || lower.includes('clone')) {
+        text = "🤖 DEEPFAKE ALERT: Scammers use AI technology to clone the voice or face of a loved one using audio/video from their social media. If you get a distressing emergency call asking for money, hang up and verify by calling back their original phone number!";
+      } else if (lower.includes('arrest') || lower.includes('cbi') || lower.includes('police')) {
+        text = "⚠️ DIGITAL ARREST FRAUD: CBI, Police, or RBI never conduct video call interrogations or demand money over Skype/WhatsApp to clear charges. Disconnect immediately and dial 1930!";
+      } else {
+        text = "🚨 Security Mentor Advisory: Always pause and verify unasked financial requests or suspicious links independently. Never share your bank OTP, passwords, or UPI PIN over phone calls. If you suspect fraud, report immediately to the National Helpline at 1930 or visit cybercrime.gov.in.";
+      }
     }
 
     return NextResponse.json({ reply: text });
   } catch (error) {
     console.error('API Chat Error:', error);
     return NextResponse.json({ 
-      reply: "🚨 Security Mentor Advisory: Always pause and verify unasked financial requests or suspicious links independently. Never share your bank OTP, passwords, or UPI PIN over phone calls. If you suspect fraud, report immediately to the National Helpline at 1930 or visit cybercrime.gov.in." 
+      reply: "🎣 PHISHING & SCAM ADVISORY: Phishing is when scammers disguise themselves as trusted institutions to steal passwords or OTPs. Always pause and verify unasked financial requests independently. Report cyber fraud immediately to 1930." 
     });
   }
 }

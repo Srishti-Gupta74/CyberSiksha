@@ -52,7 +52,7 @@ export default function FloatingChatbot() {
     if (isOpen) scrollToBottom();
   }, [messages, isOpen]);
 
-  const handleSendMessage = (textToSend) => {
+  const handleSendMessage = async (textToSend) => {
     const query = typeof textToSend === 'string' ? textToSend : inputText;
     if (!query || !query.trim()) return;
 
@@ -61,28 +61,46 @@ export default function FloatingChatbot() {
     if (typeof textToSend !== 'string') setInputText('');
     setIsTyping(true);
 
-    // AI Intelligence Analysis Simulation
-    setTimeout(() => {
-      const lower = query.toLowerCase();
-      let reply = "⚠️ SUSPICIOUS PATTERN DETECTED: Scammers frequently use urgent pressure tactics and promises of quick rewards. Do not share OTPs, click unknown links, or transfer funds. Verify independently!";
-      
-      if (lower.includes('apk') || lower.includes('yono') || lower.includes('download')) {
-        reply = MOCK_AI_RESPONSES.apk;
-      } else if (lower.includes('arrest') || lower.includes('police') || lower.includes('cbi') || lower.includes('video call')) {
-        reply = MOCK_AI_RESPONSES.arrest;
-      } else if (lower.includes('lottery') || lower.includes('kbc') || lower.includes('prize') || lower.includes('won')) {
-        reply = MOCK_AI_RESPONSES.lottery;
-      } else if (lower.includes('job') || lower.includes('telegram') || lower.includes('part time') || lower.includes('youtube like')) {
-        reply = MOCK_AI_RESPONSES.job;
-      } else if (lower.includes('aadhaar') || lower.includes('biometric') || lower.includes('lock')) {
-        reply = "🛡️ PROTOCOL: Visit myaadhaar.uidai.gov.in right now, log in with OTP, and click 'Lock/Unlock Biometrics'. This stops scammers from using your cloned fingerprints at customer service centres!";
-      } else if (lower.includes('upi') || lower.includes('pin') || lower.includes('qr') || lower.includes('receive')) {
-        reply = "🛑 IRONCLAD RULE: You NEVER need to enter your UPI PIN to RECEIVE money. Entering your PIN always DEDUCTS money from your bank account!";
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: query })
+      });
+      const data = await res.json();
+      if (res.ok && data.reply) {
+        setMessages(prev => [...prev, { sender: 'ai', text: data.reply, time: 'Just now' }]);
+        setIsTyping(false);
+        return;
       }
+    } catch (err) {
+      console.log("AI Chat endpoint fallback:", err);
+    }
 
-      setMessages(prev => [...prev, { sender: 'ai', text: reply, time: 'Just now' }]);
-      setIsTyping(false);
-    }, 1000);
+    // Local fallback intelligence engine if API is unreachable
+    const lower = query.toLowerCase();
+    let reply = "🚨 Security Mentor Advisory: Always pause and verify unasked financial requests or suspicious links independently. Never share your bank OTP, passwords, or UPI PIN over phone calls. If you suspect fraud, report immediately to the National Helpline at 1930.";
+    
+    if (lower.includes('phishing') || lower.includes('link') || lower.includes('click')) {
+      reply = "🎣 PHISHING DEFINITION: Phishing is a cyber attack where scammers send fake messages (SMS, WhatsApp, or Email) disguised as trusted banks, delivery services, or government bodies. They trick you into clicking malicious links to steal your passwords, bank logins, or OTPs. Always check the sender address carefully!";
+    } else if (lower.includes('deepfake') || lower.includes('ai voice') || lower.includes('clone')) {
+      reply = "🤖 DEEPFAKE ALERT: Scammers use AI to clone voices or faces of family members from public social media videos. If a loved one calls claiming an emergency and demanding money, hang up and call them back on their known number!";
+    } else if (lower.includes('apk') || lower.includes('yono') || lower.includes('download')) {
+      reply = MOCK_AI_RESPONSES.apk;
+    } else if (lower.includes('arrest') || lower.includes('police') || lower.includes('cbi') || lower.includes('video call')) {
+      reply = MOCK_AI_RESPONSES.arrest;
+    } else if (lower.includes('lottery') || lower.includes('kbc') || lower.includes('prize') || lower.includes('won')) {
+      reply = MOCK_AI_RESPONSES.lottery;
+    } else if (lower.includes('job') || lower.includes('telegram') || lower.includes('part time') || lower.includes('youtube like')) {
+      reply = MOCK_AI_RESPONSES.job;
+    } else if (lower.includes('aadhaar') || lower.includes('biometric') || lower.includes('lock')) {
+      reply = "🛡️ PROTOCOL: Visit myaadhaar.uidai.gov.in right now, log in with OTP, and click 'Lock/Unlock Biometrics'. This stops scammers from using your cloned fingerprints at customer service centres!";
+    } else if (lower.includes('upi') || lower.includes('pin') || lower.includes('qr') || lower.includes('receive')) {
+      reply = "🛑 IRONCLAD RULE: You NEVER need to enter your UPI PIN to RECEIVE money. Entering your PIN always DEDUCTS money from your bank account!";
+    }
+
+    setMessages(prev => [...prev, { sender: 'ai', text: reply, time: 'Just now' }]);
+    setIsTyping(false);
   };
 
   if (!user) return null;

@@ -261,10 +261,6 @@ export default function LearnPage() {
           <div className="absolute -top-32 -left-32 w-80 h-80 bg-purple-600/20 rounded-full blur-3xl pointer-events-none"></div>
           
           <div className="relative z-10 text-center md:text-left max-w-2xl">
-            <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/40 px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(139,92,246,0.3)] font-mono">
-              <Sparkles size={16} className="text-cyan-400 animate-spin" /> Elite Dark Navy-Purple Ecosystem
-            </div>
-            
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-black font-['Outfit'] mb-4 leading-[1.06] text-white">
               Tactile Dealing <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500">

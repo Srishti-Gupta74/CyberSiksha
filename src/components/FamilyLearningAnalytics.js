@@ -4,10 +4,10 @@ import { useState } from 'react';
 import { Trophy, Award, BookOpen, CheckCircle2, TrendingUp, Users, ShieldCheck, Star } from 'lucide-react';
 
 const CORE_FAMILY_STATS = [
-  { name: "Neha (Circle Commander)", role: "Admin", xp: 540, lessons: 18, quizzes: 15, resScore: "98%", streak: 12, color: "#22d3ee", status: "🏆 MASTER GUARDIAN" },
-  { name: "Grandpa Sharma (Elder)", role: "Protected", xp: 180, lessons: 6, quizzes: 4, resScore: "84%", streak: 4, color: "#fbbf24", status: "🛡️ CERTIFIED RESISTANT" },
-  { name: "Sunita (Mother)", role: "Member", xp: 320, lessons: 11, quizzes: 9, resScore: "92%", streak: 7, color: "#a855f7", status: "⚡ VIGILANT DEFENDER" },
-  { name: "Aarav (Student)", role: "Member", xp: 410, lessons: 14, quizzes: 12, resScore: "95%", streak: 9, color: "#f43f5e", status: "🔥 CYBER SENTINEL" }
+  { name: "Neha (Circle Commander)", role: "Admin", xp: 540, lessons: 16, quizzes: 14, resScore: "94%", streak: 12, color: "#22d3ee", status: "🏆 MASTER GUARDIAN" },
+  { name: "Sunita (Mother)", role: "Member", xp: 420, lessons: 20, quizzes: 18, resScore: "91%", streak: 7, color: "#a855f7", status: "⚡ VIGILANT DEFENDER" },
+  { name: "Aarav (Student)", role: "Member", xp: 480, lessons: 15, quizzes: 13, resScore: "99%", streak: 9, color: "#f43f5e", status: "🔥 CYBER SENTINEL" },
+  { name: "Grandpa Sharma (Elder)", role: "Protected", xp: 210, lessons: 12, quizzes: 9, resScore: "86%", streak: 4, color: "#fbbf24", status: "🛡️ CERTIFIED RESISTANT" }
 ];
 
 export default function FamilyLearningAnalytics({ members = [] }) {
@@ -19,8 +19,8 @@ export default function FamilyLearningAnalytics({ members = [] }) {
     return !["neha", "grandpa", "sunita", "aarav"].some(core => dName.toLowerCase().includes(core));
   }).map((m, idx) => {
     const name = m?.profiles?.display_name || m?.email?.split('@')[0] || `Member ${idx+1}`;
-    const xp = m?.profiles?.xp || Math.floor(150 + Math.random() * 250);
-    const lessons = Math.min(20, Math.floor(xp / 30));
+    const xp = m?.profiles?.xp || (350 + (idx * 45));
+    const lessons = Math.min(20, Math.floor(xp / 25));
     const quizzes = Math.max(1, Math.floor(lessons * 0.8));
     const colors = ["#ec4899", "#84cc16", "#f97316", "#06b6d4"];
     return {
@@ -29,7 +29,7 @@ export default function FamilyLearningAnalytics({ members = [] }) {
       xp: xp,
       lessons: lessons,
       quizzes: quizzes,
-      resScore: `${Math.min(99, 80 + Math.floor(xp / 25))}%`,
+      resScore: `${Math.min(98, 82 + Math.floor(xp / 30))}%`,
       streak: m?.profiles?.streak || 3,
       color: colors[idx % colors.length],
       status: xp > 350 ? "⚡ VIGILANT DEFENDER" : "🛡️ ACTIVE SENTINEL"
@@ -38,7 +38,7 @@ export default function FamilyLearningAnalytics({ members = [] }) {
 
   const allStats = [...CORE_FAMILY_STATS, ...dynamicStats];
 
-  const sortedStats = allStats.sort((a, b) => {
+  const sortedStats = [...allStats].sort((a, b) => {
     if (selectedSort === "xp") return b.xp - a.xp;
     if (selectedSort === "lessons") return b.lessons - a.lessons;
     return parseInt(b.resScore) - parseInt(a.resScore);
@@ -67,7 +67,7 @@ export default function FamilyLearningAnalytics({ members = [] }) {
                 key={tab.id}
                 onClick={() => setSelectedSort(tab.id)}
                 className={`px-3 py-1.5 rounded-lg font-black transition-all cursor-pointer ${
-                  selectedSort === tab.id ? "bg-cyan-400 text-slate-950 shadow-md" : "text-slate-300 hover:text-white"
+                  selectedSort === tab.id ? "bg-cyan-400 text-slate-950 shadow-md scale-105" : "text-slate-300 hover:text-white bg-white/5"
                 }`}
               >
                 {tab.label}
@@ -77,20 +77,34 @@ export default function FamilyLearningAnalytics({ members = [] }) {
         </div>
 
         {/* Visual Comparative Bar Matrix */}
-        <div className="space-y-6 mb-12 bg-slate-900/40 p-6 rounded-3xl border border-white/5">
-          <span className="text-xs font-black text-slate-300 uppercase tracking-widest block mb-4">📈 Relative Pedagogy Completion Graph:</span>
+        <div className="space-y-6 mb-12 bg-slate-900/40 p-6 rounded-3xl border border-white/5 transition-all">
+          <span className="text-xs font-black text-slate-300 uppercase tracking-widest block mb-4">
+            📈 Relative Pedagogy Completion Graph ({selectedSort === 'xp' ? 'Ranked by Total XP' : (selectedSort === 'lessons' ? 'Ranked by Lessons Mastered' : 'Ranked by Phish Resistance Score')}):
+          </span>
           <div className="space-y-4">
             {sortedStats.map((mem, idx) => {
-              const maxXP = 600;
-              const widthPct = Math.min(100, Math.round((mem.xp / maxXP) * 100));
+              let widthPct = 0;
+              let labelText = "";
+              if (selectedSort === "xp") {
+                widthPct = Math.min(100, Math.round((mem.xp / 600) * 100));
+                labelText = `${mem.xp} XP (${widthPct}% Mastery)`;
+              } else if (selectedSort === "lessons") {
+                widthPct = Math.min(100, Math.round((mem.lessons / 20) * 100));
+                labelText = `${mem.lessons} / 20 Lessons Mastered (${widthPct}%)`;
+              } else {
+                widthPct = parseInt(mem.resScore) || 80;
+                labelText = `${mem.resScore} Phish Resistance Score`;
+              }
+
               return (
-                <div key={idx} className="space-y-1.5">
+                <div key={mem.name} className="space-y-1.5 transition-all duration-500">
                   <div className="flex justify-between items-center text-xs font-bold">
                     <span className="text-white flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] bg-white/10 text-slate-300 font-mono">#{idx+1}</span>
                       <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: mem.color }}></span>
                       <span className="truncate max-w-[200px] sm:max-w-none">{mem.name}</span>
                     </span>
-                    <span className="font-mono text-cyan-300 shrink-0">{mem.xp} XP ({widthPct}% Mastery)</span>
+                    <span className="font-mono text-cyan-300 shrink-0 font-black">{labelText}</span>
                   </div>
                   <div className="w-full bg-slate-950 h-3.5 rounded-full overflow-hidden border border-white/10 p-0.5">
                     <div 

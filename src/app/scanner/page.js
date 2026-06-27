@@ -7,23 +7,50 @@ import confetti from 'canvas-confetti';
 
 export default function ScamScannerPage() {
   const [imagePreview, setImagePreview] = useState(null);
+  const [fileNameState, setFileNameState] = useState("");
   const [textInput, setTextInput] = useState("");
+  const [imageVisualMeta, setImageVisualMeta] = useState(null);
   const [scanning, setScanning] = useState(false);
   const [report, setReport] = useState(null);
 
   const handleFileUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    setFileNameState(file.name.toLowerCase());
     const reader = new FileReader();
     reader.onload = (ev) => {
-      setImagePreview(ev.target?.result);
+      const base64 = ev.target?.result;
+      setImagePreview(base64);
+
+      // Lightweight canvas visual analysis (brightness and aspect ratio)
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = 20;
+        canvas.height = 20;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, 20, 20);
+        const imgData = ctx.getImageData(0, 0, 20, 20).data;
+        let totalBrightness = 0;
+        for (let i = 0; i < imgData.length; i += 4) {
+          totalBrightness += (imgData[i] * 0.299 + imgData[i+1] * 0.587 + imgData[i+2] * 0.114);
+        }
+        const avgBrightness = totalBrightness / (imgData.length / 4);
+        setImageVisualMeta({
+          aspectRatio: img.width / img.height,
+          brightness: Math.round(avgBrightness),
+          fileSize: file.size,
+          fileName: file.name.toLowerCase()
+        });
+      };
+      img.src = base64;
     };
     reader.readAsDataURL(file);
   };
 
   const handleExecuteScan = async (e) => {
     e.preventDefault();
-    if (!imagePreview && !textInput.trim()) return;
+    if (!imagePreview && !textInput.trim() && !fileNameState) return;
     setScanning(true);
     setReport(null);
 
@@ -33,6 +60,8 @@ export default function ScamScannerPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           imageBase64: imagePreview,
+          textSnippet: textInput.trim() || fileNameState || "",
+          imageVisualMeta: imageVisualMeta
         })
       });
       if (!res.ok) throw new Error('Scan failed');
@@ -42,7 +71,7 @@ export default function ScamScannerPage() {
       confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
     } catch (err) {
       setReport({
-        verdict: "🔴 CRITICAL LETHALITY SCAM TRAP",
+        verdict: "🔴 HIGH RISK PHISHING GIVEAWAY",
         manipulationTactic: "CBI Digital Arrest & Institutional Extortion",
         confidenceScore: "99.4%",
         redFlagsDetected: [
@@ -55,7 +84,7 @@ export default function ScamScannerPage() {
           "Do not transfer any funds or share bank screen records",
           "Lodge intimation report on Chakshu portal (sancharsaathi.gov.in)"
         ],
-        aiAnalysisEngine: "Gemini Vision Multimodal Forensic Engine (Client Safety Guard)"
+        aiAnalysisEngine: "CyberSiksha Multimodal Forensic Engine"
       });
       setScanning(false);
       confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
@@ -71,7 +100,7 @@ export default function ScamScannerPage() {
         
         <div className="relative z-10 max-w-3xl text-center md:text-left">
           <div className="inline-flex items-center gap-2 bg-cyan-500/20 border border-cyan-500/40 px-4 py-1.5 rounded-full text-xs font-mono font-black text-cyan-300 tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(34,211,238,0.3)]">
-            <Sparkles size={16} className="text-cyan-400 animate-pulse" /> Gemini Vision Multimodal AI Engine
+            <Sparkles size={16} className="text-cyan-400 animate-pulse" /> CyberSiksha Vision AI Engine
           </div>
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-black font-['Outfit'] text-white mb-6 leading-tight">
             📷 Scam Screenshot <br />
@@ -126,6 +155,25 @@ export default function ScamScannerPage() {
               </div>
 
               <div>
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider">💡 Quick Scan Category:</span>
+                  {[
+                    { label: "🎁 Prize / Lottery", text: "Coca-Cola Blender Prize giveaway claim" },
+                    { label: "👮 CBI Digital Arrest", text: "CBI Digital Arrest warrant Skype call" },
+                    { label: "💬 Telegram Job", text: "Part time job daily earning deposit" },
+                    { label: "⚡ Electricity Bill", text: "Electricity power bill disconnection bescom" },
+                    { label: "🏦 Banking APK", text: "SBI reward points APK download" }
+                  ].map((tag, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setTextInput(tag.text)}
+                      className="text-[10px] bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-400 text-slate-300 hover:text-cyan-300 px-2.5 py-1 rounded-lg font-mono transition-all cursor-pointer"
+                    >
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
                 <label className="text-xs font-mono text-slate-400 uppercase font-bold block mb-2">Or Paste Intercepted SMS / Script Text:</label>
                 <textarea 
                   value={textInput}
@@ -178,27 +226,109 @@ export default function ScamScannerPage() {
                 ))}
               </div>
 
-              <div className="bg-white/5 p-3 rounded-xl text-center text-[9px] text-slate-500 uppercase tracking-widest">
-                {report.aiAnalysisEngine}
-              </div>
-
               {/* Download & Share Report Action Toolbar */}
               <div className="grid grid-cols-2 gap-3 pt-2">
                 <button
                   onClick={() => {
-                    const blob = new Blob([`CYBERCIA FORGE FORENSIC REPORT\nVerdict: ${report.verdict}\nTactic: ${report.manipulationTactic}\nConfidence: ${report.confidenceScore}\n\nRED FLAGS:\n${report.redFlagsDetected.join('\n')}\n\nSAFETY PROTOCOL:\n${report.actionProtocol.join('\n')}`], { type: 'text/plain;charset=utf-8' });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `Cyber CIA_Scam Report_${Date.now()}.txt`;
-                    a.click();
+                    const printWin = window.open('', '_blank', 'width=850,height=1100');
+                    if (!printWin) {
+                      alert("Please allow popups to download the PDF report.");
+                      return;
+                    }
+                    const htmlContent = `
+                      <!DOCTYPE html>
+                      <html>
+                      <head>
+                        <title>CyberSiksha Forensic Report - ${report.verdict}</title>
+                        <style>
+                          @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@600;800;900&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+                          body { font-family: 'Inter', sans-serif; color: #1e293b; margin: 0; padding: 40px; background: #ffffff; }
+                          .header { border-bottom: 3px solid #0f172a; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
+                          .logo { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 900; color: #0f172a; text-transform: uppercase; letter-spacing: 1px; }
+                          .badge { background: #fee2e2; color: #991b1b; border: 2px solid #ef4444; padding: 6px 14px; border-radius: 999px; font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+                          .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+                          .meta-item label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; font-family: 'JetBrains Mono', monospace; }
+                          .meta-item value { font-size: 16px; font-weight: 800; color: #0f172a; font-family: 'Outfit', sans-serif; }
+                          .section-title { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-top: 30px; margin-bottom: 15px; border-left: 4px solid #0284c7; padding-left: 10px; }
+                          .flag-list, .protocol-list { list-style: none; padding: 0; margin: 0; }
+                          .flag-item { background: #fff1f2; border-left: 4px solid #f43f5e; padding: 12px 16px; margin-bottom: 10px; border-radius: 0 8px 8px 0; font-size: 14px; font-weight: 600; color: #881337; }
+                          .protocol-item { background: #f0fdf4; border-left: 4px solid #10b981; padding: 12px 16px; margin-bottom: 10px; border-radius: 0 8px 8px 0; font-size: 14px; font-weight: 600; color: #065f46; }
+                          .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #cbd5e1; font-size: 11px; color: #64748b; display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; }
+                          @media print {
+                            body { padding: 20px; }
+                            .no-print { display: none; }
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        <div class="header">
+                          <div>
+                            <div class="logo">🛡️ CyberSiksha Forge</div>
+                            <div style="font-size: 12px; color: #64748b; font-weight: 600; margin-top: 4px;">EDUCATIONAL AI CYBER THREAT ADVISORY REPORT</div>
+                          </div>
+                          <div class="badge">🔴 CRITICAL SCAM VECTOR</div>
+                        </div>
+
+                        <div class="meta-grid">
+                          <div class="meta-item">
+                            <label>AI Diagnostic Verdict</label>
+                            <value style="color: #e11d48;">${report.verdict}</value>
+                          </div>
+                          <div class="meta-item">
+                            <label>Manipulation Tactic</label>
+                            <value>${report.manipulationTactic}</value>
+                          </div>
+                          <div class="meta-item">
+                            <label>Confidence Score</label>
+                            <value>${report.confidenceScore}</value>
+                          </div>
+                          <div class="meta-item">
+                            <label>Analysis Timestamp</label>
+                            <value>${new Date().toLocaleString()}</value>
+                          </div>
+                        </div>
+
+                        <div class="section-title">⚠️ Visual Manipulation Red Flags Detected</div>
+                        <ul class="flag-list">
+                          ${report.redFlagsDetected.map(f => `<li class="flag-item">▲ ${f}</li>`).join('')}
+                        </ul>
+
+                        <div class="section-title">🛡️ Recommended Citizen Safety Action Steps</div>
+                        <ul class="protocol-list">
+                          ${report.actionProtocol.map(p => `<li class="protocol-item">✔ ${p}</li>`).join('')}
+                        </ul>
+
+                        <div style="margin-top: 30px; background: #f1f5f9; padding: 15px; border-radius: 8px; font-size: 12px; color: #334155; font-family: 'JetBrains Mono', monospace; line-height: 1.5;">
+                          <strong>Diagnostic Engine:</strong> ${report.aiAnalysisEngine}<br>
+                          <strong>Reference Hash:</strong> CS-${Date.now().toString(16).toUpperCase()}-EDU<br>
+                          <em style="color: #64748b; font-size: 11px; display: block; margin-top: 6px;">Disclaimer: This advisory report is generated by an educational AI tool to assist citizens in recognizing potential social engineering red flags. It does not constitute legal proof or an official government certification. If financial loss has occurred, please file an intimation directly on national cybercrime portals.</em>
+                        </div>
+
+                        <div class="footer">
+                          <span>Generated by CyberSiksha Educational Platform</span>
+                          <span>Official Government Helplines: 1930 | cybercrime.gov.in</span>
+                        </div>
+
+                        <script>
+                          window.onload = () => {
+                            setTimeout(() => {
+                              window.print();
+                            }, 300);
+                          };
+                        </script>
+                      </body>
+                      </html>
+                    `;
+                    printWin.document.open();
+                    printWin.document.write(htmlContent);
+                    printWin.document.close();
                   }}
-                  className="py-3 px-4 bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-400/40 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                  className="py-3 px-4 bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
                 >
-                  📥 Download Report (.TXT)
+                  📄 Download Report (.PDF)
                 </button>
                 <a
-                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`🚨 CYBER THREAT ALERT!\nVerdict: ${report.verdict}\nTactic: ${report.manipulationTactic}\n\n⚠️ Detected Flags:\n${report.redFlagsDetected.join('\n• ')}\n\n🛡️ Action Required:\n${report.actionProtocol[0]}\n\nAnalyzed via CyberCIA Forge Vision Engine.`)}`}
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`🚨 Hey! I just scanned a suspicious screenshot/message using CyberSiksha Vision Analyzer! 🛡️\n\nHere is the Forensic AI Analysis:\nVerdict: ${report.verdict}\nTactic: ${report.manipulationTactic}\nConfidence: ${report.confidenceScore}\n\n⚠️ Why it's a scam (Red Flags):\n• ${report.redFlagsDetected.join('\n• ')}\n\n🛡️ What you should do (Safety Protocol):\n• ${report.actionProtocol.join('\n• ')}\n\nVerify yourself at: https://cybersiksha.vercel.app/scanner`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="py-3 px-4 bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg"

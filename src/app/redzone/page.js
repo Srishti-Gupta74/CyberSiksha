@@ -44,6 +44,7 @@ export default function RedZonePage() {
         body: JSON.stringify({
           persona: targetPersona,
           vector: attackVector,
+          message: craftedMessage
         })
       });
       if (!res.ok) throw new Error('API route returned non-200');
@@ -52,15 +53,23 @@ export default function RedZonePage() {
       setEvaluating(false);
       confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
     } catch (err) {
-      // Foolproof Hackathon Client Fallback (Guarantees button NEVER fails during judging)
+      const lower = craftedMessage.toLowerCase().trim();
+      const isHarmless = lower.length < 20 && !lower.includes('urgent') && !lower.includes('bank') && !lower.includes('win') && !lower.includes('block') && !lower.includes('http');
+      
       setResult({
-        lethalityScore: 88,
-        rating: '🔴 Supreme Lethality Trap (Client Engine)',
-        triggersExploited: ['High-Pressure Time Urgency', 'Institutional Authority Impersonation'],
-        forensicAnalysis: `Your trap exploited core psychological vulnerability vectors targeting the ${targetPersona} persona.`,
+        lethalityScore: isHarmless ? 10 : 88,
+        rating: isHarmless ? '🟢 Harmless Message (No Threat Detected)' : '🔴 Supreme Lethality Trap (Simulated)',
+        triggersExploited: isHarmless ? ['None (Friendly Casual Message)'] : ['High-Pressure Time Urgency', 'Institutional Authority Impersonation'],
+        forensicAnalysis: isHarmless 
+          ? `This looks like a friendly, completely harmless greeting or casual conversation! It does not contain any urgency, scare tactics, links, or financial demands typical of social engineering attackers.`
+          : `This attack attempts to exploit core psychological vulnerability vectors targeting the ${targetPersona} persona.`,
         ethicalFlipChallenge: {
-          prompt: "Now flip your helmet! As a CyberCIA Forge Defender, spot the critical flaws in your own attack.",
-          redFlagsToSpot: [
+          prompt: "Now flip your mindset! As a cyber defender, evaluate how a vigilant citizen analyzes this text.",
+          redFlagsToSpot: isHarmless ? [
+            "No threatening or urgent language present",
+            "No request for sensitive credentials or money",
+            "No external phishing links or spoofed numbers"
+          ] : [
             "Unverified external contact vector",
             "Artificial urgency demanding immediate action",
             "Requests sensitive credential or financial transfer"
@@ -85,7 +94,7 @@ export default function RedZonePage() {
         
         <div className="relative z-10 max-w-2xl text-center md:text-left">
           <div className="inline-flex items-center gap-2 bg-rose-500/20 border border-rose-500/40 px-3.5 py-1 rounded-full text-[11px] font-mono font-black text-rose-300 tracking-widest uppercase mb-4">
-            <Crosshair size={14} className="text-rose-400 animate-spin" /> CyberCIA Forge Offense-For-Defense Arena
+            <Crosshair size={14} className="text-rose-400 animate-spin" /> CyberSiksha Interactive Defense Arena
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-['Outfit'] text-white mb-4 leading-tight">
             🔴 The Red Zone: <br />
@@ -270,6 +279,17 @@ export default function RedZonePage() {
                     </div>
                   )}
                 </div>
+
+                <button
+                  onClick={() => {
+                    setResult(null);
+                    setCraftedMessage("");
+                    setSpottedFlags([]);
+                  }}
+                  className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-400/40 rounded-2xl text-xs font-black uppercase font-mono tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg mt-4"
+                >
+                  <RefreshCw size={16} /> Reset Workbench & Craft New Trap
+                </button>
 
               </div>
             ) : (

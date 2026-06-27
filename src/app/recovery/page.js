@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import ScrollReveal from '@/components/ScrollReveal';
-import { PhoneCall, ShieldAlert, ExternalLink, Lock, CheckCircle2, FileText, ArrowRight, AlertOctagon, Activity, Sparkles } from 'lucide-react';
+import { PhoneCall, ShieldAlert, ExternalLink, Lock, CheckCircle2, FileText, ArrowRight, AlertOctagon, Activity, Sparkles, HelpCircle, Phone, Globe, Shield } from 'lucide-react';
 import Link from 'next/link';
 import confetti from 'canvas-confetti';
 
@@ -15,6 +15,60 @@ const BANK_FREEZE_NUMBERS = [
   { bank: "Paytm / UPI Gateway", num: "0120 4456456", sms: "Report in Paytm App Support" }
 ];
 
+const NATIONAL_HELPLINES = [
+  { name: "National Cyber Helpline (Golden Hour Fund Freeze)", num: "1930", badge: "🔴 CRITICAL 24/7" },
+  { name: "National Emergency Helpline (Police / Rescue)", num: "112", badge: "🚨 EMERGENCY" },
+  { name: "Women & Child Cyber Protection Helpline", num: "181 / 1091", badge: "🛡️ PRIORITY SAFETY" },
+  { name: "RBI Financial Consumer Fraud Helpline", num: "14448", badge: "🏦 BANKING REGULATOR" }
+];
+
+const SCENARIO_GUIDES = [
+  {
+    id: "arrest",
+    title: "👮 Fake CBI / Police Digital Arrest",
+    subtitle: "Scammer on video call claiming your Aadhaar/SIM is linked to money laundering or drugs.",
+    steps: [
+      "HANG UP IMMEDIATELY — Indian Police, CBI, or judges NEVER conduct video call interrogations via Skype or WhatsApp.",
+      "Cover your phone or laptop webcam with opaque tape or disconnect internet immediately.",
+      "DO NOT transfer 'security bail' or share screen recordings of your bank accounts.",
+      "Report the scammer's Skype ID or mobile number immediately on TRAI Chakshu portal."
+    ]
+  },
+  {
+    id: "upi",
+    title: "💸 UPI / Bank Account Money Debited",
+    subtitle: "Unauthorized money transfer occurred after clicking a link or sharing OTP.",
+    steps: [
+      "DIAL 1930 WITHIN 2 HOURS (The Golden Hour) — I4C can put a lien freeze on scammer accounts holding stolen funds.",
+      "Send SMS to your bank fraud desk (from directory below) to instantly block debit card & netbanking.",
+      "Copy the exact 12-digit UTR / UPI Transaction Reference Number from your SMS or bank passbook.",
+      "File a formal online dispute warrant on cybercrime.gov.in attaching the transaction screenshot."
+    ]
+  },
+  {
+    id: "job",
+    title: "💬 Telegram Job / Task Scam Deposit",
+    subtitle: "Paid prepaid deposit for YouTube likes or hotel reviews and cannot withdraw money.",
+    steps: [
+      "STOP DEPOSITING MONEY IMMEDIATELY — Do not pay 'tax' or 'unfreeze fee' to recover lost funds; it is a trap.",
+      "Take screenshots of every UPI ID or bank account where you transferred money.",
+      "Exit and report the Telegram VIP recruitment group to @notoscambot.",
+      "Report recipient merchant handles to 1930 to freeze their fraudulent payout accounts."
+    ]
+  },
+  {
+    id: "electricity",
+    title: "⚡ Electricity Disconnection / APK Trojan",
+    subtitle: "Received SMS about power disconnection tonight or downloaded SBI Reward points APK.",
+    steps: [
+      "DO NOT call the 10-digit personal mobile number listed in the SMS message.",
+      "If you installed AnyDesk, TeamViewer, or an unverified APK, TURN OFF MOBILE DATA / WI-FI instantly.",
+      "Uninstall the suspicious APK and run Google Play Protect full device scan.",
+      "Verify electricity bill status only on your state's official utility board portal or official app."
+    ]
+  }
+];
+
 const RECOVERY_STEPS = [
   "Dialed 1930 National Cyber Helpline to trigger golden hour lien freeze",
   "Contacted bank fraud desk & initiated emergency debit card / netbanking lock",
@@ -24,6 +78,7 @@ const RECOVERY_STEPS = [
 
 export default function EmergencyRecoveryPage() {
   const [completedSteps, setCompletedSteps] = useState([]);
+  const [activeScenario, setActiveScenario] = useState("arrest");
 
   const toggleRecoveryStep = (idx) => {
     const next = completedSteps.includes(idx) ? completedSteps.filter(i => i !== idx) : [...completedSteps, idx];
@@ -89,13 +144,13 @@ export default function EmergencyRecoveryPage() {
             <AlertOctagon size={16} className="text-rose-400 animate-spin" /> Golden Hour Citizen Emergency Protocol
           </div>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-black font-['Outfit'] text-white mb-4 leading-tight">
-            🚨 I Got Scammed — <br />
+            🚨 Scammed? SOS Guide — <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-400 via-amber-300 to-purple-400">
-              What Do I Do Now?
+              What To Do Right Now
             </span>
           </h1>
           <p className="text-slate-200 text-sm sm:text-base leading-relaxed font-medium">
-            Every minute counts. Do not panic. Follow India's documented post-fraud recovery sequence immediately to freeze stolen funds and lodge official cyber warrants.
+            Every second matters. Do not panic. Select your emergency scenario below for an immediate step-by-step action sequence, or call national government helplines to freeze funds.
           </p>
         </div>
 
@@ -112,14 +167,98 @@ export default function EmergencyRecoveryPage() {
         </div>
       </div>
 
-      {/* 4-Step Action Sequence */}
+      {/* NEW: Scenario-Specific Emergency To-Do Guides */}
+      <div className="mb-12 glass-card p-6 sm:p-10 bg-slate-950 border-2 border-rose-500/80 shadow-[0_0_80px_rgba(244,63,94,0.2)]">
+        <div className="border-b border-white/10 pb-6 mb-8">
+          <span className="text-xs font-black text-rose-400 uppercase tracking-widest flex items-center gap-2 mb-1">
+            <HelpCircle size={16} className="animate-bounce" /> Scenario-Specific Action Sequences
+          </span>
+          <h2 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white">What To Do When Something Goes Wrong</h2>
+          <p className="text-xs text-slate-300 mt-1">Select the specific scam or threat scenario you are facing right now for tailored emergency instructions:</p>
+        </div>
+
+        {/* Tab Switcher */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+          {SCENARIO_GUIDES.map(sc => (
+            <button
+              key={sc.id}
+              onClick={() => setActiveScenario(sc.id)}
+              className={`p-4 rounded-2xl text-left border transition-all cursor-pointer flex flex-col justify-between ${
+                activeScenario === sc.id 
+                  ? "bg-rose-500/20 border-rose-400 text-white shadow-[0_0_20px_rgba(244,63,94,0.3)] scale-105" 
+                  : "bg-white/5 border-white/10 text-slate-300 hover:border-white/30"
+              }`}
+            >
+              <span className="font-bold text-sm leading-tight block mb-1">{sc.title}</span>
+              <span className="text-[10px] text-slate-400 font-sans line-clamp-2">{sc.subtitle}</span>
+            </button>
+          ))}
+        </div>
+
+        {/* Active Scenario Guide Display */}
+        {(() => {
+          const active = SCENARIO_GUIDES.find(s => s.id === activeScenario) || SCENARIO_GUIDES[0];
+          return (
+            <div className="bg-slate-900/80 p-6 sm:p-8 rounded-3xl border border-rose-400/50 space-y-6 animate-fade-in">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <div>
+                  <span className="text-[10px] font-black text-rose-300 uppercase tracking-widest bg-rose-500/20 px-3 py-1 rounded-full border border-rose-500/30">Emergency Protocol Active</span>
+                  <h3 className="text-xl sm:text-2xl font-black text-white mt-2">{active.title}</h3>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <span className="text-xs font-bold uppercase tracking-wider text-cyan-300 block">Immediate Action Checklist (Do These 4 Things Now):</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {active.steps.map((step, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-slate-950 border border-white/10 flex items-start gap-3">
+                      <span className="w-6 h-6 rounded-full bg-rose-500 text-white font-black text-xs flex items-center justify-center shrink-0 mt-0.5">{idx+1}</span>
+                      <span className="text-xs text-slate-200 font-sans leading-relaxed font-medium">{step}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+      </div>
+
+      {/* Comprehensive Helplines & Government Assistance Directory */}
       <div className="space-y-10">
         
+        {/* NEW: National Emergency & Government Helpline Directory */}
+        <div className="glass-card p-8 bg-slate-950 border-rose-500/60 space-y-6">
+          <div className="flex items-center gap-4 border-b border-white/10 pb-4">
+            <span className="w-10 h-10 rounded-2xl bg-rose-500/20 text-rose-400 font-mono font-black text-xl flex items-center justify-center"><Phone size={20} /></span>
+            <div>
+              <h2 className="text-2xl font-black font-['Outfit'] text-white">National Government Emergency Helplines</h2>
+              <p className="text-xs text-slate-300 font-sans">Verified 24/7 helpline numbers established by Government of India & Regulatory Authorities</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono">
+            {NATIONAL_HELPLINES.map((h, i) => (
+              <div key={i} className="p-5 rounded-2xl bg-white/5 border border-white/10 hover:border-rose-400 transition-all space-y-2 flex flex-col justify-between">
+                <div>
+                  <span className="text-[10px] font-black uppercase text-rose-300 block">{h.badge}</span>
+                  <span className="text-xs font-bold text-white block mt-1">{h.name}</span>
+                </div>
+                <div className="pt-3 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-2xl font-black text-rose-400 tracking-tight">{h.num}</span>
+                  <a href={`tel:${h.num.split(' ')[0]}`} className="p-2 rounded-xl bg-rose-500/20 text-rose-300 hover:bg-rose-500 hover:text-white transition-all">
+                    <PhoneCall size={16} />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Step 1: Government Portals Filing */}
         <div className="glass-card p-8 bg-slate-950 border-cyan-400/40 space-y-6">
           <div className="flex items-center gap-4 border-b border-white/10 pb-4">
-            <span className="w-10 h-10 rounded-2xl bg-cyan-400/20 text-cyan-400 font-mono font-black text-xl flex items-center justify-center">1</span>
-            <h2 className="text-2xl font-black font-['Outfit'] text-white">Lodge Warrants on Official Government Portals</h2>
+            <span className="w-10 h-10 rounded-2xl bg-cyan-400/20 text-cyan-400 font-mono font-black text-xl flex items-center justify-center"><Globe size={20} /></span>
+            <h2 className="text-2xl font-black font-['Outfit'] text-white">Official Government Citizen Reporting Portals</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 font-mono">
@@ -139,7 +278,6 @@ export default function EmergencyRecoveryPage() {
             <div className="p-6 rounded-2xl bg-slate-900 border border-rose-500/30 space-y-3">
               <span className="text-xs font-black text-rose-400 uppercase tracking-wider block">TRAI Chakshu Suspect Registry</span>
               <p className="text-xs text-slate-300 leading-relaxed font-sans">Report spoofed CBI calls, fake KYC links, or extortion numbers. Department of Telecom blocks suspect IMEI and SIM handles.</p>
-              {/* Note: Verified correct Hindi spelling sancharsaathi (double a) */}
               <a 
                 href="https://sancharsaathi.gov.in/sfc" 
                 target="_blank" 
@@ -155,7 +293,7 @@ export default function EmergencyRecoveryPage() {
         {/* Step 2: Emergency Bank Freeze Directory */}
         <div className="glass-card p-8 bg-slate-950 border-purple-500/40 space-y-6">
           <div className="flex items-center gap-4 border-b border-white/10 pb-4">
-            <span className="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-400 font-mono font-black text-xl flex items-center justify-center">2</span>
+            <span className="w-10 h-10 rounded-2xl bg-purple-500/20 text-purple-400 font-mono font-black text-xl flex items-center justify-center"><Shield size={20} /></span>
             <h2 className="text-2xl font-black font-['Outfit'] text-white">Direct Bank Fraud Desk Directory (Emergency Freeze)</h2>
           </div>
 

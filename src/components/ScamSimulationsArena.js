@@ -168,6 +168,10 @@ export default function ScamSimulationsArena() {
     setCurrentStepIdx(0);
     setSelectedOptionIdx(null);
     setIsAnswered(false);
+    setTimeout(() => {
+      const el = document.getElementById('gameplay-arena');
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   };
 
   const handleChooseOption = (optIdx, isCorrect) => {
@@ -254,11 +258,23 @@ export default function ScamSimulationsArena() {
                   <h4 className="text-sm font-black font-['Outfit'] text-white leading-snug">{sim.title}</h4>
                 </div>
 
-                <div className="mt-4 pt-3 border-t border-white/5 flex justify-between items-center text-[10px] font-black">
-                  <span style={{ color: sim.color }}>{sim.difficulty}</span>
-                  <span className="text-cyan-400 group-hover:translate-x-1 transition-transform flex items-center gap-1">
-                    Play <ArrowRight size={12} />
-                  </span>
+                <div className="mt-4 pt-3 border-t border-white/5 flex flex-col gap-3">
+                  <div className="flex justify-between items-center text-[10px] font-black">
+                    <span style={{ color: sim.color }}>{sim.difficulty}</span>
+                    <span className="text-slate-400 font-mono">Step {isSelected ? currentStepIdx + 1 : 1}/{sim.steps ? sim.steps.length : 'Live'}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectSim(sim);
+                    }}
+                    className={`w-full py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
+                      isSelected ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.5)] scale-102" : "bg-white/10 hover:bg-cyan-500 hover:text-slate-950 text-white"
+                    }`}
+                  >
+                    <span>{isSelected ? "⚡ Active Playing Below" : "▶ Launch Scenario"}</span>
+                  </button>
                 </div>
               </div>
             );
@@ -267,6 +283,7 @@ export default function ScamSimulationsArena() {
       </div>
 
       {/* Main Simulation Showcase Area */}
+      <div id="gameplay-arena" className="scroll-mt-28">
       {selectedSim.isLegacySim ? (
         <div className="animate-fade-in">
           <DigitalArrestSim />
@@ -363,6 +380,7 @@ export default function ScamSimulationsArena() {
 
         </div>
       )}
+      </div>
 
     </div>
   );

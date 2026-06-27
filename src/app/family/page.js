@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import ScrollReveal from '@/components/ScrollReveal';
-import { Users, Shield, UserPlus, Copy, Check, KeyRound, ArrowRight, Loader2, Award, Flame, HeartHandshake, Mail, Send, CheckCircle2, Clock, Sparkles } from 'lucide-react';
+import { Users, Shield, UserPlus, Copy, Check, KeyRound, ArrowRight, Loader2, Award, Flame, HeartHandshake, Mail, Send, CheckCircle2, Clock, Sparkles, Activity } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import FamilyLearningAnalytics from '@/components/FamilyLearningAnalytics';
 
@@ -30,13 +30,23 @@ export default function FamilyPage() {
   const [inviteRelation, setInviteRelation] = useState('Elder (Grandparent)');
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [inviteLoading, setInviteLoading] = useState(false);
+  const [inviteError, setInviteError] = useState('');
   // Family Cyber Incident Loop State
-  const [incidents, setIncidents] = useState([
-    { id: 1, author: "Grandpa (Elder)", avatar: "👴", incident: "Received fake CBI Digital Arrest video call on Skype demanding ₹50,000 crypto bail.", time: "25 mins ago", severity: "🔴 CRITICAL VECTOR" },
-    { id: 2, author: "Mother (Sunita)", avatar: "👩", incident: "Suspicious WhatsApp APK file claiming to unlock 5,000 SBI Reward points. Deleted & blocked.", time: "3 hours ago", severity: "🟡 TACTICAL SPAM" },
-    { id: 3, author: "Son (Aarav)", avatar: "👦", incident: "Fake electricity power disconnection SMS with shortened link. Reported to 1930.", time: "Yesterday", severity: "🟢 MITIGATED THREAT" }
-  ]);
+  const [incidents, setIncidents] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('cs_family_incidents');
+      if (saved) {
+        try { return JSON.parse(saved); } catch(e){}
+      }
+    }
+    return [
+      { id: 1, author: "Grandpa (Elder)", avatar: "👴", incident: "Received fake CBI Digital Arrest video call on Skype demanding ₹50,000 crypto bail.", proof: "Skype ID: cbi_vikram_88", time: "25 mins ago", severity: "🔴 CRITICAL VECTOR" },
+      { id: 2, author: "Mother (Sunita)", avatar: "👩", incident: "Suspicious WhatsApp APK file claiming to unlock 5,000 SBI Reward points. Deleted & blocked.", proof: "File: SBI_Rewards_v4.apk", time: "3 hours ago", severity: "🟡 TACTICAL SPAM" },
+      { id: 3, author: "Son (Aarav)", avatar: "👦", incident: "Fake electricity power disconnection SMS with shortened link. Reported to 1930.", proof: "Sender: +91 9876543210", time: "Yesterday", severity: "🟢 MITIGATED THREAT" }
+    ];
+  });
   const [newIncidentText, setNewIncidentText] = useState("");
+  const [incidentProof, setIncidentProof] = useState("");
   const [incidentSeverity, setIncidentSeverity] = useState("🔴 CRITICAL VECTOR");
 
   const handlePostIncident = (e) => {
@@ -48,11 +58,24 @@ export default function FamilyPage() {
       author: authorName,
       avatar: authorName.toLowerCase().includes('grand') ? "👴" : "🛡️",
       incident: newIncidentText.trim(),
+      proof: incidentProof.trim() || null,
       time: "Just now",
       severity: incidentSeverity
     };
-    setIncidents([newEntry, ...incidents]);
+    const updated = [newEntry, ...incidents];
+    setIncidents(updated);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('cs_family_incidents', JSON.stringify(updated));
+    }
+    try {
+      window.cyber_family_chan?.send({
+        type: 'broadcast',
+        event: 'live_new_incident',
+        payload: { incident: newEntry }
+      });
+    } catch(err) {}
     setNewIncidentText("");
+    setIncidentProof("");
     confetti({ particleCount: 70, spread: 60, origin: { y: 0.8 } });
   };
 
@@ -104,6 +127,15 @@ export default function FamilyPage() {
             });
           } catch(e){}
         }
+      }).on('broadcast', { event: 'live_new_incident' }, (payload) => {
+        if (payload?.payload?.incident) {
+          setIncidents(prev => {
+            if (prev.some(i => i.id === payload.payload.incident.id)) return prev;
+            const upd = [payload.payload.incident, ...prev];
+            if (typeof window !== 'undefined') localStorage.setItem('cs_family_incidents', JSON.stringify(upd));
+            return upd;
+          });
+        }
       }).subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           window.cyber_family_chan = chan;
@@ -118,6 +150,9 @@ export default function FamilyPage() {
       }
       if (e.key === 'cs_global_fam_mem' && e.newValue) {
         try { setMembers(normalizeRosterForViewer(JSON.parse(e.newValue))); } catch(err){}
+      }
+      if (e.key === 'cs_family_incidents' && e.newValue) {
+        try { setIncidents(JSON.parse(e.newValue)); } catch(err){}
       }
     };
     window.addEventListener('storage', handleStorageChange);
@@ -867,7 +902,7 @@ export default function FamilyPage() {
     }
   };
 
-  if (loading) {
+  if (!mounted || loading) {
     return <div className="flex justify-center items-center h-64 text-cyan-400">
       <Loader2 className="animate-spin" size={40} />
     </div>;
@@ -1146,32 +1181,32 @@ export default function FamilyPage() {
 
             return (
               <div 
-                className={`glass-card p-8 sm:p-10 relative overflow-hidden transition-all duration-300 w-full max-w-2xl rounded-[3rem] ${
+                className={`glass-card relative overflow-hidden transition-all duration-300 w-full rounded-[2.5rem] ${
                   isMaster 
-                    ? 'border-cyan-400 bg-gradient-to-r from-slate-950 via-purple-950/50 to-slate-950 shadow-[0_0_70px_rgba(34,211,238,0.3)] ring-2 ring-cyan-400/40' 
+                    ? 'p-8 sm:p-10 max-w-2xl border-cyan-400 bg-gradient-to-r from-slate-950 via-purple-950/50 to-slate-950 shadow-[0_0_70px_rgba(34,211,238,0.3)] ring-2 ring-cyan-400/40' 
                     : isPending 
-                    ? 'border-amber-500/40 bg-amber-950/10 opacity-90' 
-                    : 'border-white/20 hover:border-cyan-400/60 bg-slate-900/90 shadow-2xl hover:-translate-y-1.5'
+                    ? 'p-6 sm:p-8 border-amber-500/40 bg-amber-950/10 opacity-90' 
+                    : 'p-6 sm:p-8 border-white/20 hover:border-cyan-400/60 bg-slate-900/90 shadow-2xl hover:-translate-y-1.5'
                 }`}
               >
                 {isMaster && (
                   <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"></div>
                 )}
                 
-                <div className="flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 mb-6 text-center sm:text-left">
-                  <div className="flex flex-col sm:flex-row items-center gap-6">
+                <div className={`flex items-center justify-between gap-4 mb-6 ${isMaster ? 'flex-col sm:flex-row text-center sm:text-left' : 'flex-col text-center'}`}>
+                  <div className={`flex items-center gap-4 ${isMaster ? 'flex-col sm:flex-row' : 'flex-col'}`}>
                     {renderChibiFace(m.profiles?.display_name, m.role)}
-                    <div>
-                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
-                        <h3 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white tracking-wide">{m.profiles?.display_name || "Family Defender"}</h3>
+                    <div className="w-full min-w-0">
+                      <div className={`flex flex-wrap items-center gap-2 ${isMaster ? 'justify-center sm:justify-start' : 'justify-center'}`}>
+                        <h3 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white tracking-wide break-words leading-tight">{m.profiles?.display_name || "Family Defender"}</h3>
                         {isMaster && <span className="bg-gradient-to-r from-amber-300 to-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">★ CIRCLE COMMANDER</span>}
                         {isMe && !isMaster && <span className="bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase font-mono">YOU</span>}
                       </div>
-                      <span className="text-xs text-cyan-300 font-mono tracking-wider block mt-1.5 uppercase font-bold">{m.relation || (m.role === 'admin' ? 'Circle Commander' : 'Protected Member')}</span>
+                      <span className="text-xs text-cyan-300 font-mono tracking-wider block mt-1 uppercase font-bold truncate">{m.relation || (m.role === 'admin' ? 'Circle Commander' : 'Protected Member')}</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 shrink-0">
                     {isPending ? (
                       <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1 rounded-full font-mono">
                         <Clock size={12} className="animate-spin" /> Pending
@@ -1258,16 +1293,33 @@ export default function FamilyPage() {
                 </div>
               )}
 
-              {/* Connected Sub-Members / Elders Stacked in Hierarchy Tree */}
-              <div className="flex flex-col items-center gap-6 w-full">
+              {/* Horizontal Organizational Branch Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch pt-2 relative">
                 {subMembers.map((sm, idx) => (
-                  <div key={idx} className="relative flex flex-col items-center w-full">
-                    {idx > 0 && (
-                      <div className="w-0.5 h-6 bg-cyan-400/50 border-l border-dashed border-cyan-400 my-1"></div>
-                    )}
+                  <div key={idx} className="relative flex flex-col items-center w-full h-full justify-between">
+                    <div className="absolute -top-4 w-full flex justify-center hidden lg:flex">
+                      <div className="w-0.5 h-4 bg-cyan-400/60 shadow-[0_0_8px_#00f0ff]"></div>
+                    </div>
                     {renderMemberCard(sm, false)}
                   </div>
                 ))}
+
+                {/* Explicit Interactive Invite/Upload Card in the Tree */}
+                <div 
+                  onClick={() => setShowInviteModal(true)}
+                  className="p-6 rounded-3xl border-2 border-dashed border-cyan-400/40 hover:border-cyan-400 bg-slate-950/40 hover:bg-slate-900/60 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-4 min-h-[260px] group shadow-lg my-auto"
+                >
+                  <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)]">
+                    <UserPlus size={30} />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-black font-['Outfit'] text-white group-hover:text-cyan-300">Add / Invite New Member</h4>
+                    <p className="text-xs text-slate-400 mt-1 max-w-xs font-sans">Send email invitation or copy direct umbrella access link to add parents & relatives to circle.</p>
+                  </div>
+                  <span className="bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest group-hover:bg-cyan-400 group-hover:text-slate-950 transition-all">
+                    + Expand Circle
+                  </span>
+                </div>
               </div>
             </>
           );
@@ -1313,6 +1365,17 @@ export default function FamilyPage() {
               </div>
 
               <div>
+                <label className="text-[10px] text-slate-400 uppercase block mb-1.5 font-bold">📎 Attach Proof / Link / Phone # (Optional)</label>
+                <input
+                  type="text"
+                  value={incidentProof}
+                  onChange={e => setIncidentProof(e.target.value)}
+                  placeholder="e.g., Sender +91 9876543210 or sbi-reward.apk"
+                  className="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-xs text-cyan-300 focus:border-cyan-400 outline-none font-mono"
+                />
+              </div>
+
+              <div>
                 <label className="text-[10px] text-slate-400 uppercase block mb-1.5 font-bold">Threat Severity Level</label>
                 <div className="grid grid-cols-3 gap-1.5 text-[10px] font-bold">
                   {["🔴 CRITICAL VECTOR", "🟡 TACTICAL SPAM", "🟢 MITIGATED THREAT"].map((sev, i) => (
@@ -1352,6 +1415,11 @@ export default function FamilyPage() {
                     <span className="text-slate-400 flex items-center gap-1"><Clock size={10} /> {inc.time}</span>
                   </div>
                   <p className="text-xs text-slate-200 font-sans leading-relaxed">{inc.incident}</p>
+                  {inc.proof && (
+                    <div className="bg-slate-950 px-2.5 py-1 rounded-lg border border-cyan-400/30 text-[10px] font-mono text-cyan-300 inline-block mr-2 my-1">
+                      📎 Proof: {inc.proof}
+                    </div>
+                  )}
                   <span className="inline-block mt-1 text-[9px] font-bold px-2 py-0.5 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300">
                     {inc.severity}
                   </span>

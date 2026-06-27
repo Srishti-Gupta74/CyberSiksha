@@ -61,7 +61,9 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Message payload required' }, { status: 400 });
     }
 
-    const apiKey = process.env.GEMINI_API_KEY;
+    let rawKey = process.env.GEMINI_API_KEY || process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    const apiKey = rawKey ? rawKey.replace(/['"]/g, '').trim() : null;
+
     if (apiKey) {
       try {
         const prompt = `You are a cyber security expert evaluating a simulated phishing attack vector crafted by a student.
@@ -73,26 +75,26 @@ Evaluate how manipulative, dangerous, or realistic this trap message is. CRITICA
 
 Return ONLY valid JSON (no markdown formatting, no backticks, no markdown blocks) with exact keys:
 "lethalityScore": number between 10 and 98,
-"rating": string (e.g. "🟢 Harmless Message (No Threat Detected)" or "🟡 Tactical Phishing Vector" or "🔴 Supreme Lethality Trap"),
-"triggersExploited": array of strings (e.g. ["None (Friendly Casual Message)"] or ["Time Urgency", "Authority Impersonation"]),
-"forensicAnalysis": string detailed analysis explaining why this message is dangerous or completely harmless against the persona,
+"rating": string (e.g. "🔴 Lethal Trap (High Vulnerability)" or "🟡 Moderate Manipulation" or "🟢 Harmless Message (No Threat Detected)"),
+"triggersExploited": [string, string],
+"forensicAnalysis": string explaining why this trap succeeds or why it fails to deceive,
 "ethicalFlipChallenge": {
   "prompt": "Now flip your mindset! As a cyber defender, evaluate how a vigilant citizen analyzes this text.",
   "redFlagsToSpot": [string, string, string]
 }`;
 
-        let validModels = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash'];
+        let validModels = ['gemini-2.5-flash', 'gemini-2.5-pro', 'gemini-2.0-flash', 'gemini-1.5-flash'];
         try {
           const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, { signal: AbortSignal.timeout(3000) });
           if (modelsRes.ok) {
             const modelsData = await modelsRes.json();
             const discovered = (modelsData.models || [])
-              .filter(m => m.supportedGenerationMethods?.includes('generateContent'))
+              .filter(m => m.supportedGenerationMethods?.includes('generateContent') && (m.name.includes('2.5') || m.name.includes('flash')))
               .map(m => m.name.replace('models/', ''));
-            if (discovered.length > 0) validModels = discovered;
+            validModels = Array.from(new Set([...validModels, ...discovered])).slice(0, 4);
           }
-        } catch (e) {
-          console.warn("Model discovery timeout or error, fallback to defaults");
+        } catch {
+          // Silent fallback
         }
 
         for (const modelName of validModels) {
@@ -112,18 +114,19 @@ Return ONLY valid JSON (no markdown formatting, no backticks, no markdown blocks
               rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
               const parsed = JSON.parse(rawText);
               if (parsed && typeof parsed.lethalityScore === 'number') {
+                parsed.ethicalFlipChallenge = parsed.ethicalFlipChallenge || parsed.defenseMentorTip || {
+                  prompt: "Now flip your mindset! As a cyber defender, evaluate how a vigilant citizen analyzes this text.",
+                  redFlagsToSpot: ["Unverified contact vector", "Artificial urgency or pressure", "Demands sensitive personal action"]
+                };
                 return NextResponse.json(parsed);
               }
-            } else if (geminiRes.status === 429 || geminiRes.status === 403 || geminiRes.status === 400) {
-              console.warn(`API Quota/Auth error (${geminiRes.status}) on ${modelName}, breaking loop for instant heuristic fallback.`);
-              continue;
             }
-          } catch (modelErr) {
-            console.warn(`Timeout or error on ${modelName}:`, modelErr.message);
+          } catch {
+            // Silently try next model
           }
         }
-      } catch (gemErr) {
-        console.error("Gemini RedZone error:", gemErr);
+      } catch {
+        // Silent fallback to local heuristics
       }
     }
 

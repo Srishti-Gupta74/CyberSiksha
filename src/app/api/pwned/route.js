@@ -33,9 +33,9 @@ export async function GET(request) {
     email,
     breachCount: assignedBreaches.length,
     breaches: assignedBreaches,
-    framework: "CyberCIA Forge Resilience Framework",
+    framework: "CyberSiksha National Resilience Framework",
     certificationBadge: "CyberSiksha Resilience Certified",
-    methodology: "Aligned with CyberCIA Forge's cyber resilience pillars.",
+    methodology: "Aligned with MHA I4C and CERT-In cyber resilience guidelines.",
     disclaimer: "Powered by documented public breach records. Production version connects to live HIBP database."
   });
 }

@@ -86,7 +86,7 @@ export default function RedZonePage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto pb-44 pt-6 px-4 sm:px-6 animate-fade-in select-none">
+    <div className="max-w-7xl mx-auto pb-52 pt-6 px-4 sm:px-8 animate-fade-in select-none">
       
       {/* Masthead Banner */}
       <div className="glass-card p-8 md:p-12 mb-12 relative overflow-hidden bg-gradient-to-r from-rose-950/40 via-slate-950 to-slate-900 border border-rose-500/40 shadow-[0_0_80px_rgba(244,63,94,0.15)] flex flex-col md:flex-row items-center justify-between gap-8">
@@ -111,7 +111,7 @@ export default function RedZonePage() {
         {!loadingIntel && intel?.isLiveIntel && (
           <div className="bg-slate-900/90 border border-cyan-400/50 p-6 rounded-3xl text-center shadow-2xl shrink-0 max-w-xs relative animate-scale-up">
             <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping absolute top-4 right-4"></span>
-            <Sparkles className="text-cyan-400 mx-auto mb-2" size={28} />
+            <ShieldAlert className="text-cyan-400 mx-auto mb-2" size={28} />
             <span className="text-[10px] font-mono font-black text-cyan-300 uppercase tracking-widest block mb-1">Live Feed Synchronized</span>
             <p className="text-xs font-bold text-white leading-snug">{intel.badgeText}</p>
           </div>
@@ -129,7 +129,7 @@ export default function RedZonePage() {
                 : "text-slate-400 hover:text-white hover:bg-white/5"
             }`}
           >
-            <Sparkles size={18} className="animate-spin" /> <span>🎮 Interactive Scam Storyline Simulations</span>
+            <span>🎮 Interactive Scam Storyline Simulations</span>
           </button>
           <button
             onClick={() => setRedzoneTab("workbench")}
@@ -139,43 +139,41 @@ export default function RedZonePage() {
                 : "text-slate-400 hover:text-white hover:bg-white/5"
             }`}
           >
-            <Crosshair size={18} /> <span>☠️ Attack Engineering Workbench</span>
+            <span>🎯 Attacker Workbench & AI Trap Test</span>
           </button>
         </div>
       </div>
 
-      {/* Tab 1: Interactive Scam Storyline Simulations */}
-      {redzoneTab === "simulations" && (
-        <div className="mb-14 pt-2">
-          <ScamSimulationsArena />
-        </div>
-      )}
-
-      {/* Tab 2: Attack Engineering Workbench */}
-      {redzoneTab === "workbench" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2 animate-fade-in">
+      {/* Conditional Rendering based on selected tab */}
+      {redzoneTab === "simulations" ? (
+        <ScamSimulationsArena />
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start animate-fade-in">
         
-          {/* Attacker Workbench Form */}
+          {/* Attacker / Input Panel */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="glass-card p-6 sm:p-8 bg-slate-950 border-white/10">
-              <h2 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white mb-6 flex items-center gap-3">
-                <Skull className="text-rose-400" /> Engineer Phishing Vector
-              </h2>
+            <div className="glass-card p-6 sm:p-8 bg-slate-950/80 border-rose-500/40 shadow-[0_0_50px_rgba(244,63,94,0.1)] space-y-6">
+              
+              <div className="border-b border-white/10 pb-4">
+                <span className="text-xs font-mono text-rose-400 uppercase tracking-widest block font-bold mb-1">Step 1: Configure Target Vector</span>
+                <h3 className="text-xl sm:text-2xl font-black text-white font-['Outfit']">Social Engineering Workbench</h3>
+              </div>
 
               <form onSubmit={handleLaunchAttack} className="space-y-6">
+                
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-2">1. Target Persona</label>
+                    <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-2">1. Select Target Persona</label>
                     <select 
                       value={targetPersona} 
                       onChange={e => setTargetPersona(e.target.value)}
                       className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-medium focus:border-rose-500 outline-none"
                     >
-                      <option>Elderly Grandfather</option>
-                      <option>Job Seeking Graduate</option>
-                      <option>Rural Farmer</option>
-                      <option>Teen / Student</option>
-                      <option>Small Business Owner</option>
+                      <option>Elderly Grandfather (68, Pensioner)</option>
+                      <option>College Student (19, Job Seeker)</option>
+                      <option>Small Shopkeeper (42, UPI User)</option>
+                      <option>Homemaker (35, Part-time seeker)</option>
+                      <option>Corporate Employee (28, Salaried)</option>
                     </select>
                   </div>
 
@@ -211,7 +209,7 @@ export default function RedZonePage() {
                   disabled={evaluating || !craftedMessage.trim()}
                   className="w-full py-4 bg-rose-500 hover:bg-rose-400 disabled:opacity-50 text-slate-950 font-black rounded-2xl transition-all shadow-[0_0_25px_rgba(244,63,94,0.4)] flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider"
                 >
-                  {evaluating ? <RefreshCw className="animate-spin" size={20} /> : <Sparkles size={20} />}
+                  {evaluating ? <RefreshCw className="animate-spin" size={20} /> : <Crosshair size={20} />}
                   <span>{evaluating ? "Running AI Heuristic Evaluation..." : "Execute Attack Vector Simulation"}</span>
                 </button>
               </form>
@@ -225,56 +223,56 @@ export default function RedZonePage() {
                 
                 <div className="flex justify-between items-start border-b border-white/10 pb-4">
                   <div>
-                    <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">Lethality Metric</span>
-                    <h3 className="text-xl font-black text-white font-['Outfit']">{result.rating}</h3>
+                    <span className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider block mb-1">Lethality Metric</span>
+                    <h3 className="text-2xl sm:text-3xl font-black text-white font-['Outfit']">{result.rating}</h3>
                   </div>
                   <div className="text-right">
-                    <span className="text-3xl font-black font-['Outfit'] text-rose-400">{result.lethalityScore}/100</span>
+                    <span className="text-3xl sm:text-4xl font-black font-['Outfit'] text-rose-400">{result.lethalityScore}/100</span>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wider block mb-2">Exploited Psychological Triggers:</span>
-                  <div className="flex flex-wrap gap-2">
+                  <span className="text-xs font-mono font-bold text-cyan-300 uppercase tracking-wider block mb-2.5">Exploited Psychological Triggers:</span>
+                  <div className="flex flex-wrap gap-2.5">
                     {result.triggersExploited.map((trig, idx) => (
-                      <span key={idx} className="bg-rose-500/10 border border-rose-500/30 text-rose-300 px-3 py-1 rounded-full text-xs font-mono font-medium">
+                      <span key={idx} className="bg-rose-500/10 border border-rose-500/30 text-rose-300 px-3.5 py-1.5 rounded-full text-sm font-mono font-semibold">
                         🎯 {trig}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 leading-relaxed font-normal bg-white/5 p-4 rounded-2xl border border-white/5">
+                <p className="text-sm sm:text-base text-slate-100 leading-relaxed font-normal bg-white/5 p-5 sm:p-6 rounded-2xl border border-white/10 shadow-inner">
                   {result.forensicAnalysis}
                 </p>
 
                 {/* Ethical Flip Box */}
-                <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 to-indigo-950 border border-cyan-400 shadow-xl space-y-4">
-                  <div className="flex items-center gap-2 text-cyan-300 font-black font-mono text-xs uppercase tracking-wider">
-                    <ShieldCheck size={18} className="text-cyan-400" /> <span>🔄 The Ethical Flip Challenge</span>
+                <div className="p-6 sm:p-7 rounded-3xl bg-gradient-to-br from-slate-900 to-indigo-950 border border-cyan-400 shadow-xl space-y-4">
+                  <div className="flex items-center gap-2 text-cyan-300 font-black font-mono text-sm sm:text-base uppercase tracking-wider">
+                    <ShieldCheck size={20} className="text-cyan-400 shrink-0" /> <span>🔄 The Ethical Flip Challenge</span>
                   </div>
-                  <p className="text-xs text-slate-200 leading-relaxed font-medium">{result.ethicalFlipChallenge.prompt}</p>
+                  <p className="text-sm sm:text-base text-slate-100 leading-relaxed font-normal">{result.ethicalFlipChallenge.prompt}</p>
 
-                  <div className="space-y-2 pt-2">
+                  <div className="space-y-3 pt-2">
                     {result.ethicalFlipChallenge.redFlagsToSpot.map((flag, idx) => {
                       const isSpotted = spottedFlags.includes(idx);
                       return (
                         <div 
                           key={idx}
                           onClick={() => toggleFlag(idx)}
-                          className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between font-mono ${
-                            isSpotted ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 font-bold' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/30'
+                          className={`p-4 rounded-xl border text-sm cursor-pointer transition-all flex items-center justify-between font-mono ${
+                            isSpotted ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 font-bold' : 'bg-white/5 border-white/10 text-slate-300 hover:border-white/30 hover:text-white'
                           }`}
                         >
-                          <span>🚩 {flag}</span>
-                          {isSpotted && <CheckCircle2 size={16} className="text-emerald-400" />}
+                          <span className="pr-2">🚩 {flag}</span>
+                          {isSpotted && <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />}
                         </div>
                       );
                     })}
                   </div>
 
                   {spottedFlags.length === result.ethicalFlipChallenge.redFlagsToSpot.length && (
-                    <div className="bg-emerald-500/30 border border-emerald-400 p-3 rounded-xl text-center text-emerald-200 text-xs font-black uppercase font-mono tracking-widest animate-bounce mt-2">
+                    <div className="bg-emerald-500/30 border border-emerald-400 p-4 rounded-xl text-center text-emerald-200 text-sm font-black uppercase font-mono tracking-widest animate-bounce mt-3">
                       🛡️ Trap Neutralized! Cyber Resilience XP Earned!
                     </div>
                   )}
@@ -286,9 +284,9 @@ export default function RedZonePage() {
                     setCraftedMessage("");
                     setSpottedFlags([]);
                   }}
-                  className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-400/40 rounded-2xl text-xs font-black uppercase font-mono tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg mt-4"
+                  className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-400/40 rounded-2xl text-sm font-black uppercase font-mono tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg mt-4"
                 >
-                  <RefreshCw size={16} /> Reset Workbench & Craft New Trap
+                  <RefreshCw size={18} /> Reset Workbench & Craft New Trap
                 </button>
 
               </div>

@@ -124,7 +124,7 @@ export default function NewsPage() {
             onClick={() => setActiveTab("analytics")}
             className={`px-5 py-3 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${activeTab === "analytics" ? "bg-purple-600 text-white font-black shadow-lg shadow-[0_0_20px_rgba(147,51,234,0.4)]" : "text-slate-400 hover:text-white"}`}
           >
-            <Sparkles size={16} className="animate-spin" /> <span>📊 National Threat Analytics</span>
+            <span>📊 National Threat Analytics</span>
           </button>
         </div>
       </div>

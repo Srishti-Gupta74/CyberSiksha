@@ -190,7 +190,7 @@ export default function ScamScannerPage() {
                 className="w-full py-4 rounded-2xl btn-primary text-xs font-black uppercase tracking-widest shadow-xl cursor-pointer transition-all disabled:opacity-30 flex items-center justify-center gap-2 font-mono"
               >
                 {scanning ? <RefreshCw className="animate-spin" /> : <ScanLine />}
-                <span>{scanning ? "Forensic Vision Interception..." : "⚡ Analyze Evidence With Gemini Vision"}</span>
+                <span>{scanning ? "Forensic Vision Interception..." : "⚡ Analyze Evidence With AI Vision"}</span>
               </button>
             </form>
           </div>
@@ -342,7 +342,7 @@ export default function ScamScannerPage() {
             <div className="glass-card p-12 bg-slate-950/50 border-white/5 text-center flex flex-col items-center justify-center h-full min-h-[350px]">
               <ScanLine size={48} className="text-slate-600 mb-4 animate-pulse" />
               <h3 className="text-base font-bold text-slate-400 mb-1">Awaiting Screenshot Upload</h3>
-              <p className="text-xs text-slate-600 max-w-xs">Upload suspect SMS evidence to launch Gemini Vision multimodal OCR diagnostics.</p>
+              <p className="text-xs text-slate-600 max-w-xs">Upload suspect SMS evidence to launch AI multimodal OCR diagnostics.</p>
             </div>
           )}
         </div>

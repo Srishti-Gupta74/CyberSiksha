@@ -163,7 +163,7 @@ export default function LearnPage() {
               <span className={`text-[10px] font-mono font-black tracking-[0.3em] uppercase text-${accentColor}-400 block`}>3D CLASSIFIED CARD DECK</span>
               <h2 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white mt-0.5 flex flex-wrap items-center gap-3">
                 <span>{title}</span>
-                <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-500/15 px-3 py-1 rounded-full border border-cyan-400/30">✨ Hover Left/Right to Pan Deck</span>
+                <span className="text-xs font-mono font-bold text-cyan-300 bg-cyan-500/15 px-3 py-1 rounded-full border border-cyan-400/30">👆 Hover Left/Right to Pan Deck</span>
               </h2>
             </div>
           </div>
@@ -424,7 +424,7 @@ export default function LearnPage() {
             </div>
             
             <span className="bg-cyan-500/20 border border-cyan-400 text-cyan-300 text-[11px] font-mono font-black px-3.5 py-1 rounded-full uppercase tracking-widest block w-fit mx-auto mb-4">
-              ✨ Security Clearance Secured
+              🛡️ Security Clearance Secured
             </span>
 
             <h2 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white mb-2">

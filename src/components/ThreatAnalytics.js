@@ -4,20 +4,19 @@ import { useState } from 'react';
 import { PieChart, BarChart3, TrendingUp, ShieldAlert, Activity, Users, AlertTriangle, ArrowUpRight } from 'lucide-react';
 
 const CRIME_DISTRIBUTION = [
-  { label: "UPI & Shortened Payment Links", pct: 38, count: "28,196 cases", color: "#F43F5E" },
-  { label: "CBI Digital Arrest & Police Warrants", pct: 26, count: "19,292 cases", color: "#8B5CF6" },
-  { label: "Telegram Investment Task Syndicates", pct: 18, count: "13,356 cases", color: "#F59E0B" },
-  { label: "Sideloaded Loan App APK Trojans", pct: 12, count: "8,904 cases", color: "#10B981" },
-  { label: "AI Voice Cloning Family Extortion", pct: 6, count: "4,452 cases", color: "#06B6D4" }
+  { label: "Financial Fraud (UPI, NetBanking & Cards)", pct: 44, count: "12.38 Lakh complaints", color: "#F43F5E" },
+  { label: "Online Job & Telegram Investment Syndicates", pct: 22, count: "6.19 Lakh complaints", color: "#8B5CF6" },
+  { label: "Impersonation & Digital Arrest (CBI/Police)", pct: 16, count: "4.50 Lakh complaints", color: "#F59E0B" },
+  { label: "Sideloaded APK Loan Apps & Mobile Trojans", pct: 11, count: "3.09 Lakh complaints", color: "#10B981" },
+  { label: "Sextortion & Social Media Harassment", pct: 7, count: "1.97 Lakh complaints", color: "#06B6D4" }
 ];
 
-const MONTHLY_CASES = [
-  { month: "Jan", cases: 18400, label: "18.4k" },
-  { month: "Feb", cases: 24100, label: "24.1k" },
-  { month: "Mar", cases: 31200, label: "31.2k" },
-  { month: "Apr", cases: 42800, label: "42.8k" },
-  { month: "May", cases: 56900, label: "56.9k" },
-  { month: "Jun", cases: 74200, label: "74.2k" }
+const ANNUAL_INCIDENTS = [
+  { year: "2021", cases: 1402809, label: "14.03L" },
+  { year: "2022", cases: 1391457, label: "13.91L" },
+  { year: "2023", cases: 1592917, label: "15.93L" },
+  { year: "2024", cases: 2041360, label: "20.41L" },
+  { year: "2025", cases: 2944248, label: "29.44L" }
 ];
 
 export default function ThreatAnalytics() {
@@ -39,35 +38,35 @@ export default function ThreatAnalytics() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         <div className="glass-card p-6 bg-slate-950 border-rose-500/40 relative overflow-hidden">
           <div className="flex justify-between items-start mb-3">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Deepfake & Voice Fraud</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">CERT-In Reported Incidents</span>
             <span className="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-black px-2 py-0.5 rounded flex items-center gap-1">
-              +182% MoM <ArrowUpRight size={12} />
+              +44.2% YoY <ArrowUpRight size={12} />
             </span>
           </div>
-          <span className="text-4xl font-black text-white font-['Outfit'] block tracking-tight">74,200</span>
-          <span className="text-xs text-rose-400 block mt-1">Recorded Indian incidents last month</span>
+          <span className="text-4xl font-black text-white font-['Outfit'] block tracking-tight">29.44 Lakh</span>
+          <span className="text-xs text-rose-400 block mt-1">Official MeitY parliamentary data disclosure</span>
         </div>
 
         <div className="glass-card p-6 bg-slate-950 border-emerald-500/40 relative overflow-hidden">
           <div className="flex justify-between items-start mb-3">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">1930 Helpline Freezes</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">I4C Citizen Funds Saved</span>
             <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded">
-              Q2 Record
+              23.61L+ Cases
             </span>
           </div>
-          <span className="text-4xl font-black text-emerald-400 font-['Outfit'] block tracking-tight">₹1,240 Cr</span>
-          <span className="text-xs text-slate-300 block mt-1">Stolen citizen funds frozen in lien accounts</span>
+          <span className="text-4xl font-black text-emerald-400 font-['Outfit'] block tracking-tight">₹8,189 Cr</span>
+          <span className="text-xs text-slate-300 block mt-1">Total money saved/frozen via 1930 NCRP Portal</span>
         </div>
 
         <div className="glass-card p-6 bg-slate-950 border-cyan-400/40 relative overflow-hidden">
           <div className="flex justify-between items-start mb-3">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Chakshu Blacklist</span>
+            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">NCRP Citizen Complaints</span>
             <span className="bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 text-[10px] font-black px-2 py-0.5 rounded">
-              TRAI Registry
+              ~88,976 / Day
             </span>
           </div>
-          <span className="text-4xl font-black text-cyan-300 font-['Outfit'] block tracking-tight">4.2 Lakh</span>
-          <span className="text-xs text-slate-300 block mt-1">Spoofed SIMs & Skype handles disconnected</span>
+          <span className="text-4xl font-black text-cyan-300 font-['Outfit'] block tracking-tight">28.15 Lakh</span>
+          <span className="text-xs text-slate-300 block mt-1">Annual complaints registered on cybercrime.gov.in</span>
         </div>
       </div>
 
@@ -75,11 +74,11 @@ export default function ThreatAnalytics() {
       <div className="glass-card p-8 sm:p-12 bg-slate-950 border-2 border-purple-500/60 shadow-[0_0_80px_rgba(139,92,246,0.2)]">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-6 mb-8">
           <div>
-            <span className="text-xs text-purple-400 font-black uppercase tracking-widest block mb-1">National Typology Grid (I4C)</span>
+            <span className="text-xs text-purple-400 font-black uppercase tracking-widest block mb-1">National Typology Grid (I4C NCRP)</span>
             <h3 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white">Scam Vector Distribution Pie Chart</h3>
           </div>
           <span className="text-xs text-slate-400 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10">
-            Based on 74,200 documented June filings
+            Based on 28.15 Lakh documented NCRP filings
           </span>
         </div>
 
@@ -132,29 +131,28 @@ export default function ThreatAnalytics() {
         </div>
       </div>
 
-      {/* Monthly Escalation Bar Chart Heuristic */}
+      {/* Annual Escalation Bar Chart Heuristic */}
       <div className="glass-card p-8 sm:p-12 bg-slate-950 border-rose-500/40">
         <div className="flex justify-between items-center border-b border-white/10 pb-6 mb-8">
           <div>
-            <span className="text-xs text-rose-400 font-black uppercase tracking-widest block mb-1">Escalation Velocity</span>
-            <h3 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white">Monthly Cyber Fraud Surge (2026)</h3>
+            <span className="text-xs text-rose-400 font-black uppercase tracking-widest block mb-1">Year-over-Year Escalation</span>
+            <h3 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white">Annual Cyber Security Incidents Surge (CERT-In)</h3>
           </div>
           <TrendingUp size={28} className="text-rose-400 shrink-0" />
         </div>
 
         {/* Bar Matrix */}
         <div className="flex items-end justify-between gap-2 sm:gap-6 h-64 pt-8 px-2 sm:px-6 border-b border-white/10">
-          {MONTHLY_CASES.map((m, idx) => {
-            const maxVal = 74200;
+          {ANNUAL_INCIDENTS.map((m, idx) => {
+            const maxVal = 2944248;
             const heightPct = Math.round((m.cases / maxVal) * 100);
-            const isCurrent = idx === MONTHLY_CASES.length - 1;
+            const isCurrent = idx === ANNUAL_INCIDENTS.length - 1;
             
             const barGradients = [
               "from-blue-600 to-cyan-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]",
               "from-cyan-600 to-teal-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]",
               "from-teal-600 to-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]",
               "from-purple-600 to-indigo-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]",
-              "from-pink-600 to-rose-400 shadow-[0_0_15px_rgba(236,72,153,0.3)]",
               "from-rose-600 via-amber-500 to-yellow-400 shadow-[0_0_30px_rgba(244,63,94,0.6)] animate-pulse"
             ];
 
@@ -167,13 +165,18 @@ export default function ThreatAnalytics() {
                   className={`w-full rounded-t-xl transition-all duration-500 bg-gradient-to-t ${barGradients[idx] || barGradients[0]} hover:brightness-125`}
                   style={{ height: `${heightPct}%` }}
                 ></div>
-                <span className="text-xs font-black text-white mt-2">{m.month}</span>
+                <span className="text-xs font-black text-white mt-2">{m.year}</span>
               </div>
             );
           })}
         </div>
-        <div className="text-center pt-4 text-[10px] text-slate-500 uppercase tracking-widest">
-          Data compiled from Ministry of Home Affairs I4C Monthly Dispatch Bulletins
+        <div className="text-center pt-6 space-y-1">
+          <p className="text-xs font-bold text-cyan-300">
+            Official Citation Sources: Ministry of Electronics & Information Technology (MeitY) / CERT-In Parliamentary Disclosures & MHA I4C NCRP Dossier
+          </p>
+          <p className="text-[10px] text-slate-500 max-w-2xl mx-auto">
+            Data reflects total cyber incidents tracked by CERT-In and citizen financial fraud reports logged via the National Helpline 1930 and cybercrime.gov.in.
+          </p>
         </div>
       </div>
 

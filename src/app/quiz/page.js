@@ -115,7 +115,7 @@ export default function QuizPage() {
         </div>
         
         <div className="inline-flex items-center gap-2.5 bg-purple-500/20 border border-purple-400/50 px-6 py-2.5 rounded-full text-xs font-mono font-black text-purple-200 uppercase tracking-[0.25em] mb-8 shadow-[0_0_25px_rgba(168,85,247,0.3)] backdrop-blur-md">
-          <Sparkles size={15} className="text-purple-400 animate-spin" /> CYBER THREAT IDENTIFICATION ARENA
+          <ShieldQuestion size={15} className="text-purple-400" /> CYBER THREAT IDENTIFICATION ARENA
         </div>
 
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-black font-['Outfit'] mb-8 tracking-tight drop-shadow-[0_0_35px_rgba(255,255,255,0.3)]">

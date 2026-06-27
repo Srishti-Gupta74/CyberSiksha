@@ -209,7 +209,7 @@ export default function ScamSimulationsArena() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div>
             <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/40 px-3.5 py-1.5 rounded-full text-xs font-black text-purple-300 uppercase tracking-widest mb-3 shadow-md">
-              <Sparkles size={16} className="text-cyan-400 animate-spin" /> Interactive Threat Simulator Arena
+              <ShieldAlert size={16} className="text-cyan-400" /> Interactive Threat Simulator Arena
             </div>
             <h2 className="text-3xl sm:text-5xl font-black font-['Outfit'] text-white">
               Real-Life <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500">Scam Storylines</span>

@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
         <AuthProvider>
           <GlobalAuthWrapper>
             <Navbar />
-            <main className="max-w-6xl mx-auto p-4 sm:pl-24 lg:pl-28 md:pr-8 md:py-8 font-body">
+            <main className="w-full max-w-[1920px] mx-auto p-4 sm:pl-28 lg:pl-32 md:pr-12 md:py-8 font-body">
               {children}
             </main>
             <FloatingChatbot />

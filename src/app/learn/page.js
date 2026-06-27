@@ -286,17 +286,17 @@ export default function LearnPage() {
           </div>
         </div>
 
-        {/* BENTO GRID LAYOUT: Left Side Deck Track (5 Col) + Right Side Inspection Terminal (7 Col) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* BENTO GRID LAYOUT: Left Side Deck Track (4 Col) + Right Side Inspection Terminal (8 Col) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-14 items-start">
           
-          {/* LEFT BENTO BOX (5 Col): Horizontal/Vertical Lesson Selector Track */}
-          <div className="lg:col-span-5 flex flex-col gap-4">
-            <div className={`text-xs font-mono font-bold uppercase tracking-widest flex items-center justify-between px-2 ${theme.accentText}`}>
+          {/* LEFT BENTO BOX (4 Col): Horizontal/Vertical Lesson Selector Track */}
+          <div className="lg:col-span-4 flex flex-col gap-5">
+            <div className={`text-sm font-mono font-black uppercase tracking-widest flex items-center justify-between px-2 ${theme.accentText}`}>
               <span>DECK DOSSIERS ({deck.length})</span>
-              <span className="text-white/40 text-[10px]">SWEEP & CLICK</span>
+              <span className="text-white/60 text-xs font-bold">SWEEP & CLICK</span>
             </div>
 
-            <div className="flex lg:flex-col gap-4 overflow-x-auto lg:overflow-x-visible lg:max-h-[620px] lg:overflow-y-auto pr-2 pb-4 lg:pb-0 scrollbar-none no-scrollbar">
+            <div className="flex lg:flex-col gap-5 overflow-x-auto lg:overflow-x-visible lg:max-h-[700px] lg:overflow-y-auto pr-2 pb-4 lg:pb-0 scrollbar-none no-scrollbar">
               {deck.map((lesson) => {
                 const isSelected = currentLesson?.id === lesson.id;
                 const isDone = completedLessons.includes(lesson.id);
@@ -304,24 +304,24 @@ export default function LearnPage() {
                   <div
                     key={lesson.id}
                     onClick={() => handleSelectLesson(tierKey, lesson)}
-                    className={`w-[290px] sm:w-[340px] lg:w-full shrink-0 p-6 rounded-3xl cursor-pointer transition-all duration-300 border flex flex-col justify-between gap-4 relative group ${
+                    className={`w-[320px] sm:w-[380px] lg:w-full shrink-0 p-7 sm:p-9 rounded-3xl cursor-pointer transition-all duration-300 border-2 flex flex-col justify-between gap-5 relative group shadow-lg ${
                       isSelected 
-                        ? theme.cardActiveBg 
-                        : `bg-slate-950/80 border-white/10 ${theme.cardHoverBorder} hover:bg-slate-900/60`
+                        ? theme.cardActiveBg + ' border-cyan-400/80 shadow-cyan-500/20' 
+                        : `bg-slate-950/90 border-white/15 hover:border-white/40 hover:bg-slate-900/80`
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-3">
-                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all shrink-0 border ${isSelected ? theme.accentBg + ' scale-110 shadow-lg' : 'bg-white/[0.04] text-slate-400 border-white/10 group-hover:scale-105'}`}>
+                    <div className="flex items-center justify-between gap-4">
+                      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all shrink-0 border-2 ${isSelected ? theme.accentBg + ' scale-110 shadow-xl border-white/40' : 'bg-white/[0.06] text-slate-300 border-white/15 group-hover:scale-105'}`}>
                         {getLessonLucideIcon(lesson.id)}
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="text-[9px] font-mono font-black text-slate-400 uppercase tracking-widest">DOSSIER #{lesson.id}</span>
+                      <div className="flex flex-col items-end gap-1.5">
+                        <span className="text-xs font-mono font-black text-slate-300 uppercase tracking-widest">DOSSIER #{lesson.id}</span>
                         {isDone ? (
-                          <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-[9px] font-mono font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-                            <CheckCircle2 size={10} /> VERIFIED
+                          <span className="bg-emerald-500/25 border border-emerald-400 text-emerald-300 text-xs font-mono font-black px-3 py-1 rounded-full flex items-center gap-1.5 shadow-md">
+                            <CheckCircle2 size={14} /> VERIFIED
                           </span>
                         ) : (
-                          <span className={`border text-[9px] font-mono font-semibold px-2.5 py-0.5 rounded-full ${isSelected ? theme.accentBg : 'bg-white/[0.04] border-white/10 text-slate-300'}`}>
+                          <span className={`border text-xs font-mono font-black px-3 py-1 rounded-full ${isSelected ? theme.accentBg : 'bg-white/[0.06] border-white/20 text-slate-200'}`}>
                             +{tierKey === 'advanced' ? 100 : (tierKey === 'medium' ? 50 : 25)} PTS
                           </span>
                         )}
@@ -329,17 +329,17 @@ export default function LearnPage() {
                     </div>
 
                     <div>
-                      <h3 className={`text-lg font-bold font-heading transition-colors leading-snug ${isSelected ? theme.accentText : 'text-white group-hover:text-white'}`}>
+                      <h3 className={`text-xl sm:text-2xl font-black font-heading transition-colors leading-snug ${isSelected ? theme.accentText : 'text-white group-hover:text-white'}`}>
                         {lesson.title}
                       </h3>
-                      <p className="text-slate-300 text-xs line-clamp-2 leading-relaxed mt-1 font-normal opacity-90">
-                        {getLessonText(lesson.content).slice(0, 100)}...
+                      <p className="text-slate-100 text-sm sm:text-base line-clamp-3 leading-relaxed mt-2.5 font-semibold">
+                        {getLessonText(lesson.content).slice(0, 120)}...
                       </p>
                     </div>
 
-                    <div className={`pt-3 border-t border-white/5 flex items-center justify-between text-[10px] font-mono font-bold uppercase tracking-wider ${theme.accentText}`}>
+                    <div className={`pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono font-black uppercase tracking-wider ${theme.accentText}`}>
                       <span>{isSelected ? 'ACTIVE IN TERMINAL ➔' : 'CLICK TO INSPECT'}</span>
-                      {isSelected && <span className={`w-2 h-2 rounded-full ${theme.accentText.replace('text-', 'bg-')} animate-ping`}></span>}
+                      {isSelected && <span className={`w-2.5 h-2.5 rounded-full ${theme.accentText.replace('text-', 'bg-')} animate-ping`}></span>}
                     </div>
                   </div>
                 );
@@ -347,64 +347,64 @@ export default function LearnPage() {
             </div>
           </div>
 
-          {/* RIGHT BENTO BOX (7 Col): Expanded Inline Inspection Terminal (No Popups!) */}
-          <div className={`lg:col-span-7 p-6 sm:p-10 relative rounded-3xl flex flex-col justify-between min-h-[560px] border backdrop-blur-2xl transition-all ${theme.terminalBg}`}>
-            <div className={`absolute top-0 right-0 w-80 h-80 rounded-full blur-3xl pointer-events-none ${theme.glowColor}`}></div>
+          {/* RIGHT BENTO BOX (8 Col): Expanded Inline Inspection Terminal (No Popups!) */}
+          <div className={`lg:col-span-8 p-8 sm:p-14 relative rounded-[3rem] flex flex-col justify-between min-h-[640px] border-2 border-white/20 backdrop-blur-2xl transition-all shadow-2xl ${theme.terminalBg}`}>
+            <div className={`absolute top-0 right-0 w-96 h-96 rounded-full blur-3xl pointer-events-none ${theme.glowColor}`}></div>
 
             <div>
               {/* Terminal Header */}
-              <div className="flex flex-wrap items-center justify-between pb-6 mb-8 border-b border-white/10 gap-4">
-                <div className="flex items-center gap-4">
-                  <div className={`p-3.5 rounded-2xl border shadow-md ${theme.accentBg}`}>
+              <div className="flex flex-wrap items-center justify-between pb-8 mb-10 border-b border-white/15 gap-6">
+                <div className="flex items-center gap-5">
+                  <div className={`p-4 sm:p-5 rounded-2xl border-2 shadow-xl ${theme.accentBg}`}>
                     {getLessonLucideIcon(currentLesson?.id || 1)}
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <span className={`text-[10px] font-bold uppercase tracking-widest font-mono ${theme.accentText}`}>ACTIVE DOSSIER #{currentLesson?.id}</span>
-                      {isLessonDone && <span className="bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 text-[10px] font-mono px-2 py-0.5 rounded-full font-bold">CLEARANCE SECURED</span>}
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className={`text-xs sm:text-sm font-black uppercase tracking-widest font-mono ${theme.accentText}`}>ACTIVE DOSSIER #{currentLesson?.id}</span>
+                      {isLessonDone && <span className="bg-emerald-500/25 border border-emerald-400 text-emerald-300 text-xs font-mono px-3 py-1 rounded-full font-black shadow-sm">CLEARANCE SECURED</span>}
                     </div>
-                    <h3 className="text-2xl sm:text-3xl font-bold font-heading text-white mt-1 leading-tight">{currentLesson?.title}</h3>
+                    <h3 className="text-3xl sm:text-5xl font-black font-heading text-white leading-tight">{currentLesson?.title}</h3>
                   </div>
                 </div>
               </div>
 
               {/* Stepper Tabs */}
-              <div className="flex items-center gap-2 mb-8">
+              <div className="flex items-center gap-3 mb-10">
                 {steps.map((st, i) => (
                   <button
                     key={i}
                     onClick={() => setTierSlides(prev => ({ ...prev, [tierKey]: i }))}
-                    className="flex-1 h-2.5 rounded-full overflow-hidden bg-white/10 cursor-pointer relative group/step"
+                    className="flex-1 h-3.5 rounded-full overflow-hidden bg-white/15 cursor-pointer relative group/step shadow-inner"
                     title={st.title}
                   >
-                    <div className={`h-full transition-all duration-300 ${i <= currentSlideIdx ? theme.stepActiveGradient : "w-0 group-hover/step:w-full group-hover/step:bg-white/20"}`}></div>
+                    <div className={`h-full transition-all duration-300 ${i <= currentSlideIdx ? theme.stepActiveGradient : "w-0 group-hover/step:w-full group-hover/step:bg-white/30"}`}></div>
                   </button>
                 ))}
               </div>
 
               {/* Step Slide Content */}
-              <div className="min-h-[250px] flex flex-col justify-center">
-                <div className="flex items-center gap-3 mb-3">
+              <div className="h-[460px] sm:h-[500px] flex flex-col justify-start my-4 overflow-y-auto pr-3">
+                <div className="flex items-center gap-3.5 mb-3 shrink-0">
                   {currentStep?.icon}
-                  <h4 className={`text-lg sm:text-xl font-bold uppercase tracking-wider font-heading ${theme.accentText}`}>
+                  <h4 className={`text-xl sm:text-3xl font-black uppercase tracking-wider font-heading ${theme.accentText}`}>
                     {currentStep?.title}
                   </h4>
                 </div>
 
-                <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mb-5 font-mono">
+                <p className="text-slate-200 text-sm sm:text-base font-bold uppercase tracking-wider mb-6 font-mono shrink-0">
                   {currentStep?.subtitle} • Step {currentSlideIdx + 1} of {steps.length}
                 </p>
 
                 {currentStep?.isTerminal ? (
-                  <div className="bg-slate-900/95 border border-white/15 rounded-2xl p-6 font-mono text-xs sm:text-sm text-cyan-300 shadow-inner leading-relaxed overflow-x-auto relative whitespace-pre-line">
-                    <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10 text-[10px] text-purple-400 font-bold uppercase tracking-widest">
+                  <div className="bg-slate-950 border-2 border-cyan-400/60 rounded-3xl p-8 sm:p-12 font-mono text-base sm:text-2xl text-cyan-200 font-bold shadow-2xl leading-relaxed overflow-x-auto relative whitespace-pre-line">
+                    <div className="flex items-center justify-between pb-4 mb-4 border-b border-white/15 text-xs sm:text-sm text-purple-300 font-black uppercase tracking-widest">
                       <span>INTERCEPTED SCAM PAYLOAD</span>
-                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping"></span>
+                      <span className="w-3 h-3 rounded-full bg-rose-500 animate-ping"></span>
                     </div>
                     "{currentStep?.content}"
                   </div>
                 ) : (
-                  <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-6 sm:p-8 text-slate-100 text-base sm:text-lg leading-relaxed font-normal whitespace-pre-line shadow-sm">
+                  <div className="bg-white/[0.07] border-2 border-white/20 rounded-3xl p-8 sm:p-12 text-slate-100 text-lg sm:text-2xl leading-relaxed font-bold whitespace-pre-line shadow-xl">
                     {currentStep?.content}
                   </div>
                 )}
@@ -412,18 +412,18 @@ export default function LearnPage() {
             </div>
 
             {/* Terminal Actions */}
-            <div className="flex items-center justify-between pt-8 mt-8 border-t border-white/10 font-mono gap-4">
+            <div className="flex items-center justify-between pt-10 mt-10 border-t border-white/15 font-mono gap-5">
               <button 
                 onClick={() => setTierSlides(prev => ({ ...prev, [tierKey]: Math.max(0, currentSlideIdx - 1) }))}
                 disabled={currentSlideIdx === 0}
-                className="px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 text-slate-300 disabled:opacity-20 font-semibold text-xs uppercase transition-all cursor-pointer tracking-wider"
+                className="px-8 py-5 rounded-2xl bg-white/10 hover:bg-white/20 text-slate-200 disabled:opacity-20 font-black text-sm sm:text-base uppercase transition-all cursor-pointer tracking-wider shadow-md"
               >
                 ← Previous Step
               </button>
 
               <button 
                 onClick={() => handleFinishStepInline(tierKey, currentLesson, currentSlideIdx, steps.length)}
-                className={`py-4 px-8 sm:px-10 text-xs sm:text-sm rounded-2xl flex items-center gap-2 cursor-pointer transition-all transform hover:-translate-y-0.5 ${theme.btnGradient}`}
+                className={`py-5 px-10 sm:px-14 text-sm sm:text-lg font-black rounded-2xl flex items-center gap-3 cursor-pointer transition-all transform hover:-translate-y-0.5 shadow-xl ${theme.btnGradient}`}
               >
                 <span>{currentSlideIdx === steps.length - 1 ? (isLessonDone ? "Re-Verify Clearance XP" : "Secure Clearance Points") : "Next Directive ➔"}</span>
               </button>
@@ -437,7 +437,7 @@ export default function LearnPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto pb-44 pt-4 px-4 sm:px-6 select-none animate-fade-in">
+    <div className="w-full max-w-[96%] xl:max-w-[1900px] mx-auto pb-44 pt-4 px-4 sm:px-8 xl:px-12 select-none animate-fade-in">
       
       {/* Hero Banner with Interactive Scanner Radar */}
       <ScrollReveal>

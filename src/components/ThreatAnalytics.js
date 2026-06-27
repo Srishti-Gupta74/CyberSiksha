@@ -148,15 +148,23 @@ export default function ThreatAnalytics() {
             const maxVal = 74200;
             const heightPct = Math.round((m.cases / maxVal) * 100);
             const isCurrent = idx === MONTHLY_CASES.length - 1;
+            
+            const barGradients = [
+              "from-blue-600 to-cyan-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]",
+              "from-cyan-600 to-teal-400 shadow-[0_0_15px_rgba(6,182,212,0.3)]",
+              "from-teal-600 to-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]",
+              "from-purple-600 to-indigo-400 shadow-[0_0_15px_rgba(168,85,247,0.3)]",
+              "from-pink-600 to-rose-400 shadow-[0_0_15px_rgba(236,72,153,0.3)]",
+              "from-rose-600 via-amber-500 to-yellow-400 shadow-[0_0_30px_rgba(244,63,94,0.6)] animate-pulse"
+            ];
+
             return (
               <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
-                <span className={`text-[10px] sm:text-xs font-black transition-transform group-hover:-translate-y-1 ${isCurrent ? "text-rose-400 scale-110" : "text-slate-400"}`}>
+                <span className={`text-[10px] sm:text-xs font-black transition-transform group-hover:-translate-y-1 ${isCurrent ? "text-amber-300 scale-110" : "text-slate-300"}`}>
                   {m.label}
                 </span>
                 <div 
-                  className={`w-full rounded-t-xl transition-all duration-500 ${
-                    isCurrent ? "bg-gradient-to-t from-rose-600 to-amber-400 shadow-[0_0_25px_rgba(244,63,94,0.5)] animate-pulse" : "bg-slate-800 group-hover:bg-cyan-400/60"
-                  }`}
+                  className={`w-full rounded-t-xl transition-all duration-500 bg-gradient-to-t ${barGradients[idx] || barGradients[0]} hover:brightness-125`}
                   style={{ height: `${heightPct}%` }}
                 ></div>
                 <span className="text-xs font-black text-white mt-2">{m.month}</span>

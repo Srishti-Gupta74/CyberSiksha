@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react';
 import ScrollReveal from '@/components/ScrollReveal';
 import { ShieldAlert, Crosshair, Sparkles, RefreshCw, CheckCircle2, ArrowRight, Skull, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import DigitalArrestSim from '@/components/DigitalArrestSim';
+import ScamSimulationsArena from '@/components/ScamSimulationsArena';
 
 export default function RedZonePage() {
+  const [redzoneTab, setRedzoneTab] = useState("simulations");
   const [intel, setIntel] = useState(null);
   const [loadingIntel, setLoadingIntel] = useState(true);
   
@@ -108,143 +109,180 @@ export default function RedZonePage() {
         )}
       </div>
 
-      {/* Topical India Digital Arrest Simulation Showcase */}
-      <div className="mb-14">
-        <DigitalArrestSim />
+      {/* RedZone Tab Navigation Toolbar */}
+      <div className="flex justify-center mb-12">
+        <div className="bg-slate-900/80 p-2 rounded-2xl border border-white/10 flex flex-wrap justify-center gap-3 font-mono text-xs uppercase tracking-wider shadow-xl">
+          <button
+            onClick={() => setRedzoneTab("simulations")}
+            className={`px-6 py-3.5 rounded-xl transition-all cursor-pointer flex items-center gap-2.5 ${
+              redzoneTab === "simulations" 
+                ? "bg-gradient-to-r from-purple-600 to-cyan-500 text-white font-black shadow-[0_0_25px_rgba(168,85,247,0.5)] scale-105" 
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <Sparkles size={18} className="animate-spin" /> <span>🎮 Interactive Scam Storyline Simulations</span>
+          </button>
+          <button
+            onClick={() => setRedzoneTab("workbench")}
+            className={`px-6 py-3.5 rounded-xl transition-all cursor-pointer flex items-center gap-2.5 ${
+              redzoneTab === "workbench" 
+                ? "bg-rose-500 text-slate-950 font-black shadow-[0_0_25px_rgba(244,63,94,0.5)] scale-105" 
+                : "text-slate-400 hover:text-white hover:bg-white/5"
+            }`}
+          >
+            <Crosshair size={18} /> <span>☠️ Attack Engineering Workbench</span>
+          </button>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Tab 1: Interactive Scam Storyline Simulations */}
+      {redzoneTab === "simulations" && (
+        <div className="mb-14 pt-2">
+          <ScamSimulationsArena />
+        </div>
+      )}
+
+      {/* Tab 2: Attack Engineering Workbench */}
+      {redzoneTab === "workbench" && (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 pt-2 animate-fade-in">
         
-        {/* Attacker Workbench Form */}
-        <div className="lg:col-span-7 space-y-6">
-          <div className="glass-card p-6 sm:p-8 bg-slate-950 border-white/10">
-            <h2 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white mb-6 flex items-center gap-3">
-              <Skull className="text-rose-400" /> Engineer Phishing Vector
-            </h2>
+          {/* Attacker Workbench Form */}
+          <div className="lg:col-span-7 space-y-6">
+            <div className="glass-card p-6 sm:p-8 bg-slate-950 border-white/10">
+              <h2 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white mb-6 flex items-center gap-3">
+                <Skull className="text-rose-400" /> Engineer Phishing Vector
+              </h2>
 
-            <form onSubmit={handleLaunchAttack} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-2">1. Target Persona</label>
-                  <select 
-                    value={targetPersona} 
-                    onChange={e => setTargetPersona(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-medium focus:border-rose-500 outline-none"
-                  >
-                    <option>Elderly Grandfather</option>
-                    <option>Job Seeking Graduate</option>
-                    <option>Rural Farmer</option>
-                    <option>Teen / Student</option>
-                    <option>Small Business Owner</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-2">2. Attack Vector</label>
-                  <select 
-                    value={attackVector} 
-                    onChange={e => setAttackVector(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-medium focus:border-rose-500 outline-none"
-                  >
-                    <option>Bank KYC SMS Freeze</option>
-                    <option>CBI Digital Arrest Video Call</option>
-                    <option>Fake Luxury Giveaway QR</option>
-                    <option>Gov Direct Scheme Claim</option>
-                    <option>WFH Part-Time Salary Deposit</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-2">3. Craft Trap Message / Script</label>
-                <textarea 
-                  value={craftedMessage}
-                  onChange={e => setCraftedMessage(e.target.value)}
-                  placeholder="Dear Customer, your bank account is suspended pending KYC verification. Click immediately..."
-                  rows={4}
-                  className="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-sm text-white focus:border-rose-500 outline-none resize-none font-mono"
-                />
-              </div>
-
-              <button 
-                type="submit" 
-                disabled={evaluating || !craftedMessage.trim()}
-                className="w-full py-4 rounded-2xl bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white font-black uppercase text-xs tracking-widest shadow-lg cursor-pointer transition-all disabled:opacity-30 flex items-center justify-center gap-2"
-              >
-                {evaluating ? <RefreshCw className="animate-spin" /> : <span>⚡ Evaluate Lethality Score</span>}
-              </button>
-            </form>
-          </div>
-        </div>
-
-        {/* AI Scoring Results & Ethical Flip */}
-        <div className="lg:col-span-5 space-y-6">
-          {result ? (
-            <div className="glass-card p-6 sm:p-8 bg-slate-950 border-rose-500/50 relative animate-scale-up space-y-6">
-              
-              <div className="text-center pb-6 border-b border-white/10">
-                <span className="text-4xl sm:text-5xl font-black font-mono text-rose-400 block mb-1">{result.lethalityScore}%</span>
-                <span className="text-xs font-bold font-mono text-slate-300 uppercase tracking-widest">{result.rating}</span>
-              </div>
-
-              <div>
-                <h4 className="text-xs font-bold uppercase tracking-widest text-cyan-400 font-mono mb-3">🧠 Psychological Triggers Exploited:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {result.triggersExploited.map((tr, i) => (
-                    <span key={i} className="bg-purple-600/20 border border-purple-500/40 text-purple-300 text-[10px] font-mono font-bold px-3 py-1 rounded-full uppercase">
-                      {tr}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-300 leading-relaxed font-normal bg-white/5 p-4 rounded-2xl border border-white/5">
-                {result.forensicAnalysis}
-              </p>
-
-              {/* Ethical Flip Box */}
-              <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 to-indigo-950 border border-cyan-400 shadow-xl space-y-4">
-                <div className="flex items-center gap-2 text-cyan-300 font-black font-mono text-xs uppercase tracking-wider">
-                  <ShieldCheck size={18} className="text-cyan-400" /> <span>🔄 The Ethical Flip Challenge</span>
-                </div>
-                <p className="text-xs text-slate-200 leading-relaxed font-medium">{result.ethicalFlipChallenge.prompt}</p>
-
-                <div className="space-y-2 pt-2">
-                  {result.ethicalFlipChallenge.redFlagsToSpot.map((flag, idx) => {
-                    const isSpotted = spottedFlags.includes(idx);
-                    return (
-                      <div 
-                        key={idx}
-                        onClick={() => toggleFlag(idx)}
-                        className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between font-mono ${
-                          isSpotted ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 font-bold' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/30'
-                        }`}
-                      >
-                        <span>🚩 {flag}</span>
-                        {isSpotted && <CheckCircle2 size={16} className="text-emerald-400" />}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {spottedFlags.length === result.ethicalFlipChallenge.redFlagsToSpot.length && (
-                  <div className="bg-emerald-500/30 border border-emerald-400 p-3 rounded-xl text-center text-emerald-200 text-xs font-black uppercase font-mono tracking-widest animate-bounce mt-2">
-                    🛡️ Trap Neutralized! Cyber Resilience XP Earned!
+              <form onSubmit={handleLaunchAttack} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-2">1. Target Persona</label>
+                    <select 
+                      value={targetPersona} 
+                      onChange={e => setTargetPersona(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-medium focus:border-rose-500 outline-none"
+                    >
+                      <option>Elderly Grandfather</option>
+                      <option>Job Seeking Graduate</option>
+                      <option>Rural Farmer</option>
+                      <option>Teen / Student</option>
+                      <option>Small Business Owner</option>
+                    </select>
                   </div>
-                )}
+
+                  <div>
+                    <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-2">2. Attack Vector</label>
+                    <select 
+                      value={attackVector} 
+                      onChange={e => setAttackVector(e.target.value)}
+                      className="w-full bg-slate-900 border border-white/10 rounded-2xl px-4 py-3 text-sm text-white font-medium focus:border-rose-500 outline-none"
+                    >
+                      <option>Bank KYC SMS Freeze</option>
+                      <option>CBI Digital Arrest Video Call</option>
+                      <option>Fake Luxury Giveaway QR</option>
+                      <option>Gov Direct Scheme Claim</option>
+                      <option>WFH Part-Time Salary Deposit</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-mono text-slate-400 uppercase tracking-wider font-bold block mb-2">3. Craft Trap Message / Script</label>
+                  <textarea 
+                    rows={4} 
+                    value={craftedMessage}
+                    onChange={e => setCraftedMessage(e.target.value)}
+                    placeholder="e.g., Dear SBI Customer, your KYC has expired today. Your bank account and ATM card will be blocked within 24 hours. Click here to verify..." 
+                    className="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-sm text-white focus:border-rose-500 outline-none resize-none font-sans"
+                  />
+                </div>
+
+                <button 
+                  type="submit" 
+                  disabled={evaluating || !craftedMessage.trim()}
+                  className="w-full py-4 bg-rose-500 hover:bg-rose-400 disabled:opacity-50 text-slate-950 font-black rounded-2xl transition-all shadow-[0_0_25px_rgba(244,63,94,0.4)] flex items-center justify-center gap-2 cursor-pointer uppercase tracking-wider"
+                >
+                  {evaluating ? <RefreshCw className="animate-spin" size={20} /> : <Sparkles size={20} />}
+                  <span>{evaluating ? "Running AI Heuristic Evaluation..." : "Execute Attack Vector Simulation"}</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          {/* Defender / Evaluation Panel */}
+          <div className="lg:col-span-5">
+            {result ? (
+              <div className="glass-card p-6 sm:p-8 bg-slate-950 border-cyan-400 shadow-[0_0_50px_rgba(34,211,238,0.15)] space-y-6">
+                
+                <div className="flex justify-between items-start border-b border-white/10 pb-4">
+                  <div>
+                    <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">Lethality Metric</span>
+                    <h3 className="text-xl font-black text-white font-['Outfit']">{result.rating}</h3>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-3xl font-black font-['Outfit'] text-rose-400">{result.lethalityScore}/100</span>
+                  </div>
+                </div>
+
+                <div>
+                  <span className="text-[10px] font-mono font-bold text-cyan-300 uppercase tracking-wider block mb-2">Exploited Psychological Triggers:</span>
+                  <div className="flex flex-wrap gap-2">
+                    {result.triggersExploited.map((trig, idx) => (
+                      <span key={idx} className="bg-rose-500/10 border border-rose-500/30 text-rose-300 px-3 py-1 rounded-full text-xs font-mono font-medium">
+                        🎯 {trig}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <p className="text-xs text-slate-300 leading-relaxed font-normal bg-white/5 p-4 rounded-2xl border border-white/5">
+                  {result.forensicAnalysis}
+                </p>
+
+                {/* Ethical Flip Box */}
+                <div className="p-6 rounded-3xl bg-gradient-to-br from-slate-900 to-indigo-950 border border-cyan-400 shadow-xl space-y-4">
+                  <div className="flex items-center gap-2 text-cyan-300 font-black font-mono text-xs uppercase tracking-wider">
+                    <ShieldCheck size={18} className="text-cyan-400" /> <span>🔄 The Ethical Flip Challenge</span>
+                  </div>
+                  <p className="text-xs text-slate-200 leading-relaxed font-medium">{result.ethicalFlipChallenge.prompt}</p>
+
+                  <div className="space-y-2 pt-2">
+                    {result.ethicalFlipChallenge.redFlagsToSpot.map((flag, idx) => {
+                      const isSpotted = spottedFlags.includes(idx);
+                      return (
+                        <div 
+                          key={idx}
+                          onClick={() => toggleFlag(idx)}
+                          className={`p-3 rounded-xl border text-xs cursor-pointer transition-all flex items-center justify-between font-mono ${
+                            isSpotted ? 'bg-emerald-500/20 border-emerald-400 text-emerald-300 font-bold' : 'bg-white/5 border-white/10 text-slate-400 hover:border-white/30'
+                          }`}
+                        >
+                          <span>🚩 {flag}</span>
+                          {isSpotted && <CheckCircle2 size={16} className="text-emerald-400" />}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {spottedFlags.length === result.ethicalFlipChallenge.redFlagsToSpot.length && (
+                    <div className="bg-emerald-500/30 border border-emerald-400 p-3 rounded-xl text-center text-emerald-200 text-xs font-black uppercase font-mono tracking-widest animate-bounce mt-2">
+                      🛡️ Trap Neutralized! Cyber Resilience XP Earned!
+                    </div>
+                  )}
+                </div>
+
               </div>
+            ) : (
+              <div className="glass-card p-12 bg-slate-950/50 border-white/5 text-center flex flex-col items-center justify-center h-full min-h-[350px]">
+                <Crosshair size={48} className="text-slate-600 mb-4 animate-pulse" />
+                <h3 className="text-base font-bold text-slate-400 mb-1">Awaiting Trap Execution</h3>
+                <p className="text-xs text-slate-600 max-w-xs">Craft your attack vector on the workbench to analyze forensic lethality metrics.</p>
+              </div>
+            )}
+          </div>
 
-            </div>
-          ) : (
-            <div className="glass-card p-12 bg-slate-950/50 border-white/5 text-center flex flex-col items-center justify-center h-full min-h-[350px]">
-              <Crosshair size={48} className="text-slate-600 mb-4 animate-pulse" />
-              <h3 className="text-base font-bold text-slate-400 mb-1">Awaiting Trap Execution</h3>
-              <p className="text-xs text-slate-600 max-w-xs">Craft your attack vector on the workbench to analyze forensic lethality metrics.</p>
-            </div>
-          )}
         </div>
-
-      </div>
+      )}
 
     </div>
   );

@@ -182,6 +182,31 @@ export default function ScamScannerPage() {
                 {report.aiAnalysisEngine}
               </div>
 
+              {/* Download & Share Report Action Toolbar */}
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => {
+                    const blob = new Blob([`CYBERCIA FORGE FORENSIC REPORT\nVerdict: ${report.verdict}\nTactic: ${report.manipulationTactic}\nConfidence: ${report.confidenceScore}\n\nRED FLAGS:\n${report.redFlagsDetected.join('\n')}\n\nSAFETY PROTOCOL:\n${report.actionProtocol.join('\n')}`], { type: 'text/plain;charset=utf-8' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `Cyber CIA_Scam Report_${Date.now()}.txt`;
+                    a.click();
+                  }}
+                  className="py-3 px-4 bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-400/40 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                >
+                  📥 Download Report (.TXT)
+                </button>
+                <a
+                  href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`🚨 CYBER THREAT ALERT!\nVerdict: ${report.verdict}\nTactic: ${report.manipulationTactic}\n\n⚠️ Detected Flags:\n${report.redFlagsDetected.join('\n• ')}\n\n🛡️ Action Required:\n${report.actionProtocol[0]}\n\nAnalyzed via CyberCIA Forge Vision Engine.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-3 px-4 bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg"
+                >
+                  💬 Share on WhatsApp
+                </a>
+              </div>
+
             </div>
           ) : (
             <div className="glass-card p-12 bg-slate-950/50 border-white/5 text-center flex flex-col items-center justify-center h-full min-h-[350px]">

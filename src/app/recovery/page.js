@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from 'react';
 import ScrollReveal from '@/components/ScrollReveal';
-import { PhoneCall, ShieldAlert, ExternalLink, Lock, CheckCircle2, FileText, ArrowRight, AlertOctagon } from 'lucide-react';
+import { PhoneCall, ShieldAlert, ExternalLink, Lock, CheckCircle2, FileText, ArrowRight, AlertOctagon, Activity, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import confetti from 'canvas-confetti';
 
 const BANK_FREEZE_NUMBERS = [
   { bank: "State Bank of India (SBI)", num: "1800 11 1109", sms: "BLOCK <CardLast4> to 567676" },
@@ -13,10 +15,71 @@ const BANK_FREEZE_NUMBERS = [
   { bank: "Paytm / UPI Gateway", num: "0120 4456456", sms: "Report in Paytm App Support" }
 ];
 
+const RECOVERY_STEPS = [
+  "Dialed 1930 National Cyber Helpline to trigger golden hour lien freeze",
+  "Contacted bank fraud desk & initiated emergency debit card / netbanking lock",
+  "Reported suspect phone number / handle on TRAI Chakshu portal (sancharsaathi.gov.in)",
+  "Preserved full untruncated chat logs & 12-digit UPI / UTR transaction reference numbers"
+];
+
 export default function EmergencyRecoveryPage() {
+  const [completedSteps, setCompletedSteps] = useState([]);
+
+  const toggleRecoveryStep = (idx) => {
+    const next = completedSteps.includes(idx) ? completedSteps.filter(i => i !== idx) : [...completedSteps, idx];
+    setCompletedSteps(next);
+    if (next.length === RECOVERY_STEPS.length) {
+      confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+    }
+  };
+
   return (
-    <div className="max-w-6xl mx-auto pb-44 pt-6 px-4 sm:px-6 animate-fade-in select-none">
+    <div className="max-w-6xl mx-auto pb-44 pt-6 px-4 sm:px-6 animate-fade-in select-none font-mono">
       
+      {/* Interactive Visual Emergency Response Tracker */}
+      <div className="mb-10 glass-card p-6 sm:p-8 bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 border-2 border-cyan-400 shadow-2xl space-y-4">
+        <div className="flex flex-wrap justify-between items-center gap-4">
+          <span className="text-xs font-black uppercase tracking-widest text-cyan-300 flex items-center gap-2">
+            <Activity size={16} className="text-cyan-400 animate-pulse" /> Interactive Visual Recovery Action Board:
+          </span>
+          <span className="bg-cyan-400 text-slate-950 font-black text-xs px-3 py-1 rounded-full">
+            {completedSteps.length} of 4 Actions Verified ({Math.round((completedSteps.length / 4) * 100)}%)
+          </span>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-white/10">
+          <div 
+            className="bg-gradient-to-r from-rose-500 via-amber-400 to-emerald-400 h-full transition-all duration-500"
+            style={{ width: `${(completedSteps.length / 4) * 100}%` }}
+          ></div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
+          {RECOVERY_STEPS.map((stepText, idx) => {
+            const isDone = completedSteps.includes(idx);
+            return (
+              <div 
+                key={idx}
+                onClick={() => toggleRecoveryStep(idx)}
+                className={`p-3.5 rounded-2xl border text-xs cursor-pointer transition-all flex items-start gap-3 ${
+                  isDone ? "bg-emerald-500/20 border-emerald-400 text-emerald-200 font-bold" : "bg-white/5 border-white/10 text-slate-300 hover:border-cyan-400"
+                }`}
+              >
+                <span className="text-base shrink-0">{isDone ? "✔" : "◻"}</span>
+                <span className="leading-snug">{stepText}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {completedSteps.length === 4 && (
+          <div className="p-4 rounded-2xl bg-emerald-500 text-slate-950 font-black text-center text-xs uppercase tracking-widest animate-bounce shadow-xl mt-2">
+            🛡️ ALL RECOVERY PROTOCOLS EXECUTED! DIGITAL EVIDENCE PRESERVED!
+          </div>
+        )}
+      </div>
+
       {/* Emergency Masthead */}
       <div className="glass-card p-8 md:p-14 mb-12 relative overflow-hidden bg-gradient-to-r from-rose-950 via-slate-950 to-red-950 border-2 border-rose-500 shadow-[0_0_90px_rgba(244,63,94,0.35)] text-center sm:text-left flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="absolute -top-32 -left-32 w-80 h-80 bg-rose-600/20 rounded-full blur-3xl pointer-events-none"></div>

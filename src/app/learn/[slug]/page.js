@@ -66,8 +66,41 @@ export default function LessonPage({ params }) {
           <p className="text-slate-200">{lesson.protection}</p>
         </div>
 
-        <div className="flex gap-4 pt-4">
-          <button onClick={handleFinish} className="flex-1 bg-navy border border-white/20 p-4 rounded-xl font-bold hover:bg-white/5 transition-colors">
+        {/* Working Social Share Buttons */}
+        <div className="bg-slate-900/90 p-6 rounded-2xl border border-cyan-400/40 text-center space-y-4 shadow-xl">
+          <span className="text-xs font-mono font-black uppercase tracking-widest text-cyan-300 block">
+            🎉 Share Your Cyber Awareness Badge:
+          </span>
+          <div className="grid grid-cols-3 gap-2">
+            <a 
+              href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`🛡️ I just mastered "${lesson.title}" on CyberCIA Forge! Certified Scam Resistant 🇮🇳✨\nCheck my badge: https://cybersiksha.vercel.app/learn/${slug}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-3 px-4 bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md transition-transform hover:scale-105"
+            >
+              💬 WhatsApp
+            </a>
+            <a 
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`🛡️ I just mastered "${lesson.title}" on CyberCIA Forge! Certified Scam Resistant 🇮🇳✨\n@CyberCIAForge #CyberSiksha #CyberSecurity`)}&url=${encodeURIComponent(`https://cybersiksha.vercel.app/learn/${slug}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-3 px-4 bg-[#1DA1F2] hover:bg-[#1a91da] text-white font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md transition-transform hover:scale-105"
+            >
+              🐦 X / Twitter
+            </a>
+            <a 
+              href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://cybersiksha.vercel.app/learn/${slug}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-3 px-4 bg-[#0A66C2] hover:bg-[#0957a6] text-white font-black rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-md transition-transform hover:scale-105"
+            >
+              💼 LinkedIn
+            </a>
+          </div>
+        </div>
+
+        <div className="flex gap-4 pt-2">
+          <button onClick={handleFinish} className="flex-1 bg-navy border border-white/20 p-4 rounded-xl font-bold hover:bg-white/5 transition-colors cursor-pointer">
             Back to Lessons
           </button>
           <Link href="/quiz" className="flex-1 btn-primary text-center leading-[3rem]">

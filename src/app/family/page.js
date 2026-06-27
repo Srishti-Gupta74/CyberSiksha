@@ -29,7 +29,31 @@ export default function FamilyPage() {
   const [inviteRelation, setInviteRelation] = useState('Elder (Grandparent)');
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [inviteLoading, setInviteLoading] = useState(false);
-  const [inviteError, setInviteError] = useState('');
+  // Family Cyber Incident Loop State
+  const [incidents, setIncidents] = useState([
+    { id: 1, author: "Grandpa (Elder)", avatar: "👴", incident: "Received fake CBI Digital Arrest video call on Skype demanding ₹50,000 crypto bail.", time: "25 mins ago", severity: "🔴 CRITICAL VECTOR" },
+    { id: 2, author: "Mother (Sunita)", avatar: "👩", incident: "Suspicious WhatsApp APK file claiming to unlock 5,000 SBI Reward points. Deleted & blocked.", time: "3 hours ago", severity: "🟡 TACTICAL SPAM" },
+    { id: 3, author: "Son (Aarav)", avatar: "👦", incident: "Fake electricity power disconnection SMS with shortened link. Reported to 1930.", time: "Yesterday", severity: "🟢 MITIGATED THREAT" }
+  ]);
+  const [newIncidentText, setNewIncidentText] = useState("");
+  const [incidentSeverity, setIncidentSeverity] = useState("🔴 CRITICAL VECTOR");
+
+  const handlePostIncident = (e) => {
+    e.preventDefault();
+    if (!newIncidentText.trim()) return;
+    const authorName = profile?.display_name || user?.email?.split('@')[0] || "Circle Defender";
+    const newEntry = {
+      id: Date.now(),
+      author: authorName,
+      avatar: authorName.toLowerCase().includes('grand') ? "👴" : "🛡️",
+      incident: newIncidentText.trim(),
+      time: "Just now",
+      severity: incidentSeverity
+    };
+    setIncidents([newEntry, ...incidents]);
+    setNewIncidentText("");
+    confetti({ particleCount: 70, spread: 60, origin: { y: 0.8 } });
+  };
 
   // Persistent Hybrid Load Data
   // Realtime Supabase Database Sync Bridge across tabs
@@ -1189,6 +1213,92 @@ export default function FamilyPage() {
             </>
           );
         })()}
+      </div>
+
+      {/* 🚨 Live Family Security Incident Wall (Keeps everyone in circle warned & updated) */}
+      <div className="mb-20 glass-card p-6 sm:p-10 bg-slate-950 border-2 border-rose-500/80 shadow-[0_0_80px_rgba(244,63,94,0.2)] animate-fade-in font-mono select-none">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 border-b border-white/10 pb-6">
+          <div>
+            <div className="inline-flex items-center gap-2 bg-rose-500/20 border border-rose-500/40 px-3.5 py-1 rounded-full text-[11px] font-black text-rose-300 uppercase tracking-widest mb-2">
+              <Activity size={14} className="text-rose-400 animate-pulse" /> CIRCLE COLLABORATIVE INTELLIGENCE • LIVE FEED
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white">🚨 Family Incident Dispatch Wall</h3>
+            <p className="text-xs text-slate-400 font-sans mt-1">Log suspicious calls or SMS attempts you just faced. Instantly notifies and arms all elders and family defenders in your circle.</p>
+          </div>
+          <span className="bg-rose-500 text-slate-950 px-3.5 py-1.5 rounded-xl font-black text-xs uppercase animate-bounce">
+            {incidents.length} Active Intimations
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Post Incident Input Workbench */}
+          <div className="lg:col-span-5 bg-slate-900/60 p-6 rounded-3xl border border-white/10 space-y-4">
+            <h4 className="text-xs font-bold text-cyan-300 uppercase tracking-widest flex items-center gap-2">
+              <Sparkles size={16} /> Log Recent Threat Encounter:
+            </h4>
+
+            <form onSubmit={handlePostIncident} className="space-y-4">
+              <div>
+                <label className="text-[10px] text-slate-400 uppercase block mb-1.5 font-bold">Encounter Details</label>
+                <textarea
+                  value={newIncidentText}
+                  onChange={e => setNewIncidentText(e.target.value)}
+                  placeholder="e.g., Fake SBI credit card reward APK received on family WhatsApp group. Warned grandma..."
+                  rows={3}
+                  className="w-full bg-slate-950 border border-white/10 rounded-2xl p-3.5 text-xs text-white focus:border-rose-500 outline-none resize-none font-mono"
+                />
+              </div>
+
+              <div>
+                <label className="text-[10px] text-slate-400 uppercase block mb-1.5 font-bold">Threat Severity Level</label>
+                <div className="grid grid-cols-3 gap-1.5 text-[10px] font-bold">
+                  {["🔴 CRITICAL VECTOR", "🟡 TACTICAL SPAM", "🟢 MITIGATED THREAT"].map((sev, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setIncidentSeverity(sev)}
+                      className={`py-2 rounded-xl border transition-all truncate px-1 ${
+                        incidentSeverity === sev ? "bg-rose-500 text-white border-rose-400 shadow-md font-black" : "bg-white/5 border-white/5 text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {sev.split(' ')[0]} {sev.split(' ')[1]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={!newIncidentText.trim()}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-widest shadow-lg cursor-pointer transition-all disabled:opacity-30 flex items-center justify-center gap-2"
+              >
+                <Send size={14} /> <span>Broadcast To Family Circle</span>
+              </button>
+            </form>
+          </div>
+
+          {/* Incident Dispatches Stream */}
+          <div className="lg:col-span-7 space-y-3 max-h-[420px] overflow-y-auto pr-2">
+            <span className="text-xs font-black text-slate-300 uppercase tracking-widest block">📡 Recent Circle Threat Dispatches:</span>
+            {incidents.map((inc) => (
+              <div key={inc.id} className="p-4 rounded-2xl bg-white/5 border border-white/10 flex gap-3.5 items-start transition-all hover:border-cyan-400/50">
+                <span className="text-3xl shrink-0 p-2 bg-slate-900 rounded-2xl border border-white/5 shadow-md">{inc.avatar}</span>
+                <div className="space-y-1 w-full">
+                  <div className="flex justify-between items-center text-[10px]">
+                    <span className="font-black text-white">{inc.author}</span>
+                    <span className="text-slate-400 flex items-center gap-1"><Clock size={10} /> {inc.time}</span>
+                  </div>
+                  <p className="text-xs text-slate-200 font-sans leading-relaxed">{inc.incident}</p>
+                  <span className="inline-block mt-1 text-[9px] font-bold px-2 py-0.5 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300">
+                    {inc.severity}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
       </div>
 
       {/* Email Invitation Modal - True Viewport Portal Overlay */}

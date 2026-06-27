@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import ScrollReveal from '@/components/ScrollReveal';
 import { Users, Shield, UserPlus, Copy, Check, KeyRound, ArrowRight, Loader2, Award, Flame, HeartHandshake, Mail, Send, CheckCircle2, Clock, Sparkles } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import FamilyLearningAnalytics from '@/components/FamilyLearningAnalytics';
 
 export default function FamilyPage() {
   const { user, profile, guestMode } = useAuth();
@@ -1214,6 +1215,9 @@ export default function FamilyPage() {
           );
         })()}
       </div>
+
+      {/* 📊 Personalized Family Learning Dashboard & Benchmark Matrix */}
+      <FamilyLearningAnalytics />
 
       {/* 🚨 Live Family Security Incident Wall (Keeps everyone in circle warned & updated) */}
       <div className="mb-20 glass-card p-6 sm:p-10 bg-slate-950 border-2 border-rose-500/80 shadow-[0_0_80px_rgba(244,63,94,0.2)] animate-fade-in font-mono select-none">

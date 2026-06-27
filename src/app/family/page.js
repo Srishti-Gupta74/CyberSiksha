@@ -346,44 +346,70 @@ export default function FamilyPage() {
   };
 
   const getCanonicalRoster = (currentEmail, currentName) => {
-    const isElder = currentEmail?.toLowerCase().includes('shei') || currentName?.toLowerCase().includes('grand') || currentName?.toLowerCase().includes('sharma');
     const myId = user?.id || "u_guest";
-    const elderName = isElder ? (profile?.display_name || "Grandpa") : "Grandpa";
-    const urlP = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-    const inviterParam = urlP?.get('inviter') ? decodeURIComponent(urlP.get('inviter')) : "Neha";
-    const adminDisp = isElder ? inviterParam : (profile?.display_name || inviterParam);
-
-    const adminCard = {
-      role: "admin",
-      relation: "Circle Commander",
-      profiles: {
-        id: isElder ? "cmd_demo_99" : myId,
-        display_name: adminDisp,
-        avatar_initial: adminDisp.charAt(0).toUpperCase(),
-        xp: !isElder ? (profile?.xp || 0) : 0,
-        streak: !isElder ? (profile?.streak || 0) : 0
-      }
-    };
-
-    if (!isElder) {
-      return [adminCard];
-    }
-
-    return [
-      adminCard,
+    const myName = profile?.display_name || currentName || "Neha";
+    
+    const baseRoster = [
+      {
+        role: "admin",
+        relation: "Circle Commander",
+        email: "neha.commander@gmail.com",
+        profiles: {
+          id: myName.toLowerCase().includes("grand") ? "cmd_neha" : myId,
+          display_name: myName.toLowerCase().includes("grand") ? "Neha (Commander)" : myName,
+          avatar_initial: "N",
+          xp: 540,
+          streak: 12
+        }
+      },
       {
         role: "member",
         relation: "Protected Elder (Family Roster)",
-        email: currentEmail || "grandpa@gmail.com",
+        email: "grandpa.sharma@gmail.com",
         profiles: {
-          id: myId,
-          display_name: elderName,
-          avatar_initial: elderName.charAt(0).toUpperCase(),
-          xp: profile?.xp || 0,
-          streak: profile?.streak || 0
+          id: myName.toLowerCase().includes("grand") ? myId : "elder_sharma",
+          display_name: "Grandpa Sharma (Elder)",
+          avatar_initial: "G",
+          xp: 180,
+          streak: 4
+        }
+      },
+      {
+        role: "member",
+        relation: "Vigilant Defender",
+        email: "sunita.sharma@gmail.com",
+        profiles: {
+          id: "mem_sunita",
+          display_name: "Sunita (Mother)",
+          avatar_initial: "S",
+          xp: 320,
+          streak: 7
+        }
+      },
+      {
+        role: "member",
+        relation: "Cyber Sentinel",
+        email: "aarav.student@gmail.com",
+        profiles: {
+          id: "mem_aarav",
+          display_name: "Aarav (Student)",
+          avatar_initial: "A",
+          xp: 410,
+          streak: 9
         }
       }
     ];
+
+    try {
+      const localMems = JSON.parse(localStorage.getItem('cs_global_fam_mem')) || [];
+      const extraMems = localMems.filter(lm => {
+        const dName = lm?.profiles?.display_name || lm?.email || "";
+        return !["neha", "grandpa", "sunita", "aarav"].some(core => dName.toLowerCase().includes(core));
+      });
+      return [...baseRoster, ...extraMems];
+    } catch(e) {
+      return baseRoster;
+    }
   };
 
   async function loadFamilyData() {
@@ -1217,7 +1243,7 @@ export default function FamilyPage() {
       </div>
 
       {/* 📊 Personalized Family Learning Dashboard & Benchmark Matrix */}
-      <FamilyLearningAnalytics />
+      <FamilyLearningAnalytics members={members} />
 
       {/* 🚨 Live Family Security Incident Wall (Keeps everyone in circle warned & updated) */}
       <div className="mb-20 glass-card p-6 sm:p-10 bg-slate-950 border-2 border-rose-500/80 shadow-[0_0_80px_rgba(244,63,94,0.2)] animate-fade-in font-mono select-none">

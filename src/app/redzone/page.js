@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import ScrollReveal from '@/components/ScrollReveal';
 import { ShieldAlert, Crosshair, Sparkles, RefreshCw, CheckCircle2, ArrowRight, Skull, ShieldCheck } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import DigitalArrestSim from '@/components/DigitalArrestSim';
 
 export default function RedZonePage() {
   const [intel, setIntel] = useState(null);
@@ -89,6 +90,11 @@ export default function RedZonePage() {
             <p className="text-xs font-bold text-white leading-snug">{intel.badgeText}</p>
           </div>
         )}
+      </div>
+
+      {/* Topical India Digital Arrest Simulation Showcase */}
+      <div className="mb-14">
+        <DigitalArrestSim />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

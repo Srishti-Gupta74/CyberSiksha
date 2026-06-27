@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { NEWS_ARTICLES } from '@/data/content';
 import ScrollReveal from '@/components/ScrollReveal';
-import { Newspaper, ArrowRight, Calendar, ShieldAlert, Sparkles, ChevronDown, ArrowUpRight, Share2, Bookmark, Zap } from 'lucide-react';
+import { Newspaper, ArrowRight, Calendar, ShieldAlert, Sparkles, ChevronDown, ArrowUpRight, Share2, Bookmark, Zap, MapPin } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import IndiaHeatmap from '@/components/IndiaHeatmap';
 
 export default function NewsPage() {
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState("feed"); // "feed" | "map"
   const [selectedArticle, setSelectedArticle] = useState(null);
   const [mounted, setMounted] = useState(false);
   
@@ -133,13 +135,37 @@ export default function NewsPage() {
         </div>
       </ScrollReveal>
 
-      {/* Spacious On-Scroll Showcase Sections */}
-      <div className="pt-4">
-        {liveThreats.length > 0 && renderNewsShowcase("live", "🔴 Live Indian Threat Feed", intelSource, liveThreats, "rose", "🚨")}
-        {renderNewsShowcase("finance", "Financial & Banking Frauds", "High Priority", financialNews, "cyan", "💸")}
-        {renderNewsShowcase("ai", "AI Deepfakes & Social Impersonation", "Emerging Vector", aiSocialNews, "purple", "🤖")}
-        {renderNewsShowcase("biometric", "Aadhaar Biometric & Identity Theft", "Critical Advisory", biometricNews, "rose", "🔒")}
+      {/* Tab Toggle Toolbar */}
+      <div className="flex justify-center mb-12">
+        <div className="bg-slate-900/80 p-2 rounded-2xl border border-white/10 flex gap-2 font-mono text-xs uppercase tracking-wider">
+          <button 
+            onClick={() => setActiveTab("feed")}
+            className={`px-6 py-3 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${activeTab === "feed" ? "bg-cyan-400 text-slate-950 font-black shadow-lg" : "text-slate-400 hover:text-white"}`}
+          >
+            <Newspaper size={16} /> <span>Chronicles Feed</span>
+          </button>
+          <button 
+            onClick={() => setActiveTab("map")}
+            className={`px-6 py-3 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${activeTab === "map" ? "bg-rose-500 text-white font-black shadow-lg" : "text-slate-400 hover:text-white"}`}
+          >
+            <MapPin size={16} /> <span>Geographic Heat Map</span>
+          </button>
+        </div>
       </div>
+
+      {/* Conditional Content */}
+      {activeTab === "feed" ? (
+        <div className="pt-4">
+          {liveThreats.length > 0 && renderNewsShowcase("live", "🔴 Live Indian Threat Feed", intelSource, liveThreats, "rose", "🚨")}
+          {renderNewsShowcase("finance", "Financial & Banking Frauds", "High Priority", financialNews, "cyan", "💸")}
+          {renderNewsShowcase("ai", "AI Deepfakes & Social Impersonation", "Emerging Vector", aiSocialNews, "purple", "🤖")}
+          {renderNewsShowcase("biometric", "Aadhaar Biometric & Identity Theft", "Critical Advisory", biometricNews, "rose", "🔒")}
+        </div>
+      ) : (
+        <div className="pt-4">
+          <IndiaHeatmap />
+        </div>
+      )}
 
       {/* Detailed Editorial Chronicle Modal - True Viewport Portal Overlay */}
       {mounted && selectedArticle && createPortal(

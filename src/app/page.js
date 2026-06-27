@@ -49,8 +49,20 @@ function HeroSection() {
   }, [typed, deleting, threatIdx]);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-12 md:py-20 text-center select-none overflow-hidden">
+    <div className="max-w-5xl mx-auto px-4 py-8 md:py-16 text-center select-none overflow-hidden">
       
+      {/* Persistent Emergency SOS Top Banner */}
+      <div className="mb-10 animate-bounce">
+        <Link 
+          href="/recovery"
+          className="inline-flex items-center gap-3 px-6 py-3.5 rounded-full bg-gradient-to-r from-rose-600 via-rose-500 to-red-600 text-white font-mono font-black text-xs sm:text-sm uppercase tracking-widest shadow-[0_0_40px_rgba(244,63,94,0.6)] border-2 border-rose-300 hover:scale-105 transition-all cursor-pointer"
+        >
+          <AlertTriangle size={18} className="animate-spin text-amber-300" />
+          <span>🚨 Emergency SOS: I Got Scammed — What Now?</span>
+          <ChevronRight size={16} />
+        </Link>
+      </div>
+
       {/* Breathtaking Calligraphic Brand Typography Header */}
       <div className="relative mx-auto mb-10 text-center select-none py-2">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-24 bg-gradient-to-r from-cyan-400/20 via-purple-500/25 to-pink-500/20 blur-3xl opacity-90 rounded-full animate-pulse pointer-events-none"></div>

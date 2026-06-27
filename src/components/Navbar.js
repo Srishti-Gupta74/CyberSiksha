@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BookOpen, ShieldQuestion, Newspaper, Users, Crosshair, Sparkles, Radar } from 'lucide-react';
+import { Home, Newspaper, Users, Crosshair, Camera } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useAuth } from './AuthProvider';
 
@@ -21,15 +21,13 @@ export default function Navbar() {
 
   if (loading || !user) return null;
   
+  // Strict 5-Icon Hard Cap (Zero visual clutter)
   const navItems = [
-    { name: 'Home', path: '/', icon: <Home size={20} /> },
-    { name: 'RedZone', path: '/redzone', icon: <Crosshair size={20} className="text-rose-400" /> },
-    { name: 'Report', path: '/report', icon: <Radar size={20} className="text-cyan-400" /> },
-    { name: 'Studio', path: '/create', icon: <Sparkles size={20} className="text-pink-400" /> },
-    { name: 'Learn', path: '/learn', icon: <BookOpen size={20} /> },
-    { name: 'Quiz', path: '/quiz', icon: <ShieldQuestion size={20} /> },
-    { name: 'News', path: '/news', icon: <Newspaper size={20} /> },
-    { name: 'Family', path: '/family', icon: <Users size={20} /> },
+    { name: 'Home', path: '/', icon: <Home size={22} /> },
+    { name: 'Scanner', path: '/scanner', icon: <Camera size={22} className="text-cyan-400 animate-pulse" /> },
+    { name: 'RedZone', path: '/redzone', icon: <Crosshair size={22} className="text-rose-400" /> },
+    { name: 'News', path: '/news', icon: <Newspaper size={22} /> },
+    { name: 'Family', path: '/family', icon: <Users size={22} /> },
   ];
 
   return (

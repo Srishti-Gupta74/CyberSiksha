@@ -79,24 +79,24 @@ export default function IndiaHeatmap() {
           </h2>
         </div>
 
-        {/* Legend */}
-        <div className="flex flex-wrap gap-4 text-xs font-mono bg-slate-900 p-3 rounded-2xl border border-white/10">
-          <span className="flex items-center gap-1.5 font-bold text-rose-400"><span className="w-3 h-3 rounded-md bg-[#ef4444] shadow-[0_0_8px_#ef4444]"></span> Critical (&gt;10%)</span>
-          <span className="flex items-center gap-1.5 font-bold text-orange-400"><span className="w-3 h-3 rounded-md bg-[#f97316] shadow-[0_0_8px_#f97316]"></span> High (5-10%)</span>
-          <span className="flex items-center gap-1.5 font-bold text-amber-400"><span className="w-3 h-3 rounded-md bg-[#f59e0b] shadow-[0_0_8px_#f59e0b]"></span> Tactical (1-5%)</span>
-          <span className="flex items-center gap-1.5 font-bold text-cyan-400"><span className="w-3 h-3 rounded-md bg-[#06b6d4] shadow-[0_0_8px_#06b6d4]"></span> Vigilance (&lt;1%)</span>
+        {/* Legend (High contrast & large fonts for elders) */}
+        <div className="flex flex-wrap gap-5 text-sm sm:text-base font-mono bg-slate-900/90 p-4 rounded-2xl border-2 border-white/20 shadow-xl">
+          <span className="flex items-center gap-2 font-bold text-rose-400"><span className="w-3.5 h-3.5 rounded-md bg-[#ef4444] shadow-[0_0_10px_#ef4444]"></span> Critical (&gt;10%)</span>
+          <span className="flex items-center gap-2 font-bold text-orange-400"><span className="w-3.5 h-3.5 rounded-md bg-[#f97316] shadow-[0_0_10px_#f97316]"></span> High (5-10%)</span>
+          <span className="flex items-center gap-2 font-bold text-amber-400"><span className="w-3.5 h-3.5 rounded-md bg-[#f59e0b] shadow-[0_0_10px_#f59e0b]"></span> Tactical (1-5%)</span>
+          <span className="flex items-center gap-2 font-bold text-cyan-400"><span className="w-3.5 h-3.5 rounded-md bg-[#06b6d4] shadow-[0_0_10px_#06b6d4]"></span> Vigilance (&lt;1%)</span>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
         {/* Interactive Geographic Matrix */}
-        <div className="lg:col-span-7 space-y-6">
+        <div className="lg:col-span-7 space-y-8">
           
           {/* Top GeoJSON Map Render */}
           <div className="bg-slate-900/40 rounded-3xl p-4 border border-white/5 relative flex items-center justify-center min-h-[350px] overflow-hidden group">
-            <div className="absolute top-4 left-4 z-10 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-cyan-400/40 text-[10px] text-cyan-300 font-bold flex items-center gap-1.5 pointer-events-none shadow-lg">
-              <ZoomIn size={12} className="text-cyan-400 animate-pulse" /> <span>Pinch / Scroll to Zoom & Pan • Click State</span>
+            <div className="absolute top-4 left-4 z-10 bg-slate-950/90 backdrop-blur-md px-4 py-2 rounded-full border border-cyan-400/60 text-xs sm:text-sm text-cyan-300 font-bold flex items-center gap-2 pointer-events-none shadow-xl">
+              <ZoomIn size={16} className="text-cyan-400 animate-pulse" /> <span>Pinch / Scroll to Zoom & Pan • Click State</span>
             </div>
             {!geoError ? (
               <ComposableMap 
@@ -153,9 +153,9 @@ export default function IndiaHeatmap() {
           </div>
 
           {/* Unshakeable State Belt Selection Grid */}
-          <div className="space-y-3">
-            <span className="text-xs font-black uppercase tracking-widest text-cyan-400 block">⚡ Select Official Threat Zone To Audit:</span>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+          <div className="space-y-4">
+            <span className="text-base sm:text-lg font-black uppercase tracking-wider text-cyan-300 block">⚡ Select Official Threat Zone To Audit:</span>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               {Object.keys(STATE_INTENSITY_DB).map((state, i) => {
                 const data = STATE_INTENSITY_DB[state];
                 const isSelected = selectedState === state;
@@ -163,14 +163,14 @@ export default function IndiaHeatmap() {
                   <button
                     key={i}
                     onClick={() => setSelectedState(state)}
-                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1 ${
-                      isSelected ? "bg-rose-500/20 border-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.3)] scale-105" : "bg-white/5 border-white/5 hover:border-white/20"
+                    className={`p-4 sm:p-5 rounded-2xl border-2 text-left transition-all cursor-pointer flex flex-col justify-between gap-2 shadow-md ${
+                      isSelected ? "bg-rose-500/30 border-rose-400 shadow-[0_0_25px_rgba(244,63,94,0.5)] scale-105" : "bg-white/[0.06] border-white/15 hover:border-white/30 hover:bg-white/[0.1]"
                     }`}
                   >
-                    <span className="text-xs font-black text-white font-['Outfit'] truncate">{state}</span>
-                    <div className="flex justify-between items-center text-[10px]">
-                      <span className="text-rose-400 font-bold truncate pr-1">{data.share.split(' ')[0]} Share</span>
-                      <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: data.color }}></span>
+                    <span className="text-base sm:text-lg font-black text-white font-['Outfit'] truncate">{state}</span>
+                    <div className="flex justify-between items-center text-xs sm:text-sm font-bold">
+                      <span className="text-rose-300 truncate pr-1">{data.share.split(' ')[0]} Share</span>
+                      <span className="w-3 h-3 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: data.color }}></span>
                     </div>
                   </button>
                 );
@@ -182,45 +182,45 @@ export default function IndiaHeatmap() {
 
         {/* State Threat Dossier Card */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="glass-card p-6 sm:p-8 bg-slate-900 border-2 border-rose-500/60 shadow-2xl space-y-6 relative animate-scale-up">
+          <div className="glass-card p-6 sm:p-10 bg-slate-900 border-2 border-rose-500/80 shadow-2xl space-y-8 relative animate-scale-up rounded-[2.5rem]">
             
-            <div className="flex justify-between items-start border-b border-white/10 pb-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-white/20 pb-6 gap-4">
               <div>
-                <span className="text-[10px] text-slate-400 uppercase tracking-widest block font-bold">Geographic Dossier</span>
-                <h3 className="text-3xl font-black font-['Outfit'] text-cyan-300 mt-1">{selectedState}</h3>
+                <span className="text-xs sm:text-sm text-slate-200 uppercase tracking-widest block font-bold">Geographic Dossier</span>
+                <h3 className="text-4xl sm:text-5xl font-black font-['Outfit'] text-cyan-300 mt-1">{selectedState}</h3>
               </div>
-              <div className="text-right">
-                <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 font-black text-xs px-3 py-1.5 rounded-xl block">
+              <div className="text-left sm:text-right">
+                <span className="bg-rose-500/30 border-2 border-rose-500/60 text-rose-200 font-black text-sm sm:text-base px-4 py-2 rounded-xl block shadow-lg">
                   {activeInfo.share}
                 </span>
-                <span className="text-[9px] text-slate-400 uppercase block mt-1">{activeInfo.level}</span>
+                <span className="text-xs sm:text-sm text-slate-100 font-bold uppercase block mt-2">{activeInfo.level}</span>
               </div>
             </div>
 
             <div>
-              <span className="text-xs text-slate-400 uppercase tracking-wider block mb-1 font-bold">🎯 Documented Hotspot Districts:</span>
-              <p className="text-xs font-mono font-bold text-amber-300 bg-amber-500/10 p-3 rounded-xl border border-amber-500/30">
+              <span className="text-sm sm:text-base text-slate-200 uppercase tracking-wider block mb-2 font-bold">🎯 Documented Hotspot Districts:</span>
+              <p className="text-base sm:text-lg font-mono font-bold text-amber-300 bg-amber-500/15 p-4 rounded-2xl border-2 border-amber-500/40 shadow-inner">
                 📍 {activeInfo.districts}
               </p>
             </div>
 
             <div>
-              <span className="text-xs text-slate-400 uppercase tracking-wider block mb-1 font-bold">🔥 Primary Regional Trap Typology:</span>
-              <p className="text-sm font-bold text-white bg-white/5 p-4 rounded-2xl border border-white/10 leading-snug">
+              <span className="text-sm sm:text-base text-slate-200 uppercase tracking-wider block mb-2 font-bold">🔥 Primary Regional Trap Typology:</span>
+              <p className="text-base sm:text-lg font-bold text-white bg-white/[0.06] p-5 rounded-2xl border-2 border-white/20 leading-relaxed shadow-inner">
                 {activeInfo.topVector}
               </p>
             </div>
 
-            <div className="bg-rose-950/40 border border-rose-500/30 p-4 rounded-2xl space-y-2">
-              <div className="flex items-center gap-2 text-rose-300 text-xs font-black uppercase tracking-wider">
-                <AlertTriangle size={16} className="text-rose-400 shrink-0" /> <span>Official MHA / I4C Advisory</span>
+            <div className="bg-rose-950/60 border-2 border-rose-500/50 p-6 rounded-2xl space-y-3 shadow-lg">
+              <div className="flex items-center gap-2.5 text-rose-300 text-sm sm:text-base font-black uppercase tracking-wider">
+                <AlertTriangle size={20} className="text-rose-400 shrink-0" /> <span>Official MHA / I4C Advisory</span>
               </div>
-              <p className="text-xs text-slate-300 font-sans leading-relaxed">
+              <p className="text-sm sm:text-base text-slate-100 font-sans leading-relaxed font-normal">
                 {selectedState} accounts for {activeInfo.share} of reported national cyber fraud incidents. Citizens must exercise vigilance against {activeInfo.topVector.toLowerCase()}. Never share banking credentials over unverified calls.
               </p>
             </div>
 
-            <div className="text-center pt-2 text-[9px] text-slate-500 uppercase tracking-widest border-t border-white/5">
+            <div className="text-center pt-2 text-xs text-slate-400 uppercase tracking-widest border-t border-white/10 font-bold">
               Source: Ministry of Home Affairs (MHA) & I4C Parliamentary Reports
             </div>
 

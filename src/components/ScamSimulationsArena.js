@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ShieldAlert, PhoneCall, Video, MessageSquare, Zap, CheckCircle2, XCircle, ArrowRight, RefreshCw, Sparkles, Award, AlertTriangle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import DigitalArrestSim from './DigitalArrestSim';
+import TextReveal from './TextReveal';
 
 const SIMULATIONS_DATA = [
   {
@@ -200,186 +201,259 @@ export default function ScamSimulationsArena() {
   };
 
   return (
-    <div className="space-y-10 font-mono animate-fade-in select-none">
+    <div className="space-y-12 font-mono animate-fade-in select-none">
       
-      {/* Header Banner */}
-      <div className="glass-card p-6 sm:p-10 bg-gradient-to-r from-slate-950 via-purple-950/40 to-slate-950 border-2 border-purple-500/80 shadow-[0_0_80px_rgba(168,85,247,0.25)] relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-          <div>
-            <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/40 px-3.5 py-1.5 rounded-full text-xs font-black text-purple-300 uppercase tracking-widest mb-3 shadow-md">
-              <ShieldAlert size={16} className="text-cyan-400" /> Interactive Threat Simulator Arena
-            </div>
-            <h2 className="text-3xl sm:text-5xl font-black font-['Outfit'] text-white">
-              Real-Life <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500">Scam Storylines</span>
-            </h2>
-            <p className="text-slate-300 text-xs sm:text-sm font-sans mt-2 max-w-2xl">
-              Immerse yourself in interactive India-specific cyber scam scenarios. Make split-second choices to learn right from wrong and armor your psychological reflexes!
-            </p>
-          </div>
-
-          <div className="bg-slate-900/90 border border-cyan-400/40 p-5 rounded-3xl text-center shrink-0 shadow-xl">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Combat XP Score</span>
-            <div className="text-3xl font-black font-['Outfit'] text-cyan-300 flex items-center justify-center gap-2">
-              <Award size={28} className="text-amber-400 animate-bounce" /> {score} XP
-            </div>
-            <span className="text-[10px] text-emerald-400 font-bold block mt-1">✔ {completedSims.length} Scenarios Completed</span>
-          </div>
+      {/* Noir Hero Header (Exact Screenshot 1 Match) */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 pb-8 border-b border-white/10">
+        <div>
+          <span className="bg-rose-600 text-white font-black font-mono text-[10px] px-3 py-1 uppercase tracking-widest inline-block mb-4 rounded-sm shadow">
+            INTERACTIVE THREAT SIMULATOR ARENA
+          </span>
+          <h2 className="text-5xl sm:text-8xl font-black font-['Outfit'] uppercase leading-[0.85] tracking-tight text-white">
+            SCAM <br /><span className="text-cyan-400">STORYLINES</span>
+          </h2>
+          <TextReveal 
+            text="Immerse yourself in India-specific cyber threat vectors. Make split-second decisions to survive high-lethality social engineering attacks." 
+            className="text-slate-300 text-base sm:text-lg font-sans mt-6 max-w-xl leading-relaxed font-semibold"
+          />
         </div>
 
-        {/* Scenario Selection Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8 pt-8 border-t border-white/10">
-          {SIMULATIONS_DATA.map((sim) => {
-            const isSelected = selectedSim.id === sim.id;
-            const isDone = completedSims.includes(sim.id);
-            return (
-              <div
-                key={sim.id}
-                onClick={() => handleSelectSim(sim)}
-                className={`p-5 rounded-3xl border-2 transition-all cursor-pointer flex flex-col justify-between relative group ${
-                  isSelected 
-                    ? "bg-slate-900 border-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.3)] scale-102" 
-                    : "bg-slate-950/60 border-white/10 hover:border-white/30 hover:bg-slate-900/40"
-                }`}
-              >
-                <div>
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="text-3xl p-2.5 rounded-2xl bg-white/5 border border-white/10 shadow-md group-hover:scale-110 transition-transform">
-                      {sim.icon}
-                    </span>
-                    {isDone && (
-                      <span className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-2.5 py-0.5 rounded-full text-[10px] font-black flex items-center gap-1">
-                        <CheckCircle2 size={12} /> Mastered
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-[10px] font-bold text-slate-400 uppercase block mb-1">{sim.category}</span>
-                  <h4 className="text-sm font-black font-['Outfit'] text-white leading-snug">{sim.title}</h4>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-white/5 flex flex-col gap-3">
-                  <div className="flex justify-between items-center text-[10px] font-black">
-                    <span style={{ color: sim.color }}>{sim.difficulty}</span>
-                    <span className="text-slate-400 font-mono">Step {isSelected ? currentStepIdx + 1 : 1}/{sim.steps ? sim.steps.length : 'Live'}</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSelectSim(sim);
-                    }}
-                    className={`w-full py-2.5 rounded-xl font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md ${
-                      isSelected ? "bg-gradient-to-r from-cyan-500 to-blue-600 text-slate-950 shadow-[0_0_20px_rgba(34,211,238,0.5)] scale-102" : "bg-white/10 hover:bg-cyan-500 hover:text-slate-950 text-white"
-                    }`}
-                  >
-                    <span>{isSelected ? "⚡ Active Playing Below" : "▶ Launch Scenario"}</span>
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+        <div className="lg:border-l lg:border-white/10 lg:pl-12 flex flex-col justify-center shrink-0">
+          <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest block mb-1">COMBAT XP SCORE</span>
+          <div className="text-6xl sm:text-8xl font-black font-['Outfit'] text-cyan-400 leading-none">
+            {score.toString().padStart(2, '0')}
+          </div>
+          <span className="text-xs font-mono text-cyan-400 flex items-center gap-2 mt-3 font-bold">
+            <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+            {completedSims.length} SCENARIOS COMPLETED
+          </span>
         </div>
       </div>
 
-      {/* Main Simulation Showcase Area */}
-      <div id="gameplay-arena" className="scroll-mt-28">
-      {selectedSim.isLegacySim ? (
-        <div className="animate-fade-in">
-          <DigitalArrestSim />
-        </div>
-      ) : (
-        <div className="glass-card p-6 sm:p-10 bg-slate-950 border-2 border-cyan-400/80 shadow-[0_0_80px_rgba(34,211,238,0.2)] animate-fade-in">
-          
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 mb-8 border-b border-white/10">
-            <div>
-              <span className="text-xs font-black text-cyan-400 uppercase tracking-widest flex items-center gap-2">
-                <AlertTriangle size={16} className="text-amber-400" /> Scenario Storyline Arcade
-              </span>
-              <h3 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white mt-1">{selectedSim.title}</h3>
+      {/* 4 Cards Grid on Top (Exact Screenshot 1 Match) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {SIMULATIONS_DATA.map((sim) => {
+          const isSelected = selectedSim.id === sim.id;
+          const isDone = completedSims.includes(sim.id);
+          const stepCount = sim.steps ? sim.steps.length : 1;
+          const currentStepStr = isSelected ? `0${currentStepIdx + 1}/0${stepCount}` : `01/0${stepCount}`;
+
+          return (
+            <div
+              key={sim.id}
+              onClick={() => handleSelectSim(sim)}
+              className={`p-5 rounded-xl transition-all cursor-pointer flex flex-col justify-between min-h-[150px] relative overflow-hidden ${
+                isSelected
+                  ? "bg-[#18181b] border-2 border-cyan-400 shadow-[0_4px_30px_rgba(34,211,238,0.2)] scale-102"
+                  : "bg-[#121214] border border-white/10 hover:border-white/25 hover:bg-[#161618]"
+              }`}
+            >
+              <div className="flex justify-between items-center text-xs font-mono font-bold">
+                <span className={isSelected ? "text-cyan-400" : "text-slate-500"}>
+                  {isSelected ? "[ IN-PROGRESS ]" : isDone ? "[ MASTERED ]" : "[ STANDBY ]"}
+                </span>
+                <span className="text-slate-400">{currentStepStr}</span>
+              </div>
+
+              <h4 className="text-sm sm:text-base font-black font-['Outfit'] text-white uppercase leading-snug my-4">
+                {sim.title}
+              </h4>
+
+              <div className="flex justify-between items-center pt-3 border-t border-white/5">
+                <span className="text-rose-500 text-[10px] font-mono font-bold uppercase tracking-wider">
+                  {sim.difficulty.replace(/[^\w\s]/gi, '').trim() || 'HIGH LETHALITY'}
+                </span>
+                {isDone && <CheckCircle2 size={16} className="text-emerald-400" />}
+              </div>
             </div>
-            <div className="bg-slate-900 px-4 py-2 rounded-2xl border border-white/10 text-xs font-bold text-slate-300">
-              Step <span className="text-cyan-400 font-black text-sm">{currentStepIdx + 1}</span> of {selectedSim.steps.length}
+          );
+        })}
+      </div>
+
+      {/* Cinematic Noir Split Console (Exact Screenshot 1 & 2 Match) */}
+      <div id="gameplay-arena" className="scroll-mt-28 pt-2">
+        {selectedSim.isLegacySim ? (
+          <div className="bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 animate-fade-in">
+            {/* Far Left Vertical Strip (1 Col) */}
+            <div className="hidden lg:flex lg:col-span-1 border-r border-white/10 flex-col justify-between items-center py-8 px-2 bg-black/40 text-slate-500 font-mono select-none">
+              <div 
+                className="text-[10px] font-bold tracking-widest uppercase py-4"
+                style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+              >
+                THREAT_ID: DIGITAL_ARREST_CBI
+              </div>
+              <div className="text-rose-500 font-black text-lg tracking-widest animate-pulse">
+                !!!
+              </div>
+            </div>
+
+            {/* Main Noir Content Area (11 Cols) */}
+            <div className="lg:col-span-11 bg-[#141416]">
+              <DigitalArrestSim />
             </div>
           </div>
+        ) : (
+          <div className="bg-[#121214] border border-white/15 rounded-2xl shadow-2xl overflow-hidden grid grid-cols-1 lg:grid-cols-12 animate-fade-in min-h-[720px]">
+            
+            {/* Far Left Vertical Strip (1 Col) */}
+            <div className="hidden lg:flex lg:col-span-1 border-r border-white/10 flex-col justify-between items-center py-8 px-2 bg-black/40 text-slate-500 font-mono select-none">
+              <div 
+                className="text-[10px] font-bold tracking-widest uppercase py-4"
+                style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
+              >
+                THREAT_ID: {selectedSim.id.toUpperCase()}_TAIWAN
+              </div>
+              <div className="text-rose-500 font-black text-lg tracking-widest animate-pulse">
+                !!!
+              </div>
+            </div>
 
-          {/* Story Intro Box */}
-          <div className="bg-gradient-to-r from-slate-900 via-indigo-950/50 to-slate-900 p-6 rounded-3xl border border-purple-500/40 mb-8 shadow-inner">
-            <span className="text-[10px] font-black text-purple-300 uppercase tracking-widest block mb-2">📜 Situation Background:</span>
-            <p className="text-xs sm:text-sm text-slate-200 font-sans whitespace-pre-line leading-relaxed">
-              {selectedSim.storyIntro}
-            </p>
-          </div>
-
-          {/* Interactive Question Step */}
-          {(() => {
-            const step = selectedSim.steps[currentStepIdx];
-            return (
-              <div className="space-y-6">
-                <div className="bg-slate-900/80 p-6 rounded-3xl border border-cyan-400/30">
-                  <span className="text-xs font-black text-amber-400 uppercase tracking-widest block mb-2">❓ Critical Decision Point:</span>
-                  <h4 className="text-base sm:text-lg font-black font-['Outfit'] text-white leading-relaxed">
-                    {step.question}
-                  </h4>
+            {/* Left Main Panel (6 Cols) */}
+            <div className="lg:col-span-6 p-6 sm:p-12 flex flex-col space-y-8 border-b lg:border-b-0 lg:border-r border-white/10 bg-[#141416]">
+              <div>
+                <div className="flex items-center gap-3 mb-6">
+                  <span className="border border-rose-500/60 text-rose-500 text-xs font-mono font-bold px-2.5 py-1 uppercase rounded-sm">
+                    {selectedSim.difficulty.replace(/[^\w\s]/gi, '').trim() || 'HIGH LETHALITY'}
+                  </span>
+                  <span className="text-slate-400 font-mono text-xs font-bold">
+                    STEP 0{currentStepIdx + 1} OF 0{selectedSim.steps.length}
+                  </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {step.options.map((opt, idx) => {
-                    const isSelected = selectedOptionIdx === idx;
-                    let cardStyle = "bg-white/5 border-white/10 hover:border-white/30 text-slate-200";
-                    
-                    if (isAnswered) {
-                      if (opt.isCorrect) {
-                        cardStyle = "bg-emerald-500/20 border-2 border-emerald-400 text-emerald-200 shadow-[0_0_30px_rgba(16,185,129,0.2)]";
-                      } else if (isSelected && !opt.isCorrect) {
-                        cardStyle = "bg-rose-500/20 border-2 border-rose-500 text-rose-200 shadow-[0_0_30px_rgba(244,63,94,0.2)]";
-                      } else {
-                        cardStyle = "bg-white/5 border-white/5 text-slate-500 opacity-50";
-                      }
-                    } else if (isSelected) {
-                      cardStyle = "bg-cyan-500/20 border-cyan-400 text-white";
-                    }
+                <h3 className="text-4xl sm:text-6xl font-black font-['Outfit'] text-white uppercase leading-[0.9] tracking-tight mb-8">
+                  {selectedSim.title}
+                </h3>
+              </div>
 
+              <div>
+                <span className="text-slate-400 font-mono text-xs font-bold tracking-widest block mb-4">
+                  [ INCOMING TRANSMISSION ]
+                </span>
+
+                {/* Stack Intro and Quote Box vertically with full comfortable width */}
+                {(() => {
+                  const introParts = selectedSim.storyIntro ? selectedSim.storyIntro.split('\n\n') : [];
+                  if (introParts.length > 1) {
                     return (
-                      <div
-                        key={idx}
-                        onClick={() => handleChooseOption(idx, opt.isCorrect)}
-                        className={`p-6 rounded-3xl border transition-all cursor-pointer flex flex-col justify-between font-sans leading-relaxed relative group ${cardStyle}`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <span className="w-6 h-6 rounded-full bg-white/10 flex items-center justify-center font-mono font-black text-xs shrink-0 mt-0.5">
-                            {idx === 0 ? 'A' : 'B'}
-                          </span>
-                          <span className="text-sm font-bold">{opt.text}</span>
+                      <div className="space-y-6">
+                        <TextReveal 
+                          text={introParts[0]} 
+                          className="text-slate-100 text-base sm:text-lg leading-relaxed font-sans font-semibold"
+                        />
+                        <div className="bg-[#082f33] border-l-4 border-cyan-400 p-6 rounded-2xl shadow-lg">
+                          <TextReveal 
+                            text={introParts[1]} 
+                            className="text-cyan-200 font-sans font-bold text-base sm:text-lg leading-relaxed"
+                          />
                         </div>
-
-                        {isAnswered && (isSelected || opt.isCorrect) && (
-                          <div className="mt-4 pt-4 border-t border-white/10 font-mono text-xs font-bold flex items-start gap-2">
-                            {opt.isCorrect ? <CheckCircle2 size={18} className="text-emerald-400 shrink-0 mt-0.5" /> : <XCircle size={18} className="text-rose-400 shrink-0 mt-0.5" />}
-                            <span>{opt.feedback}</span>
-                          </div>
-                        )}
                       </div>
                     );
-                  })}
-                </div>
-
-                {isAnswered && (
-                  <div className="flex justify-end pt-6 animate-fade-in">
-                    <button
-                      onClick={handleNextStep}
-                      className="btn-primary py-4 px-8 text-sm font-black flex items-center gap-3 shadow-[0_0_30px_rgba(34,211,238,0.5)] cursor-pointer"
-                    >
-                      <span>{currentStepIdx < selectedSim.steps.length - 1 ? "Next Decision Step ➔" : "Complete Scenario 🏆"}</span>
-                    </button>
-                  </div>
-                )}
+                  }
+                  return (
+                    <div className="bg-[#082f33] border-l-4 border-cyan-400 p-6 rounded-2xl shadow-lg">
+                      <TextReveal 
+                        text={selectedSim.storyIntro} 
+                        className="text-cyan-200 font-sans font-bold text-base sm:text-lg leading-relaxed"
+                      />
+                    </div>
+                  );
+                })()}
               </div>
-            );
-          })()}
+            </div>
 
-        </div>
-      )}
+            {/* Right Panel (5 Cols) */}
+            <div className="lg:col-span-5 p-6 sm:p-12 bg-[#0e0e10] flex flex-col space-y-6 min-h-[600px]">
+              {(() => {
+                const step = selectedSim.steps[currentStepIdx];
+                return (
+                  <div className="flex flex-col flex-1">
+                    <div>
+                      <h4 className="text-cyan-300 font-black font-['Outfit'] text-2xl sm:text-3xl uppercase leading-snug tracking-wide mb-8">
+                        {step.question}
+                      </h4>
+
+                      {/* Options stacked vertically with consistent border thickness (border-2) */}
+                      <div className="space-y-4">
+                        {step.options.map((opt, idx) => {
+                          const isSelected = selectedOptionIdx === idx;
+                          let cardStyle = "bg-[#18181b] border-2 border-white/10 hover:border-white/30 text-slate-100";
+                          let badgeStyle = "text-slate-400";
+                          
+                          if (isAnswered) {
+                            if (opt.isCorrect) {
+                              cardStyle = "bg-emerald-950/90 border-2 border-emerald-400 text-emerald-100 shadow-[0_0_25px_rgba(16,185,129,0.25)]";
+                              badgeStyle = "text-emerald-400 font-black";
+                            } else if (isSelected && !opt.isCorrect) {
+                              cardStyle = "bg-rose-950/90 border-2 border-rose-500 text-rose-100 shadow-[0_0_25px_rgba(244,63,94,0.25)]";
+                              badgeStyle = "text-rose-400 font-black";
+                            } else {
+                              cardStyle = "bg-[#18181b]/30 border-2 border-white/5 text-slate-500 opacity-40";
+                            }
+                          } else if (isSelected) {
+                            cardStyle = "bg-cyan-950/80 border-2 border-cyan-400 text-white shadow-lg";
+                            badgeStyle = "text-cyan-400 font-black";
+                          }
+
+                          return (
+                            <div
+                              key={idx}
+                              onClick={() => handleChooseOption(idx, opt.isCorrect)}
+                              className={`p-6 sm:p-7 rounded-2xl transition-all cursor-pointer flex items-start gap-5 relative group shadow-md ${cardStyle}`}
+                            >
+                              <span className={`font-mono text-2xl sm:text-3xl font-black pt-0.5 shrink-0 ${badgeStyle}`}>
+                                {idx === 0 ? 'A' : 'B'}
+                              </span>
+                              <div className="flex-1">
+                                <p className="text-base sm:text-xl font-bold leading-relaxed font-sans text-white">
+                                  {opt.text}
+                                </p>
+                              </div>
+
+                              {isAnswered && (isSelected || opt.isCorrect) && (
+                                <div className="shrink-0 pt-0.5 animate-fade-in">
+                                  {opt.isCorrect ? <CheckCircle2 size={24} className="text-emerald-400" /> : <XCircle size={24} className="text-rose-400" />}
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Reserved Feedback & Action Area to prevent abrupt layout jumping */}
+                    <div className="mt-8 pt-6 border-t border-white/10 flex flex-col justify-between gap-6 min-h-[160px]">
+                      {isAnswered ? (
+                        <div className="font-mono text-xs sm:text-sm font-bold text-slate-200 animate-fade-in">
+                          {step.options[selectedOptionIdx] && (
+                            <p className="leading-relaxed bg-white/[0.04] p-4 rounded-xl border border-white/10 text-cyan-200">
+                              💡 {step.options[selectedOptionIdx].feedback}
+                            </p>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="font-mono text-xs text-slate-500 italic flex items-center gap-2">
+                          <span>⚡ Select an option above to trigger forensic AI evaluation...</span>
+                        </div>
+                      )}
+
+                      {isAnswered && (
+                        <div className="flex justify-end animate-fade-in">
+                          <button
+                            onClick={handleNextStep}
+                            className="btn-primary py-4 px-8 text-sm sm:text-base font-black flex items-center gap-3 shadow-[0_0_25px_rgba(34,211,238,0.5)] cursor-pointer rounded-xl font-mono uppercase tracking-wider hover:scale-105 transition-transform"
+                          >
+                            <span>{currentStepIdx < selectedSim.steps.length - 1 ? "Next Decision Step ➔" : "Complete Scenario 🏆"}</span>
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+
+          </div>
+        )}
       </div>
 
     </div>

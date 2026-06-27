@@ -1,10 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-navy: #0a0f1d;
-  --color-navy-card: #111827;
-  --color-navy-light: #1e293b;
+  --color-slate-800: #111111;
+  --color-slate-900: #0a0a0a;
+  --color-slate-950: #050505;
+  --color-navy: #000000;
+  --color-navy-card: #050505;
+  --color-navy-light: #0a0a0a;
   --color-purple-elite: #4c1d95;
   --color-violet-glow: #8b5cf6;
   --color-cyan-elite: #22d3ee;
@@ -13,23 +15,45 @@
   --color-rose: #f43f5e;
   --color-gold: #f59e0b;
   --color-violet: #8b5cf6;
+  --font-family-body: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-heading: var(--font-heading), -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 :root {
-  --background: #080c17;
+  --background: #000000;
   --foreground: #ffffff;
 }
 
 body {
   color: var(--foreground);
-  background: radial-gradient(circle at 50% 0%, #2e1065 0%, #0a0f1d 70%, #050811 100%);
-  background-attachment: fixed;
-  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #050505;
+  font-family: var(--font-family-body);
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Subtle Elite Purple Ambient Glow */
+p, span, li, a, button, input, textarea, select {
+  font-family: inherit;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.font-heading {
+  font-family: var(--font-family-heading);
+}
+
+.font-body {
+  font-family: var(--font-family-body);
+}
+
+/* Subtle Aesthetic Ambient Glow */
 body::before {
   content: '';
   position: fixed;
@@ -38,7 +62,7 @@ body::before {
   transform: translateX(-50%);
   width: 900px;
   height: 500px;
-  background: radial-gradient(circle, rgba(139, 92, 246, 0.18) 0%, rgba(76, 29, 149, 0.08) 50%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 50%, transparent 70%);
   filter: blur(80px);
   z-index: -1;
   pointer-events: none;
@@ -46,7 +70,7 @@ body::before {
 
 /* Elite Glassmorphic Card */
 .glass-card {
-  background: rgba(17, 24, 39, 0.75);
+  background: rgba(10, 10, 10, 0.75);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: 1px solid rgba(139, 92, 246, 0.22);
@@ -60,7 +84,7 @@ body::before {
 }
 
 .glass-card:hover {
-  background: rgba(30, 41, 59, 0.85);
+  background: rgba(17, 17, 17, 0.85);
   border-color: rgba(167, 139, 250, 0.45);
   box-shadow: 
     0 25px 50px rgba(0, 0, 0, 0.7),
@@ -150,4 +174,124 @@ body::before {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: rgba(139, 92, 246, 0.6);
+}
+
+/* ==================== MARQUEE ==================== */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-marquee {
+  animation: marquee linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse linear infinite;
+}
+
+/* ==================== SCROLL-DRIVEN UTILITIES ==================== */
+.text-gradient-white {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Stat card glow pulse */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.05); }
+  50% { box-shadow: 0 0 40px rgba(255,255,255,0.1), 0 0 80px rgba(255,255,255,0.03); }
+}
+
+.stat-glow {
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+/* Full-screen CTA shimmer line */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Cinematic floating idle animation */
+@keyframes cinematicFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.015); }
+}
+
+.cinematic-float {
+  animation: cinematicFloat 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Vertical Marquee for Mockups */
+@keyframes marqueeVertical {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.animate-marquee-vertical {
+  animation: marqueeVertical 20s linear infinite;
+}
+
+/* ==================== FLOATING & HOVER UTILITIES ==================== */
+@keyframes floating {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+
+.animate-floating {
+  animation: floating 6s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes floatingSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+.animate-floating-slow {
+  animation: floatingSlow 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.hover-lift {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 30px rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.3);
+}
+
+.hover-glow-border {
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-glow-border:hover {
+  border-color: rgba(255,255,255,0.4);
+  box-shadow: 0 0 25px rgba(255,255,255,0.2);
 }

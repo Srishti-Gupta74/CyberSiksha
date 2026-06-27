@@ -39,95 +39,97 @@ export default function DigitalArrestSim() {
   };
 
   return (
-    <div className="glass-card p-6 sm:p-10 bg-slate-950 border-2 border-rose-500 shadow-[0_0_80px_rgba(244,63,94,0.3)] select-none font-mono">
+    <div className="p-6 sm:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start select-none font-mono">
       
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-6 border-b border-white/10 pb-4">
-        <div className="flex items-center gap-2 text-rose-400 font-black text-xs uppercase tracking-widest">
-          <Video className="animate-pulse" size={18} /> <span>LIVE INTERCEPTED THREAT VECTOR • TOPICAL INDIA SCAM</span>
+      {/* Left Panel: Hero Title & Fake Video Feed (6 Cols) */}
+      <div className="lg:col-span-6 space-y-8">
+        <div>
+          <div className="flex items-center gap-4 mb-6">
+            <span className="border border-rose-500/60 text-rose-500 text-xs font-mono font-bold px-2.5 py-1 uppercase rounded-sm">
+              EXTREME VECTOR
+            </span>
+            <span className="text-rose-400 font-mono text-xs font-bold animate-pulse">
+              ⏳ ULTIMATUM COUNTDOWN: {formatTime(timer)}
+            </span>
+          </div>
+
+          <h3 className="text-4xl sm:text-6xl font-black font-['Outfit'] text-white uppercase leading-[0.9] tracking-tight mb-6">
+            CBI / SUPREME COURT DIGITAL ARREST
+          </h3>
+
+          <p className="text-slate-100 text-base sm:text-lg leading-relaxed font-sans font-medium">
+            A fake law enforcement officer on Skype claims your bank account is linked to narcotics trafficking. Tap the 3 psychological red flags below to break the digital arrest!
+          </p>
         </div>
-        <span className="bg-rose-500/20 border border-rose-500/40 text-rose-300 px-3 py-1 rounded-full text-xs font-black animate-pulse">
-          ⏳ Ultimatum Countdown: {formatTime(timer)}
-        </span>
+
+        {/* Fake Video Call Screen in Noir aesthetic */}
+        <div className="bg-[#0c0c0e] border border-white/15 rounded-2xl p-6 shadow-2xl relative overflow-hidden space-y-4">
+          <div className="flex justify-between items-center text-xs font-bold text-cyan-400 border-b border-white/10 pb-3">
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+              SKYPE INTERCEPT • CBI_SPECIAL_CELL_DELHI
+            </span>
+            <span className="bg-red-600/90 text-white px-2.5 py-1 rounded text-[10px] uppercase font-black tracking-widest">
+              WARRANT #DL-992
+            </span>
+          </div>
+
+          <div className="py-8 text-center space-y-3 bg-black/40 rounded-xl border border-white/5">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-slate-900 border-2 border-rose-500 mx-auto flex items-center justify-center shadow-lg">
+              <Video size={36} className="text-rose-500 animate-pulse" />
+            </div>
+            <p className="text-white font-black text-sm sm:text-base uppercase tracking-wider">
+              [ ENCRYPTED VIDEO FEED // DO NOT DISCONNECT ]
+            </p>
+            <p className="text-slate-300 text-xs sm:text-sm font-sans font-medium">
+              Caller demands secret screen sharing & isolation from family.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <h3 className="text-xl sm:text-3xl font-black font-['Outfit'] text-white mb-2">
-        🚨 Simulation: <span className="text-rose-400">"CBI Digital Arrest"</span> Interrogation
-      </h3>
-      <p className="text-xs text-slate-300 font-sans mb-6">
-        A fake law enforcement officer on Skype claims your bank account is linked to narcotics trafficking. Tap the 3 psychological red flags below to break the digital arrest!
-      </p>
+      {/* Right Panel: Interactive Red Flags (6 Cols) */}
+      <div className="lg:col-span-6 space-y-6">
+        <h4 className="text-cyan-300 font-black font-['Outfit'] text-2xl sm:text-3xl uppercase leading-snug tracking-wide mb-8">
+          SPOT & TAP THE 3 FATAL FLAWS ({spotted.length}/3):
+        </h4>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        
-        {/* Fake Video Call Screen */}
-        <div className="lg:col-span-6 aspect-video bg-slate-900 rounded-3xl border-2 border-rose-500/50 relative overflow-hidden shadow-2xl flex flex-col justify-between p-4 sm:p-6 group">
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent z-10 pointer-events-none"></div>
-          
-          {/* Top Call Info */}
-          <div className="relative z-20 flex justify-between items-center text-[10px] sm:text-xs font-bold text-white bg-black/60 px-3.5 py-1.5 rounded-xl backdrop-blur-md w-fit">
-            <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping mr-2"></span>
-            <span>Skype Recording • CBI_SPECIAL_CELL_DELHI</span>
-          </div>
-
-          {/* Center Frozen Officer Face Simulation */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-80">
-            <div className="text-center space-y-2 relative">
-              <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-slate-800 border-4 border-amber-500/80 mx-auto flex items-center justify-center text-5xl sm:text-6xl shadow-2xl relative">
-                👮‍♂️
-                <span className="absolute -bottom-2 bg-amber-500 text-slate-950 text-[9px] font-black uppercase px-2 py-0.5 rounded-md tracking-widest">SUPREME COURT</span>
-              </div>
-              <span className="text-xs sm:text-sm font-black text-white bg-red-600/90 px-3 py-1 rounded-lg uppercase tracking-widest block shadow-lg">
-                ⚠️ DIGITAL ARREST WARRANT #DL-992
-              </span>
-            </div>
-          </div>
-
-          {/* Bottom Video Controls */}
-          <div className="relative z-20 flex justify-between items-center pt-4">
-            <div className="flex gap-2 text-white/80 bg-black/50 p-2 rounded-xl">
-              <MicOff size={16} className="text-rose-400" />
-              <Video size={16} />
-            </div>
-
-            <div className="bg-rose-600 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider flex items-center gap-1.5 shadow-lg animate-bounce">
-              <PhoneOff size={14} /> <span>DO NOT DISCONNECT</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Tap Red Flags Game Arena */}
-        <div className="lg:col-span-6 space-y-4">
-          <span className="text-xs font-black text-cyan-300 uppercase tracking-widest block">
-            🚩 Spot & Tap The 3 Fatal Flaws ({spotted.length}/3):
-          </span>
-
-          <div className="space-y-3">
-            {RED_FLAGS.map((fl, idx) => {
-              const isSpotted = spotted.includes(idx);
-              return (
-                <div 
-                  key={idx}
-                  onClick={() => handleSpotFlag(idx)}
-                  className={`p-4 rounded-2xl border text-xs cursor-pointer transition-all leading-relaxed ${
-                    isSpotted ? "bg-emerald-500/20 border-emerald-400 text-emerald-200 font-bold shadow-[0_0_20px_rgba(52,211,153,0.3)]" : "bg-white/5 border-white/10 text-slate-300 hover:border-cyan-400 hover:bg-white/10"
-                  }`}
-                >
-                  <div className="flex justify-between items-start gap-3">
-                    <span>⚠️ {fl}</span>
-                    {isSpotted && <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />}
-                  </div>
+        <div className="space-y-4">
+          {RED_FLAGS.map((fl, idx) => {
+            const isSpotted = spotted.includes(idx);
+            return (
+              <div 
+                key={idx}
+                onClick={() => handleSpotFlag(idx)}
+                className={`p-6 sm:p-7 rounded-2xl border transition-all cursor-pointer flex items-start gap-5 relative group shadow-md ${
+                  isSpotted 
+                    ? "bg-emerald-950/90 border-2 border-emerald-400 text-emerald-100 shadow-[0_0_25px_rgba(16,185,129,0.25)]" 
+                    : "bg-[#18181b] border-white/10 hover:border-white/30 text-slate-100"
+                }`}
+              >
+                <span className={`font-mono text-2xl sm:text-3xl font-black pt-0.5 shrink-0 ${isSpotted ? "text-emerald-400" : "text-slate-400"}`}>
+                  0{idx + 1}
+                </span>
+                <div className="flex-1">
+                  <p className="text-base sm:text-xl font-bold leading-relaxed font-sans text-white">
+                    {fl}
+                  </p>
                 </div>
-              );
-            })}
-          </div>
-
-          {neutralized && (
-            <div className="p-4 rounded-2xl bg-emerald-500 text-slate-950 font-black text-center uppercase tracking-widest text-xs shadow-xl animate-scale-up">
-              🛡️ WARRANT NEUTRALIZED! 1,000 RESILIENCE XP EARNED!
-            </div>
-          )}
+                {isSpotted && (
+                  <div className="shrink-0 pt-0.5">
+                    <CheckCircle2 size={24} className="text-emerald-400" />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
+        {neutralized && (
+          <div className="p-6 rounded-2xl bg-emerald-500 text-slate-950 font-black text-center uppercase tracking-widest text-base sm:text-lg shadow-xl animate-scale-up font-mono mt-6">
+            🛡️ WARRANT NEUTRALIZED! 1,000 RESILIENCE XP EARNED!
+          </div>
+        )}
       </div>
 
     </div>

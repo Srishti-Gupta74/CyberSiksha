@@ -1,0 +1,29 @@
+[
+  {
+    "id": "n1",
+    "title": "Warning: Fake 'Traffic Challan' WhatsApp Messages on the Rise",
+    "date": "2026-06-20",
+    "summary": "Scammers are sending WhatsApp messages that look like official traffic police e-challans. Clicking the link installs malware on your phone.",
+    "howItWorks": "You receive a message saying 'Your vehicle has a pending traffic fine of Rs 500. Click here to pay or face legal action.' The link looks somewhat official but downloads a malicious APK file that steals your banking OTPs.",
+    "howToStaySafe": "Never click on challan links received on WhatsApp. Always check pending challans directly on the official Parivahan website or your state's official traffic police portal.",
+    "source": "CERT-In Advisory"
+  },
+  {
+    "id": "n2",
+    "title": "The 'Digital Arrest' Scam Epidemic: What You Need to Know",
+    "date": "2026-06-15",
+    "summary": "Over Rs 2,000 Crore has been lost to fake police officers threatening citizens over Skype and WhatsApp calls.",
+    "howItWorks": "Scammers call you pretending to be from the CBI or Customs. They claim your Aadhaar was used in a crime and force you to stay on a video call ('Digital Arrest') until you transfer all your money to a 'safe account' for verification.",
+    "howToStaySafe": "Indian law enforcement does not conduct 'Digital Arrests' over Skype. Real police will visit you with a physical warrant. Disconnect immediately and report to 1930.",
+    "source": "Ministry of Home Affairs"
+  },
+  {
+    "id": "n3",
+    "title": "AI Voice Cloning: Scammers Sounding Like Your Loved Ones",
+    "date": "2026-06-10",
+    "summary": "Fraudsters are using AI to clone the voices of family members, calling in a panic and asking for emergency money transfers.",
+    "howItWorks": "They scrape a 3-second audio clip of your child or spouse from social media, use AI to replicate the voice, and call you saying they have been in an accident and need money urgently.",
+    "howToStaySafe": "Establish a 'safe word' with your family. If you get a panic call asking for money, hang up and call the person back on their actual phone number to verify.",
+    "source": "Cyber Security News"
+  }
+]

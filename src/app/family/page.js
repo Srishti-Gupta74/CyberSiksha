@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom';
 import { useAuth } from '@/components/AuthProvider';
 import { supabase } from '@/lib/supabase';
 import ScrollReveal from '@/components/ScrollReveal';
-import { Users, Shield, UserPlus, Copy, Check, KeyRound, ArrowRight, Loader2, Award, Flame, HeartHandshake, Mail, Send, CheckCircle2, Clock, Sparkles, Activity } from 'lucide-react';
+import { Users, Shield, UserPlus, Copy, Check, KeyRound, ArrowRight, Loader2, Award, Flame, HeartHandshake, Mail, Send, CheckCircle2, Clock, Sparkles, Activity, ShieldCheck, UserCheck, Lock, AlertTriangle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import FamilyLearningAnalytics from '@/components/FamilyLearningAnalytics';
 
@@ -31,7 +31,8 @@ export default function FamilyPage() {
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [inviteLoading, setInviteLoading] = useState(false);
   const [inviteError, setInviteError] = useState('');
-  // Family Cyber Incident Loop State
+  
+  // Family Cyber Incident Loop State (Refined non-gamified data)
   const [incidents, setIncidents] = useState(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('cs_family_incidents');
@@ -40,23 +41,24 @@ export default function FamilyPage() {
       }
     }
     return [
-      { id: 1, author: "Grandpa (Elder)", avatar: "👴", incident: "Received fake CBI Digital Arrest video call on Skype demanding ₹50,000 crypto bail.", proof: "Skype ID: cbi_vikram_88", time: "25 mins ago", severity: "🔴 CRITICAL VECTOR" },
-      { id: 2, author: "Mother (Sunita)", avatar: "👩", incident: "Suspicious WhatsApp APK file claiming to unlock 5,000 SBI Reward points. Deleted & blocked.", proof: "File: SBI_Rewards_v4.apk", time: "3 hours ago", severity: "🟡 TACTICAL SPAM" },
-      { id: 3, author: "Son (Aarav)", avatar: "👦", incident: "Fake electricity power disconnection SMS with shortened link. Reported to 1930.", proof: "Sender: +91 9876543210", time: "Yesterday", severity: "🟢 MITIGATED THREAT" }
+      { id: 1, author: "Grandpa Sharma", avatarTag: "ELDER", incident: "Received suspicious Skype video call alleging CBI Digital Arrest. Disconnected and reported on Chakshu portal.", proof: "Skype ID: cbi_vikram_88", time: "25 mins ago", severity: "CRITICAL VECTOR" },
+      { id: 2, author: "Sunita Sharma", avatarTag: "PARENT", incident: "Unverified SMS link claiming SBI reward points expiration. Link blocked via mobile security filter.", proof: "File: sbi-rewards.apk", time: "3 hours ago", severity: "TACTICAL SPAM" },
+      { id: 3, author: "Aarav Sharma", avatarTag: "MEMBER", incident: "Electricity utility disconnection threat message received. Verified safe via official portal.", proof: "Sender: +91 9876543210", time: "Yesterday", severity: "MITIGATED THREAT" }
     ];
   });
   const [newIncidentText, setNewIncidentText] = useState("");
   const [incidentProof, setIncidentProof] = useState("");
-  const [incidentSeverity, setIncidentSeverity] = useState("🔴 CRITICAL VECTOR");
+  const [incidentSeverity, setIncidentSeverity] = useState("CRITICAL VECTOR");
 
   const handlePostIncident = (e) => {
     e.preventDefault();
     if (!newIncidentText.trim()) return;
     const authorName = profile?.display_name || user?.email?.split('@')[0] || "Circle Defender";
+    const tag = authorName.toLowerCase().includes('grand') ? "ELDER" : (authorName.toLowerCase().includes('mother') || authorName.toLowerCase().includes('sunita') ? "PARENT" : "DEFENDER");
     const newEntry = {
       id: Date.now(),
       author: authorName,
-      avatar: authorName.toLowerCase().includes('grand') ? "👴" : "🛡️",
+      avatarTag: tag,
       incident: newIncidentText.trim(),
       proof: incidentProof.trim() || null,
       time: "Just now",
@@ -79,7 +81,6 @@ export default function FamilyPage() {
     confetti({ particleCount: 70, spread: 60, origin: { y: 0.8 } });
   };
 
-  // Persistent Hybrid Load Data
   // Realtime Supabase Database Sync Bridge across tabs
   useEffect(() => {
     let chan;
@@ -104,8 +105,8 @@ export default function FamilyPage() {
                   ...m,
                   profiles: {
                     ...m.profiles,
-                    xp: payload.payload.xp,
-                    streak: payload.payload.streak
+                    xp: payload.payload.xp !== undefined ? payload.payload.xp : (m.profiles?.xp || 0),
+                    streak: payload.payload.streak !== undefined ? payload.payload.streak : (m.profiles?.streak || 0)
                   }
                 };
               }
@@ -115,188 +116,68 @@ export default function FamilyPage() {
             return updated;
           });
         }
-      }).on('broadcast', { event: 'request_roster_sync' }, () => {
-        const savedG = localStorage.getItem('cs_global_fam_grp');
-        const savedM = localStorage.getItem('cs_global_fam_mem');
-        if (savedG && !user?.email?.includes('shei')) {
-          try {
-            chan.send({
-              type: 'broadcast',
-              event: 'live_roster_sync',
-              payload: { grp: JSON.parse(savedG), mems: savedM ? JSON.parse(savedM) : members }
-            });
-          } catch(e){}
-        }
       }).on('broadcast', { event: 'live_new_incident' }, (payload) => {
         if (payload?.payload?.incident) {
           setIncidents(prev => {
-            if (prev.some(i => i.id === payload.payload.incident.id)) return prev;
-            const upd = [payload.payload.incident, ...prev];
-            if (typeof window !== 'undefined') localStorage.setItem('cs_family_incidents', JSON.stringify(upd));
-            return upd;
+            if (prev.some(x => x.id === payload.payload.incident.id)) return prev;
+            const updated = [payload.payload.incident, ...prev];
+            localStorage.setItem('cs_family_incidents', JSON.stringify(updated));
+            return updated;
           });
         }
-      }).subscribe((status) => {
-        if (status === 'SUBSCRIBED') {
-          window.cyber_family_chan = chan;
-          chan.send({ type: 'broadcast', event: 'request_roster_sync', payload: {} });
-        }
-      });
+      }).subscribe();
+      window.cyber_family_chan = chan;
     }
+    return () => { if (chan) supabase.removeChannel(chan); };
+  }, []);
 
-    const handleStorageChange = (e) => {
-      if (e.key === 'cs_global_fam_grp' && e.newValue) {
-        try { setFamilyGroup(JSON.parse(e.newValue)); } catch(err){}
-      }
-      if (e.key === 'cs_global_fam_mem' && e.newValue) {
-        try { setMembers(normalizeRosterForViewer(JSON.parse(e.newValue))); } catch(err){}
-      }
-      if (e.key === 'cs_family_incidents' && e.newValue) {
-        try { setIncidents(JSON.parse(e.newValue)); } catch(err){}
-      }
-    };
-    window.addEventListener('storage', handleStorageChange);
+  const dedupeMembers = (list) => {
+    if (!list || !Array.isArray(list)) return [];
+    const seenIds = new Set();
+    const seenEmails = new Set();
+    return list.filter(m => {
+      const id = m.profiles?.id;
+      const em = m.email ? m.email.toLowerCase() : null;
+      if (id && seenIds.has(id)) return false;
+      if (em && seenEmails.has(em)) return false;
+      if (id) seenIds.add(id);
+      if (em) seenEmails.add(em);
+      return true;
+    });
+  };
 
-    const params = new URLSearchParams(window.location.search);
-    const codeParam = params.get('code');
-    const savedGroup = localStorage.getItem(`cs_global_fam_grp`);
-    const savedMembers = localStorage.getItem(`cs_global_fam_mem`);
-    
-    if (codeParam && user) {
-      performJoin(codeParam.toUpperCase());
-      return;
-    }
-
-    if (savedGroup) {
-      try {
-        let parsedGrp = JSON.parse(savedGroup);
-        let parsedMems = savedMembers ? JSON.parse(savedMembers) : null;
-
-        const isMyAccountElder = user?.email?.includes('shei') || profile?.display_name?.toLowerCase().includes('grand');
-        if (isMyAccountElder) {
-          if (parsedGrp?.name?.toLowerCase().includes('grand') || parsedGrp?.name?.includes('Ramesh')) {
-            parsedGrp.name = "Neha's Cyber Circle";
-            localStorage.setItem('cs_global_fam_grp', JSON.stringify(parsedGrp));
-          }
-          if (parsedMems && parsedMems[0] && parsedMems[0].role === 'admin') {
-            parsedMems[0].profiles.display_name = "Neha";
-            parsedMems[0].profiles.avatar_initial = "N";
-            localStorage.setItem('cs_global_fam_mem', JSON.stringify(parsedMems));
-          }
-        }
-
-        window.setTimeout(() => {
-          setFamilyGroup(parsedGrp);
-          if (parsedMems) setMembers(normalizeRosterForViewer(parsedMems));
-        }, 0);
-      } catch(e){}
-    }
-    
-    let pollTimer;
-    if (user && !codeParam) {
-      loadFamilyData();
-      pollTimer = setInterval(() => {
-        loadFamilyData();
-      }, 3000);
-    }
-
-    return () => {
-      if (pollTimer) clearInterval(pollTimer);
-      if (chan) supabase.removeChannel(chan);
-      window.cyber_family_chan = null;
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [user, profile]);
-
-  function canonicalizeMembers(list) {
-    if (!list || !Array.isArray(list)) return list;
-    const adminName = list.find(item => item.role === 'admin')?.profiles?.display_name || list[0]?.profiles?.display_name || "Neha";
-    const currentUserId = user?.id;
-
-    return list.map((item) => {
-      const isAdminCard = item.role === 'admin';
-      let disp = item.profiles?.display_name;
-      if (!isAdminCard) {
-        if (!disp || disp === adminName || disp.toLowerCase() === 'demo') {
-          disp = "Grandpa";
-        }
-      }
-
-      const isMeCard = item.profiles?.id === currentUserId;
-
+  const canonicalizeMembers = (list) => {
+    return dedupeMembers(list).map(item => {
+      const name = item?.profiles?.display_name || item?.email?.split('@')[0] || 'Defender';
+      const isGrand = name.toLowerCase().includes('grand') || name.toLowerCase().includes('sharma');
       return {
         ...item,
-        isPending: item.isPending,
-        relation: item.relation || (isAdminCard ? "Circle Commander" : "Protected Elder (Family Roster)"),
+        relation: item?.relation || (item?.role === 'admin' ? 'Circle Commander' : (isGrand ? 'Protected Elder' : 'Vigilant Defender')),
         profiles: {
-          ...item.profiles,
-          display_name: disp,
-          avatar_initial: disp ? disp.charAt(0).toUpperCase() : (isAdminCard ? "N" : "G"),
-          xp: isMeCard ? (profile?.xp || item.profiles?.xp || 0) : (item.profiles?.xp || 0),
-          streak: isMeCard ? (profile?.streak || item.profiles?.streak || 0) : (item.profiles?.streak || 0)
+          ...item?.profiles,
+          display_name: name,
+          avatar_initial: (item?.profiles?.avatar_initial || name.charAt(0)).toUpperCase()
         }
       };
     });
-  }
+  };
 
-  function dedupeMembers(list) {
-    if (!list || !Array.isArray(list)) return list;
-    const seen = new Set();
-
-    return list.filter((item, index) => {
-      const keyParts = [
-        item?.profiles?.id,
-        item?.email,
-        item?.profiles?.display_name?.toLowerCase(),
-        item?.role,
-      ].filter(Boolean);
-      const key = keyParts.join('|') || `idx:${index}`;
-
-      if (seen.has(key)) {
-        return false;
+  const normalizeRosterForViewer = (list) => {
+    const viewerId = user?.id || "u_guest";
+    const merged = list.map(item => {
+      if (item.profiles?.id === viewerId && profile?.display_name) {
+        return {
+          ...item,
+          profiles: {
+            ...item.profiles,
+            display_name: profile.display_name,
+            avatar_initial: profile.display_name.charAt(0).toUpperCase()
+          }
+        };
       }
-
-      seen.add(key);
-      return true;
+      return item;
     });
-  }
 
-  function normalizeRosterForViewer(list) {
-    if (!list || !Array.isArray(list)) list = [];
-
-    const hasSunita = list.some(m => m?.profiles?.display_name?.toLowerCase().includes('sunita'));
-    const hasAarav = list.some(m => m?.profiles?.display_name?.toLowerCase().includes('aarav'));
-    const hasGrandpa = list.some(m => m?.profiles?.display_name?.toLowerCase().includes('grand') || m?.profiles?.display_name?.toLowerCase().includes('sharma'));
-
-    const coreInjects = [];
-    if (!hasGrandpa) {
-      coreInjects.push({
-        role: "member",
-        relation: "Protected Elder (Family Roster)",
-        email: "grandpa.sharma@gmail.com",
-        profiles: { id: "elder_sharma", display_name: "Grandpa Sharma (Elder)", avatar_initial: "G", xp: 180, streak: 4 }
-      });
-    }
-    if (!hasSunita) {
-      coreInjects.push({
-        role: "member",
-        relation: "Vigilant Defender",
-        email: "sunita.sharma@gmail.com",
-        profiles: { id: "mem_sunita", display_name: "Sunita (Mother)", avatar_initial: "S", xp: 320, streak: 7 }
-      });
-    }
-    if (!hasAarav) {
-      coreInjects.push({
-        role: "member",
-        relation: "Cyber Sentinel",
-        email: "aarav.student@gmail.com",
-        profiles: { id: "mem_aarav", display_name: "Aarav (Student)", avatar_initial: "A", xp: 410, streak: 9 }
-      });
-    }
-
-    const merged = [...list, ...coreInjects];
-
-    const viewerId = user?.id;
     return canonicalizeMembers(dedupeMembers(merged))
       .map((item, index) => ({ item, index }))
       .sort((left, right) => {
@@ -311,25 +192,20 @@ export default function FamilyPage() {
         return left.index - right.index;
       })
       .map(({ item }) => item);
-  }
+  };
 
-  // Live Identity Synchronization
   useEffect(() => {
     if (!profile?.display_name || !familyGroup || !members.length) return;
     const currentMyName = profile.display_name;
     const isMeElder = currentMyName.toLowerCase().includes('grand') || currentMyName.toLowerCase().includes('sharma') || currentMyName.toLowerCase().includes('ramesh') || user?.email?.toLowerCase().includes('shei');
 
     const updatedGrpName = isMeElder ? familyGroup.name : `${currentMyName}'s Cyber Circle`;
-    
-    // Check if anything actually changed
     const needsGrpUpdate = !isMeElder && familyGroup.name !== updatedGrpName;
     
     let updatedMembers = members;
     let needsMemsUpdate = false;
-    
     const isMeAdmin = !isMeElder;
     
-    // Update members display names if needed
     updatedMembers = members.map(m => {
       const isMeCard = (isMeElder && m.role !== 'admin') || (isMeAdmin && m.role === 'admin');
       if (isMeCard && m.profiles?.display_name !== currentMyName) {
@@ -348,26 +224,21 @@ export default function FamilyPage() {
 
     if (needsGrpUpdate || needsMemsUpdate) {
       const updatedGrp = { ...familyGroup, name: updatedGrpName };
-
       window.setTimeout(() => {
         if (needsGrpUpdate) {
           setFamilyGroup(updatedGrp);
           localStorage.setItem('cs_global_fam_grp', JSON.stringify(updatedGrp));
-
-          // Push update to Supabase DB
           const isRealUser = user && !String(user.id).startsWith('usr_') && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id);
           if (isRealUser && supabase) {
             supabase.from('family_groups').update({ name: updatedGrpName }).eq('id', familyGroup.id).then();
           }
         }
-
         if (needsMemsUpdate) {
           setMembers(updatedMembers);
           localStorage.setItem('cs_global_fam_mem', JSON.stringify(updatedMembers));
         }
       }, 0);
 
-      // Broadcast update
       try {
         const payload = { grp: updatedGrp, mems: updatedMembers };
         if (window.cyber_family_chan) {
@@ -392,9 +263,7 @@ export default function FamilyPage() {
       } else if (supabase) {
         const tempCh = supabase.channel('cyber_family_network');
         tempCh.subscribe((status) => {
-          if (status === 'SUBSCRIBED') {
-            tempCh.send({ type: 'broadcast', event: 'live_roster_sync', payload });
-          }
+          if (status === 'SUBSCRIBED') tempCh.send({ type: 'broadcast', event: 'live_roster_sync', payload });
         });
       }
     } catch(e){}
@@ -416,7 +285,7 @@ export default function FamilyPage() {
     const myId = user?.id || "u_guest";
     const myName = profile?.display_name || currentName || "Neha";
     
-    const baseRoster = [
+    return [
       {
         role: "admin",
         relation: "Circle Commander",
@@ -431,11 +300,11 @@ export default function FamilyPage() {
       },
       {
         role: "member",
-        relation: "Protected Elder (Family Roster)",
+        relation: "Protected Elder",
         email: "grandpa.sharma@gmail.com",
         profiles: {
           id: myName.toLowerCase().includes("grand") ? myId : "elder_sharma",
-          display_name: "Grandpa Sharma (Elder)",
+          display_name: "Grandpa Sharma",
           avatar_initial: "G",
           xp: 180,
           streak: 4
@@ -447,51 +316,61 @@ export default function FamilyPage() {
         email: "sunita.sharma@gmail.com",
         profiles: {
           id: "mem_sunita",
-          display_name: "Sunita (Mother)",
+          display_name: "Sunita Sharma",
           avatar_initial: "S",
           xp: 320,
-          streak: 7
-        }
-      },
-      {
-        role: "member",
-        relation: "Cyber Sentinel",
-        email: "aarav.student@gmail.com",
-        profiles: {
-          id: "mem_aarav",
-          display_name: "Aarav (Student)",
-          avatar_initial: "A",
-          xp: 410,
-          streak: 9
+          streak: 8
         }
       }
     ];
-
-    try {
-      const localMems = JSON.parse(localStorage.getItem('cs_global_fam_mem')) || [];
-      const extraMems = localMems.filter(lm => {
-        const dName = lm?.profiles?.display_name || lm?.email || "";
-        return !["neha", "grandpa", "sunita", "aarav"].some(core => dName.toLowerCase().includes(core));
-      });
-      return [...baseRoster, ...extraMems];
-    } catch(e) {
-      return baseRoster;
-    }
   };
 
-  async function loadFamilyData() {
-    const isRealUser = user && !String(user.id).startsWith('usr_') && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id);
-    if (!isRealUser || guestMode || !supabase) {
+  const loadFamilyData = async () => {
+    setLoading(true);
+    const pms = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const inviteCodeParam = pms?.get('code');
+
+    if (guestMode) {
+      const savedGroup = localStorage.getItem('cs_global_fam_grp');
+      const savedMems = localStorage.getItem('cs_global_fam_mem');
+      if (savedGroup && savedMems) {
+        try {
+          const grp = JSON.parse(savedGroup);
+          const mems = normalizeRosterForViewer(JSON.parse(savedMems));
+          setFamilyGroup(grp);
+          setMembers(mems);
+          setLoading(false);
+          return;
+        } catch(e){}
+      }
+      const defaultGroup = { id: "mock_fam_1", name: `${profile?.display_name || "Neha"}'s Cyber Circle`, invite_code: "SHIELD88" };
+      const defaultMems = normalizeRosterForViewer(getCanonicalRoster(user?.email, profile?.display_name));
+      setFamilyGroup(defaultGroup);
+      setMembers(defaultMems);
+      syncStorage(defaultGroup, defaultMems);
       setLoading(false);
       return;
     }
-    if (!localStorage.getItem(`cs_global_fam_grp`)) setLoading(true);
+
+    if (!user || !supabase) {
+      const savedGroup = localStorage.getItem('cs_global_fam_grp');
+      const savedMems = localStorage.getItem('cs_global_fam_mem');
+      if (savedGroup && savedMems) {
+        try {
+          setFamilyGroup(JSON.parse(savedGroup));
+          setMembers(normalizeRosterForViewer(JSON.parse(savedMems)));
+        } catch(e){}
+      }
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data: memberData, error: memberErr } = await supabase
         .from('family_members')
         .select('family_group_id, role')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (memberErr) {
         if (memberErr.code === 'PGRST116') {
@@ -551,7 +430,6 @@ export default function FamilyPage() {
           const unresolvedPendings = pendingInvites.filter(p => {
             const nameToMatch = p.profiles?.display_name?.toLowerCase() || '';
             const emailPrefix = p.email ? p.email.split('@')[0].toLowerCase() : '';
-            
             const isResolved = dbNames.some(dbName => 
               dbName === nameToMatch || 
               dbName === emailPrefix || 
@@ -559,18 +437,15 @@ export default function FamilyPage() {
               emailPrefix.includes(dbName) ||
               dbName.includes('shei')
             ) || dbIds.includes(p.profiles?.id);
-            
             return !isResolved;
           });
 
-          // Keep mock/local members who exist in localStorage but did not successfully sync to the database
           const localOnlyMems = localMems.filter(lm => {
             if (!lm.profiles?.id || lm.isPending) return false;
             return !dbIds.includes(lm.profiles.id);
           });
 
           const fullRoster = dedupeMembers([...formattedRoster, ...unresolvedPendings, ...localOnlyMems]);
-
           const viewerRoster = normalizeRosterForViewer(fullRoster);
           setFamilyGroup(groupData);
           setMembers(viewerRoster);
@@ -583,7 +458,7 @@ export default function FamilyPage() {
       console.log("Supabase cloud load:", err.message);
     }
     setLoading(false);
-  }
+  };
 
   async function handleCreateFamily() {
     setActionLoading(true);
@@ -610,9 +485,7 @@ export default function FamilyPage() {
               .select()
               .single();
             if (grpErr) throw grpErr;
-            if (newGroup) {
-              targetGroup = newGroup;
-            }
+            if (newGroup) targetGroup = newGroup;
           }
 
           if (targetGroup) {
@@ -624,15 +497,9 @@ export default function FamilyPage() {
             if (memsReadErr) throw memsReadErr;
 
             if (!mems || mems.length === 0) {
-              const { error: insMemErr } = await supabase.from('family_members').insert({
-                family_group_id: targetGroup.id,
-                user_id: user.id,
-                role: 'admin'
-              });
-              if (insMemErr) throw insMemErr;
+              await supabase.from('family_members').insert({ family_group_id: targetGroup.id, user_id: user.id, role: 'admin' });
             } else {
-              const { error: updMemErr } = await supabase.from('family_members').update({ role: 'admin' }).eq('family_group_id', targetGroup.id).eq('user_id', user.id);
-              if (updMemErr) throw updMemErr;
+              await supabase.from('family_members').update({ role: 'admin' }).eq('family_group_id', targetGroup.id).eq('user_id', user.id);
             }
             await loadFamilyData();
             setActionLoading(false);
@@ -641,7 +508,7 @@ export default function FamilyPage() {
           }
         } catch(e){
           console.log("Supabase create family logic error:", e);
-          throw e; // Bubble up to trigger clean local fallback!
+          throw e;
         }
       }
 
@@ -650,114 +517,30 @@ export default function FamilyPage() {
       setFamilyGroup(newGrp);
       setMembers(newMems);
       syncStorage(newGrp, newMems);
+      setActionLoading(false);
       confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
     } catch (err) {
-      console.log("Create family fallback activated:", err.message || err);
-      // Fallback to local storage setup
-      const familyName = `${profile?.display_name || user?.email?.split('@')[0] || 'Demo'}'s Cyber Circle`;
-      const newGrp = { id: "mock_grid_88", name: familyName, invite_code: "A6B437" };
-      const newMems = normalizeRosterForViewer(getCanonicalRoster(user?.email, profile?.display_name));
-      setFamilyGroup(newGrp);
-      setMembers(newMems);
-      syncStorage(newGrp, newMems);
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-    } finally {
+      setError(err?.message || 'Error initializing security circle.');
       setActionLoading(false);
     }
   }
 
-  async function performJoin(codeToJoin) {
-    const activeCode = codeToJoin || joinCode.toUpperCase() || "A6B437";
-    setActionLoading(true);
+  useEffect(() => {
+    loadFamilyData();
+  }, [user, guestMode]);
 
-    const isRealUser = user && !String(user.id).startsWith('usr_') && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.id);
-    if (isRealUser && !guestMode && supabase) {
-      try {
-        const { data: grps, error: grpsErr } = await supabase.from('family_groups').select('*').ilike('invite_code', activeCode);
-        if (grpsErr) throw grpsErr;
-        const targetGrp = grps && grps[0] ? grps[0] : null;
-
-        if (targetGrp) {
-          const profileData = {
-            id: user.id,
-            display_name: profile?.display_name || user.email?.split('@')[0] || "Grandpa",
-            avatar_initial: (profile?.display_name || user.email?.split('@')[0] || "G").charAt(0).toUpperCase(),
-            xp: profile?.xp || 0,
-            streak: profile?.streak || 0
-          };
-          const { error: profErr } = await supabase.from('profiles').upsert(profileData);
-          if (profErr) throw profErr;
-
-          const { data: existingMember, error: readErr } = await supabase
-            .from('family_members')
-            .select('*')
-            .eq('family_group_id', targetGrp.id)
-            .eq('user_id', user.id);
-          if (readErr) throw readErr;
-
-          if (!existingMember || existingMember.length === 0) {
-            const { error: insErr } = await supabase.from('family_members').insert({
-              family_group_id: targetGrp.id,
-              user_id: user.id,
-              role: 'member'
-            });
-            if (insErr) throw insErr;
-          }
-
-          const { data: membersList, error: membersErr } = await supabase
-            .from('family_members')
-            .select(`
-              role,
-              joined_at,
-              user_id,
-              profiles:user_id (id, display_name, avatar_initial, xp, streak)
-            `)
-            .eq('family_group_id', targetGrp.id);
-          if (membersErr) throw membersErr;
-
-          if (membersList) {
-            const canonical = normalizeRosterForViewer(membersList.map(m => ({
-              role: m.role,
-              isPending: false,
-              relation: m.role === 'admin' ? 'Circle Commander' : 'Protected Member',
-              profiles: m.profiles || { id: m.user_id, display_name: "Family Defender", avatar_initial: "F", xp: 0, streak: 0 }
-            })));
-            syncStorage(targetGrp, canonical);
-            
-            // Set local state directly to ensure instant transition
-            setFamilyGroup(targetGrp);
-            setMembers(canonical);
-          }
-
-          if (typeof window !== 'undefined') {
-            const url = new URL(window.location.href);
-            url.searchParams.delete('code');
-            url.searchParams.delete('inviter');
-            url.searchParams.delete('circle');
-            window.history.replaceState({}, '', url.pathname);
-          }
-
-          await loadFamilyData();
-          setActionLoading(false);
-          confetti({ particleCount: 80, spread: 60 });
-          return;
-        }
-      } catch(e) {
-        console.log("Supabase db direct join fallback triggered due to error:", e.message || e);
-      }
-    }
-
+  async function performJoin(activeCode) {
+    if (!activeCode) return;
     const savedGroup = localStorage.getItem('cs_global_fam_grp');
     const savedMems = localStorage.getItem('cs_global_fam_mem');
     let currentRoster = savedMems ? JSON.parse(savedMems) : getCanonicalRoster(user?.email, profile?.display_name);
 
-    // Guarantee Grandpa card is present and active!
-    const elderName = profile?.display_name || "Grandpa";
+    const elderName = profile?.display_name || "Grandpa Sharma";
     const hasElder = currentRoster.some(c => c.relation?.includes('Elder') || c.profiles?.display_name?.includes('Grand') || c.profiles?.display_name?.includes('Sharma'));
     if (!hasElder) {
       currentRoster.push({
         role: "member",
-        relation: "Protected Elder (Family Roster)",
+        relation: "Protected Elder",
         email: user?.email || "grandpa@gmail.com",
         profiles: {
           id: user?.id || "mem_elder_88",
@@ -769,7 +552,6 @@ export default function FamilyPage() {
       });
     }
 
-    // Instantly upgrade pending invite cards to active Shield Protected!
     currentRoster = currentRoster.map(item => ({
       ...item,
       isPending: false,
@@ -780,22 +562,10 @@ export default function FamilyPage() {
     const circName = pms?.get('circle') ? decodeURIComponent(pms.get('circle')) : "Neha's Cyber Circle";
     const jGrp = savedGroup ? JSON.parse(savedGroup) : { id: "mock_joined_99", name: circName, invite_code: activeCode };
     
-    // Set local state directly
     setFamilyGroup(jGrp);
     const viewerRoster = normalizeRosterForViewer(currentRoster);
     setMembers(viewerRoster);
     syncStorage(jGrp, viewerRoster);
-
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('code');
-      url.searchParams.delete('inviter');
-      url.searchParams.delete('circle');
-      window.history.replaceState({}, '', url.pathname);
-    }
-
-    setActionLoading(false);
-    confetti({ particleCount: 80, spread: 60 });
   }
 
   const handleJoinFamily = async (e) => {
@@ -808,7 +578,6 @@ export default function FamilyPage() {
   const handleDispatchInvite = async (e) => {
     e.preventDefault();
     if (!inviteName.trim() || !inviteEmail.trim()) return;
-
     setInviteLoading(true);
     setInviteError('');
 
@@ -816,16 +585,11 @@ export default function FamilyPage() {
       const { data: sessionData } = await supabase.auth.getSession();
       const accessToken = sessionData?.session?.access_token;
 
-      if (!accessToken) {
-        throw new Error('Please sign in again before sending an invite.');
-      }
+      if (!accessToken) throw new Error('Please sign in again before sending an invite.');
 
       const response = await fetch('/api/family/invite', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`
-        },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
         body: JSON.stringify({
           familyGroupId: familyGroup?.id,
           familyGroupName: familyGroup?.name,
@@ -838,26 +602,18 @@ export default function FamilyPage() {
       });
 
       const result = await response.json();
-      if (!response.ok) {
-        throw new Error(result?.error || 'Failed to send the family invite.');
-      }
+      if (!response.ok) throw new Error(result?.error || 'Failed to send the family invite.');
 
       if (result?.fallbackEmailInvite) {
-        const { error: otpError } = await supabase.auth.signInWithOtp({
+        await supabase.auth.signInWithOtp({
           email: inviteEmail.trim(),
-          options: {
-            emailRedirectTo: result?.inviteLink || `${window.location.origin}/family?code=${familyGroup?.invite_code || 'A6B437'}`
-          }
+          options: { emailRedirectTo: result?.inviteLink || `${window.location.origin}/family?code=${familyGroup?.invite_code || 'A6B437'}` }
         });
-
-        if (otpError) {
-          throw otpError;
-        }
       }
 
       const inviteNote = result?.existingUserInvite
-        ? 'This email already exists in Supabase Auth, so the invite record was created and the direct join link is ready to share.'
-        : 'Invite sent successfully.';
+        ? 'Direct join record established for existing authenticated email.'
+        : 'Invite dispatched successfully.';
 
       const updatedMembers = [
         ...members,
@@ -880,10 +636,8 @@ export default function FamilyPage() {
       setMembers(cleanedMembers);
       syncStorage(familyGroup, cleanedMembers);
       setInviteSuccess(true);
-      if (result?.existingUserInvite) {
-        setInviteError(inviteNote);
-      }
-      confetti({ particleCount: 60, spread: 50, colors: ['#22d3ee', '#10b981'] });
+      if (result?.existingUserInvite) setInviteError(inviteNote);
+      confetti({ particleCount: 60, spread: 50, colors: ['#3b82f6', '#10b981'] });
     } catch (err) {
       setInviteError(err?.message || 'Unable to send invite right now.');
     } finally {
@@ -902,101 +656,99 @@ export default function FamilyPage() {
     }
   };
 
-  if (!mounted || loading) {
-    return <div className="flex justify-center items-center h-64 text-cyan-400">
-      <Loader2 className="animate-spin" size={40} />
-    </div>;
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <Loader2 size={36} className="text-cyan-400 animate-spin" />
+        <span className="text-xs font-mono uppercase tracking-widest text-slate-400">Loading Circle Security Roster...</span>
+      </div>
+    );
   }
 
-  if (!user) {
-    const isInvited = typeof window !== 'undefined' && window.location.search.includes('code=');
-    const uParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-    const invCode = isInvited ? uParams?.get('code')?.toUpperCase() : 'SHIELD88';
-    const inviterName = uParams?.get('inviter') ? decodeURIComponent(uParams.get('inviter')) : 'Neha';
-    const umbrellaName = uParams?.get('circle') ? decodeURIComponent(uParams.get('circle')) : "their Cyber Circle";
+  // State 0: Guest / Invite Onboarding
+  if (typeof window !== 'undefined' && window.location.search.includes('code=') && (!user || guestMode)) {
+    const pms = new URLSearchParams(window.location.search);
+    const invCode = pms.get('code');
+    const inviterName = pms.get('inviter') ? decodeURIComponent(pms.get('inviter')) : "Circle Commander";
+    const umbrellaName = pms.get('circle') ? decodeURIComponent(pms.get('circle')) : "Protected Cyber Circle";
+    const isInvited = invCode && invCode !== 'SHIELD88';
 
     return (
-      <div className="max-w-2xl mx-auto text-center py-16 animate-fade-in px-4 select-none">
-        <div className="w-20 h-20 bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 text-white border border-purple-500/40 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-[0_0_30px_rgba(139,92,246,0.5)] text-4xl animate-bounce">
-          {isInvited ? '💌' : '👨‍👩‍👧‍👦'}
+      <div className="max-w-2xl mx-auto py-16 px-6 text-center animate-fade-in glass-card border-blue-500/40 bg-slate-950/90 shadow-2xl my-12 rounded-[3rem]">
+        <div className="w-20 h-20 bg-blue-500/10 border border-blue-400/40 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg text-blue-400">
+          <ShieldCheck size={40} />
         </div>
-        <h1 className="text-3xl sm:text-5xl font-black font-['Outfit'] mb-4 text-white tracking-tight">
-          {isInvited ? "You've Been Invited!" : "Family Defense Grid"}
+        <h1 className="text-3xl sm:text-5xl font-black font-heading mb-4 text-white tracking-tight">
+          {isInvited ? "Circle Clearance Authorization" : "Executive Defense Circle"}
         </h1>
         <p className="text-slate-300 mb-8 max-w-lg mx-auto font-normal text-base leading-relaxed">
           {isInvited 
-            ? `${inviterName} invited you into ${umbrellaName} (Token: ${invCode}). Create your elder or family defender account below to accept!`
-            : "Protect your loved ones. Create a free family circle to monitor everyone's Scam Awareness and shield parents and grandparents online."}
+            ? `${inviterName} has invited you into ${umbrellaName} (Token: ${invCode}). Create your secure credential to initialize real-time scam monitoring.`
+            : "Protect your family across all digital touchpoints. Create an executive security circle to monitor scam defense awareness."}
         </p>
         <button
-          onClick={() => {
-            window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }));
-          }}
-          className="btn-primary py-5 px-10 text-base font-black inline-flex items-center justify-center gap-3 cursor-pointer shadow-[0_0_35px_rgba(34,211,238,0.5)] hover:scale-105 transition-transform rounded-full"
+          onClick={() => window.dispatchEvent(new CustomEvent('open_auth_modal', { detail: { isLogin: false } }))}
+          className="btn-primary py-5 px-10 text-base font-black inline-flex items-center justify-center gap-3 cursor-pointer shadow-[0_0_35px_rgba(59,130,246,0.4)] hover:scale-105 transition-transform rounded-full"
         >
-          <span>{isInvited ? '🚀 Create Free Account & Join Grid' : '🛡️ Sign In to Initialize Circle'}</span>
+          <span>{isInvited ? 'Accept Clearance & Initialize' : 'Sign In to Initialize Circle'}</span>
         </button>
       </div>
     );
   }
 
-  // State 1: User is not yet in a family group
+  // State 1: User is not yet in a circle
   if (!familyGroup) {
     return (
-      <div className="max-w-4xl mx-auto py-8 animate-fade-in px-4">
+      <div className="max-w-4xl mx-auto py-12 animate-fade-in px-4">
         <ScrollReveal>
           <div className="mb-12 text-center max-w-2xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-purple-500/20 border border-purple-500/40 px-4 py-1.5 rounded-full text-xs font-black text-cyan-300 tracking-widest uppercase mb-6 shadow-[0_0_20px_rgba(139,92,246,0.3)]">
-              <Sparkles size={16} className="text-cyan-400 animate-spin" /> Family Shield Network
+            <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-500/40 px-4 py-1.5 rounded-full text-xs font-mono font-bold text-blue-300 tracking-widest uppercase mb-6">
+              <ShieldCheck size={16} className="text-blue-400" /> Executive Security Network
             </div>
-            <h1 className="text-4xl md:text-5xl font-black font-['Outfit'] mb-4 text-white">
-              Shield Your Family <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500">
-                Against Digital Frauds
+            <h1 className="text-4xl md:text-5xl font-black font-heading mb-4 text-white">
+              Executive Cyber Circle <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-indigo-400">
+                Unified Family Defense
               </span>
             </h1>
-            <p className="text-slate-300 text-base md:text-lg">Invite parents, grandparents, and siblings into one protected cyber circle.</p>
+            <p className="text-slate-300 text-base md:text-lg">Connect parents, elders, and family members into a high-security monitoring grid.</p>
           </div>
         </ScrollReveal>
 
         {error && (
-          <div className="bg-rose-500/20 border border-rose-500 text-rose-300 p-4 rounded-2xl mb-8 text-center font-bold">
+          <div className="bg-rose-500/20 border border-rose-500 text-rose-300 p-4 rounded-2xl mb-8 text-center font-bold text-sm font-mono">
             {error}
           </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Create Family Card */}
-          <div className="glass-card p-8 border-purple-500/30 bg-slate-900/80 flex flex-col justify-between group hover:border-cyan-400 transition-all relative overflow-hidden shadow-2xl hover:-translate-y-1.5">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="glass-card p-8 sm:p-10 border-blue-500/30 bg-slate-900/90 flex flex-col justify-between group hover:border-blue-400 transition-all rounded-[2.5rem] shadow-2xl">
             <div>
-              <div className="w-16 h-16 bg-cyan-500/20 border border-cyan-400/40 rounded-2xl flex items-center justify-center text-cyan-400 mb-6 group-hover:scale-110 transition-transform shadow-lg">
+              <div className="w-16 h-16 bg-blue-500/20 border border-blue-400/40 rounded-2xl flex items-center justify-center text-blue-400 mb-6 shadow-md">
                 <Shield size={32} />
               </div>
-              <h2 className="text-2xl font-black font-['Outfit'] mb-3 text-white">Create Family Circle</h2>
+              <h2 className="text-2xl font-bold font-heading mb-3 text-white">Initialize Security Circle</h2>
               <p className="text-slate-300 text-sm leading-relaxed mb-8 font-normal">
-                Initialize a private security umbrella. Generate an invite token to track your family&apos;s daily scam prevention practice.
+                Establish an executive family security roster. Generate classified cryptographic invite tokens to onboard family defenders.
               </p>
             </div>
             <button 
               onClick={handleCreateFamily}
               disabled={actionLoading}
-              className="btn-primary w-full py-5 text-base font-black flex justify-center items-center gap-3 shadow-[0_0_30px_rgba(34,211,238,0.4)] cursor-pointer"
+              className="btn-primary w-full py-5 text-base font-black flex justify-center items-center gap-3 shadow-[0_0_30px_rgba(59,130,246,0.4)] cursor-pointer rounded-2xl"
             >
-              {actionLoading ? <Loader2 className="animate-spin text-navy" /> : <span>🛡️ Initialize Free Grid</span>}
+              {actionLoading ? <Loader2 className="animate-spin text-white" /> : <span>Initialize Security Grid</span>}
             </button>
           </div>
 
-          {/* Join Family Card */}
-          <div className="glass-card p-8 border-purple-500/30 bg-slate-900/80 flex flex-col justify-between group hover:border-purple-400 transition-all relative overflow-hidden shadow-2xl hover:-translate-y-1.5">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="glass-card p-8 sm:p-10 border-blue-500/30 bg-slate-900/90 flex flex-col justify-between group hover:border-indigo-400 transition-all rounded-[2.5rem] shadow-2xl">
             <div>
-              <div className="w-16 h-16 bg-purple-500/20 border border-purple-400/40 rounded-2xl flex items-center justify-center text-purple-400 mb-6 group-hover:scale-110 transition-transform shadow-lg">
+              <div className="w-16 h-16 bg-indigo-500/20 border border-indigo-400/40 rounded-2xl flex items-center justify-center text-indigo-400 mb-6 shadow-md">
                 <KeyRound size={32} />
               </div>
-              <h2 className="text-2xl font-black font-['Outfit'] mb-3 text-white">Join with Token</h2>
+              <h2 className="text-2xl font-bold font-heading mb-3 text-white">Join Existing Circle</h2>
               <p className="text-slate-300 text-sm leading-relaxed mb-6 font-normal">
-                Did a family member invite you? Enter their 6-character classified Invite Code below to join their umbrella.
+                Did your circle commander issue an access token? Enter the 6-character clearance code below to join their security perimeter.
               </p>
             </div>
             <form onSubmit={handleJoinFamily} className="mt-auto">
@@ -1006,16 +758,16 @@ export default function FamilyPage() {
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
                   placeholder="e.g. SHIELD88"
-                  className="w-full bg-slate-950 border border-white/20 rounded-2xl py-4 pl-4 pr-14 text-center text-xl font-black tracking-widest uppercase focus:outline-none focus:border-cyan-400 text-white transition-all placeholder:text-slate-600"
+                  className="w-full bg-slate-950 border border-white/20 rounded-2xl py-4 pl-4 pr-14 text-center text-xl font-mono font-bold tracking-widest uppercase focus:outline-none focus:border-blue-400 text-white transition-all placeholder:text-slate-600"
                   maxLength={8}
                   disabled={actionLoading}
                 />
                 <button 
                   type="submit"
                   disabled={actionLoading || joinCode.length < 3}
-                  className="absolute right-2 top-2 bottom-2 bg-gradient-to-r from-cyan-400 to-purple-600 hover:opacity-90 text-navy rounded-xl px-4 font-black transition-all disabled:opacity-20 flex items-center justify-center shadow-md cursor-pointer"
+                  className="absolute right-2 top-2 bottom-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90 text-white rounded-xl px-4 font-bold transition-all disabled:opacity-20 flex items-center justify-center shadow-md cursor-pointer"
                 >
-                  {actionLoading ? <Loader2 className="animate-spin text-navy" size={20} /> : <ArrowRight size={20} />}
+                  {actionLoading ? <Loader2 className="animate-spin text-white" size={20} /> : <ArrowRight size={20} />}
                 </button>
               </div>
             </form>
@@ -1025,61 +777,165 @@ export default function FamilyPage() {
     );
   }
 
-  // State 2: User is inside an active Family Defense Grid
+  // State 2: Executive Cyber Circle Active
   const isViewerCommander = members[0]?.profiles?.display_name === profile?.display_name || members[0]?.profiles?.id === user?.id || (profile?.display_name && !profile.display_name.toLowerCase().includes('grand'));
 
-  return (
-    <div className="max-w-5xl mx-auto pb-44 pt-4 px-4 sm:px-6 animate-fade-in">
-      
-      {/* Testing Invite Banner for Logged-In Admin */}
-      {typeof window !== 'undefined' && window.location.search.includes('code=') && isViewerCommander && (
-        <div className="bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-cyan-500/20 border border-amber-400/60 p-5 rounded-3xl mb-8 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xl select-none animate-fade-in">
-          <div className="flex items-center gap-3.5 text-left">
-            <span className="text-3xl">💡</span>
-            <div>
-              <h4 className="text-sm font-black font-['Outfit'] text-white">Testing Invite Token Onboarding?</h4>
-              <p className="text-xs text-slate-300">You are currently logged into the inviter account. To test onboarding Grandpa / Family Member, open this link in Incognito or click below:</p>
+  // Render refined executive monogram shield instead of cartoon emoji faces
+  const renderMonogramShield = (name, role) => {
+    const initial = (name || 'D').charAt(0).toUpperCase();
+    const isAdmin = role === 'admin' || (name || '').toLowerCase().includes('neha');
+    const isElder = (name || '').toLowerCase().includes('grand') || (name || '').toLowerCase().includes('sharma') || (name || '').toLowerCase().includes('elder');
+
+    if (isAdmin) {
+      return (
+        <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center my-2">
+          <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-xl"></div>
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-slate-900 via-blue-950 to-slate-950 border-2 border-blue-400 flex flex-col items-center justify-center relative z-10 shadow-[0_0_30px_rgba(59,130,246,0.4)]">
+            <span className="text-3xl sm:text-4xl font-black font-heading text-blue-300">{initial}</span>
+            <span className="absolute -bottom-2 bg-blue-600 text-white font-mono text-[9px] font-black px-3 py-0.5 rounded-full uppercase tracking-widest shadow border border-blue-400">
+              COMMANDER
+            </span>
+          </div>
+        </div>
+      );
+    }
+    if (isElder) {
+      return (
+        <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center my-2">
+          <div className="absolute inset-0 bg-amber-500/20 rounded-2xl blur-xl"></div>
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-slate-900 via-amber-950 to-slate-950 border-2 border-amber-400 flex flex-col items-center justify-center relative z-10 shadow-[0_0_30px_rgba(245,158,11,0.4)]">
+            <span className="text-3xl sm:text-4xl font-black font-heading text-amber-300">{initial}</span>
+            <span className="absolute -bottom-2 bg-amber-600 text-slate-950 font-mono text-[9px] font-black px-3 py-0.5 rounded-full uppercase tracking-widest shadow border border-amber-300">
+              ELDER ROSTER
+            </span>
+          </div>
+        </div>
+      );
+    }
+    return (
+      <div className="relative w-24 h-24 sm:w-28 sm:h-28 shrink-0 flex items-center justify-center my-2">
+        <div className="absolute inset-0 bg-emerald-500/15 rounded-2xl blur-xl"></div>
+        <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-slate-900 via-emerald-950/50 to-slate-950 border border-emerald-400/60 flex flex-col items-center justify-center relative z-10 shadow-[0_0_25px_rgba(16,185,129,0.3)]">
+          <span className="text-3xl sm:text-4xl font-black font-heading text-emerald-300">{initial}</span>
+          <span className="absolute -bottom-2 bg-emerald-600 text-white font-mono text-[9px] font-black px-3 py-0.5 rounded-full uppercase tracking-widest shadow border border-emerald-400">
+            DEFENDER
+          </span>
+        </div>
+      </div>
+    );
+  };
+
+  const renderMemberCard = (m, isMaster) => {
+    const isMe = m.profiles?.id === user?.id;
+    const isPending = m.isPending;
+
+    return (
+      <div 
+        className={`glass-card relative overflow-hidden transition-all duration-300 w-full rounded-[2.5rem] ${
+          isMaster 
+            ? 'p-8 sm:p-10 max-w-3xl border-blue-500/50 bg-gradient-to-r from-slate-950 via-blue-950/30 to-slate-950 shadow-[0_0_50px_rgba(59,130,246,0.2)]' 
+            : isPending 
+            ? 'p-6 sm:p-8 border-amber-500/40 bg-slate-950/80 opacity-90' 
+            : 'p-6 sm:p-8 border-white/15 hover:border-blue-400/50 bg-slate-950/90 shadow-xl'
+        }`}
+      >
+        <div className={`flex items-center justify-between gap-6 mb-6 ${isMaster ? 'flex-col sm:flex-row text-center sm:text-left' : 'flex-col text-center'}`}>
+          <div className={`flex items-center gap-5 ${isMaster ? 'flex-col sm:flex-row' : 'flex-col'}`}>
+            {renderMonogramShield(m.profiles?.display_name, m.role)}
+            <div className="w-full min-w-0">
+              <div className={`flex flex-wrap items-center gap-2.5 ${isMaster ? 'justify-center sm:justify-start' : 'justify-center'}`}>
+                <h3 className="text-2xl font-bold font-heading text-white tracking-wide leading-tight">{m.profiles?.display_name || "Family Defender"}</h3>
+                {isMaster && <span className="bg-blue-500/20 border border-blue-400/40 text-blue-300 text-[10px] font-mono font-bold px-3 py-0.5 rounded-full uppercase tracking-wider">COMMANDER</span>}
+                {isMe && !isMaster && <span className="bg-white/10 border border-white/20 text-slate-300 text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full uppercase">YOU</span>}
+              </div>
+              <span className="text-xs text-slate-400 font-mono tracking-wider block mt-1 uppercase truncate">{m.relation || (m.role === 'admin' ? 'Circle Commander' : 'Protected Member')}</span>
             </div>
           </div>
-          <button
-            onClick={async () => {
-              const currentCode = new URLSearchParams(window.location.search).get('code') || 'A6B437';
-              const inv = encodeURIComponent(profile?.display_name || 'Neha');
-              const circ = encodeURIComponent(familyGroup?.name || "Neha's Cyber Circle");
-              if (supabase) await supabase.auth.signOut();
-              window.location.href = `/family?code=${currentCode}&inviter=${inv}&circle=${circ}`;
-            }}
-            className="bg-amber-400 hover:bg-amber-300 text-navy px-5 py-3 rounded-2xl font-black text-xs uppercase tracking-wider shrink-0 cursor-pointer shadow-lg transition-all hover:scale-105"
-          >
-            🚪 Switch Account to Join
-          </button>
-        </div>
-      )}
 
-      {/* Grid Banner */}
-      <div className="glass-card p-8 md:p-10 mb-10 border-purple-500/40 bg-gradient-to-r from-purple-900/40 via-slate-900 to-slate-900 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-8 shadow-2xl select-none">
-        <div className="absolute -left-20 -top-20 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl pointer-events-none"></div>
-        
-        <div className="relative z-10 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 bg-cyan-500/20 border border-cyan-400/40 px-3 py-1 rounded-full text-xs font-black text-cyan-300 uppercase tracking-widest mb-4">
-            🛡️ Family Umbrella Active
+          <div className="flex items-center gap-2 shrink-0">
+            {isPending ? (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3.5 py-1.5 rounded-full">
+                <Clock size={12} className="animate-spin" /> Pending Acceptance
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-3.5 py-1.5 rounded-full">
+                <ShieldCheck size={14} /> Active Surveillance
+              </span>
+            )}
+
+            {m.role !== 'admin' && (
+              <button
+                onClick={() => {
+                  if (!isViewerCommander) {
+                    if (confirm(`Leave ${familyGroup?.name || "Security Circle"}?`)) {
+                      setFamilyGroup(null);
+                      localStorage.removeItem('cs_global_fam_grp');
+                      localStorage.removeItem('cs_global_fam_mem');
+                      confetti({ particleCount: 70 });
+                    }
+                  } else {
+                    handleRemoveMember(m);
+                  }
+                }}
+                className="w-8 h-8 bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 rounded-xl border border-white/10 font-bold text-xs flex items-center justify-center transition-all cursor-pointer ml-1"
+                title={!isViewerCommander ? "Leave Security Circle" : "Remove Member"}
+              >
+                ✕
+              </button>
+            )}
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black font-['Outfit'] text-white mb-2">{familyGroup.name}</h1>
-          <p className="text-slate-300 text-sm sm:text-base">
-            Monitoring daily security clearance for <span className="text-cyan-400 font-bold">{members.length} family member{members.length !== 1 && 's'}</span>.
+        </div>
+
+        {!isPending ? (
+          <div className="grid grid-cols-2 gap-4 pt-5 border-t border-white/10 text-center font-mono">
+            <div className="bg-white/[0.03] p-3.5 rounded-2xl border border-white/5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Clearance Index</span>
+              <span className="text-xl font-bold font-heading text-blue-400 mt-0.5 block">{m.profiles?.xp || 0} PTS</span>
+            </div>
+            <div className="bg-white/[0.03] p-3.5 rounded-2xl border border-white/5">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Defense Streak</span>
+              <span className="text-xl font-bold font-heading text-emerald-400 mt-0.5 block">{m.profiles?.streak || 0} Days</span>
+            </div>
+          </div>
+        ) : (
+          <div className="pt-4 border-t border-white/10 text-xs text-slate-300 flex flex-col gap-2.5 font-mono">
+            <div className="flex items-center justify-between">
+              <span className="text-slate-400">Invite dispatched to: <b className="text-white">{m.email}</b></span>
+              <span className="text-blue-400 font-bold hover:underline cursor-pointer" onClick={() => alert("Resent invitation email!")}>Resend</span>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const commander = members.find(m => m.role === 'admin') || members[0];
+  const subMembers = members.filter(m => m !== commander);
+
+  return (
+    <div className="max-w-6xl mx-auto pb-44 pt-6 px-4 sm:px-6 animate-fade-in select-none">
+      
+      {/* Executive Security Perimeter Banner */}
+      <div className="p-8 md:p-12 mb-12 rounded-[3rem] border border-blue-500/40 bg-gradient-to-r from-slate-950 via-blue-950/30 to-slate-950 relative overflow-hidden flex flex-col md:flex-row justify-between items-center gap-8 shadow-2xl backdrop-blur-xl">
+        <div className="relative z-10 text-center md:text-left">
+          <div className="inline-flex items-center gap-2 bg-blue-500/20 border border-blue-400/40 px-3.5 py-1 rounded-full text-xs font-mono font-bold text-blue-300 uppercase tracking-widest mb-4">
+            <ShieldCheck size={16} className="text-blue-400" /> Security Roster Active
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-black font-heading text-white mb-2">{familyGroup.name}</h1>
+          <p className="text-slate-300 text-sm sm:text-base font-normal">
+            Real-time scam clearance monitoring for <span className="text-blue-400 font-bold">{members.length} member{members.length !== 1 && 's'}</span> in your security perimeter.
           </p>
         </div>
 
-        {/* Invite Code Box & Email Trigger */}
         <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10 w-full md:w-auto">
-          <div className="bg-slate-950/90 border border-white/15 p-4 rounded-2xl text-center w-full sm:w-auto shadow-lg">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Invite Token Code</span>
+          <div className="bg-slate-950 border border-white/15 p-4 rounded-2xl text-center w-full sm:w-auto shadow-lg font-mono">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Clearance Access Token</span>
             <div className="flex items-center justify-center gap-3">
-              <span className="text-2xl font-black text-cyan-400 font-mono tracking-widest">{familyGroup.invite_code}</span>
+              <span className="text-2xl font-bold text-blue-400 tracking-widest">{familyGroup.invite_code}</span>
               <button 
                 onClick={copyToClipboard}
-                className="p-2 bg-white/10 hover:bg-cyan-400 hover:text-navy text-slate-300 rounded-xl transition-all cursor-pointer"
-                title="Copy Code"
+                className="p-2 bg-white/10 hover:bg-blue-500 hover:text-white text-slate-300 rounded-xl transition-all cursor-pointer"
+                title="Copy Token"
               >
                 {copied ? <Check size={18} className="text-emerald-400" /> : <Copy size={18} />}
               </button>
@@ -1092,358 +948,215 @@ export default function FamilyPage() {
               setInviteSuccess(false);
               setShowInviteModal(true);
             }}
-            className="btn-primary w-full sm:w-auto py-5 px-6 text-sm font-black flex items-center justify-center gap-2 shrink-0 shadow-[0_0_25px_rgba(139,92,246,0.6)] cursor-pointer"
+            className="btn-primary w-full sm:w-auto py-5 px-6 text-sm font-black flex items-center justify-center gap-2 shrink-0 shadow-[0_0_25px_rgba(59,130,246,0.4)] cursor-pointer rounded-2xl"
           >
-            <Mail size={18} className="text-navy" />
-            <span>Invite via Email</span>
+            <UserPlus size={18} className="text-white" />
+            <span>Onboard Member</span>
           </button>
         </div>
       </div>
 
-      {/* Members Grid Title */}
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white flex items-center gap-2.5">
-          <span>🛡️ Protected Family Roster</span>
+      {/* Roster Title */}
+      <div className="flex items-center justify-between mb-8 border-b border-white/10 pb-4">
+        <h2 className="text-2xl sm:text-3xl font-bold font-heading text-white flex items-center gap-3">
+          <Shield size={24} className="text-blue-400" />
+          <span>Executive Defense Roster</span>
         </h2>
-        <span className="text-xs font-bold text-slate-400">Live Status Updates</span>
+        <span className="text-xs font-mono font-bold text-slate-400 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10">SURVEILLANCE ONLINE</span>
       </div>
 
-      {/* Majestic Cyberpunk Family Hierarchy Tree Showcase */}
-      <div className="flex flex-col items-center pb-36 mb-16 select-none relative w-full">
-        {(() => {
-          const commander = members.find(m => m.role === 'admin') || members[0];
-          const subMembers = members.filter(m => m !== commander);
+      {/* Executive Roster Grid */}
+      <div className="space-y-8 pb-16 mb-16">
+        {commander && (
+          <div className="flex justify-center">
+            {renderMemberCard(commander, true)}
+          </div>
+        )}
 
-          const renderChibiFace = (name, role) => {
-            const lower = (name || '').toLowerCase();
-            const isAdmin = role === 'admin' || lower.includes('neha');
-            const isElder = lower.includes('grand') || lower.includes('papa') || lower.includes('sharma') || lower.includes('elder');
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4 items-stretch">
+          {subMembers.map((sm, idx) => (
+            <div key={idx} className="flex flex-col w-full h-full">
+              {renderMemberCard(sm, false)}
+            </div>
+          ))}
 
-            if (isAdmin) {
-              return (
-                <div className="relative w-28 h-28 sm:w-36 sm:h-36 shrink-0 flex items-center justify-center group/avatar select-none my-2">
-                  {/* Orbiting Hologram Radar Rings */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 rounded-full blur-2xl opacity-60 group-hover/avatar:opacity-100 transition-opacity animate-pulse"></div>
-                  <div className="absolute inset-1 border-2 border-dashed border-cyan-400/80 rounded-full animate-spin duration-[14000ms]"></div>
-                  <div className="absolute inset-3 border border-purple-400/50 rounded-full animate-ping duration-[3500ms]"></div>
-                  
-                  {/* Massive 3D Face Pod */}
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-tr from-slate-950 via-purple-950 to-slate-900 rounded-full border-[4px] border-cyan-400 flex flex-col items-center justify-center relative z-10 shadow-[0_0_60px_rgba(34,211,238,0.65)] group-hover/avatar:scale-110 group-hover/avatar:rotate-6 transition-all duration-300">
-                    <span className="text-5xl sm:text-6xl filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">👩‍✈️</span>
-                    
-                    {/* Glowing Cyber Pill Banner */}
-                    <span className="absolute -bottom-2 bg-gradient-to-r from-cyan-400 via-purple-500 to-cyan-400 text-slate-950 font-mono text-[9px] sm:text-[10px] font-black px-3.5 py-1 rounded-full uppercase tracking-widest shadow-[0_0_20px_#22d3ee] border border-white whitespace-nowrap">
-                      ★ COMMANDER
-                    </span>
-                  </div>
-                </div>
-              );
-            }
-            if (isElder) {
-              return (
-                <div className="relative w-28 h-28 sm:w-36 sm:h-36 shrink-0 flex items-center justify-center group/avatar select-none my-2">
-                  {/* Orbiting Gold Veteran Rings */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-amber-400 via-rose-500 to-amber-400 rounded-full blur-2xl opacity-60 group-hover/avatar:opacity-100 transition-opacity animate-pulse"></div>
-                  <div className="absolute inset-1 border-2 border-dashed border-amber-400/80 rounded-full animate-spin duration-[16000ms]"></div>
-                  <div className="absolute inset-3 border border-rose-400/50 rounded-full animate-ping duration-[4000ms]"></div>
-                  
-                  {/* Massive 3D Elder Pod */}
-                  <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-tr from-slate-950 via-amber-950/80 to-slate-900 rounded-full border-[4px] border-amber-400 flex flex-col items-center justify-center relative z-10 shadow-[0_0_60px_rgba(251,191,36,0.65)] group-hover/avatar:scale-110 group-hover/avatar:-rotate-6 transition-all duration-300">
-                    <span className="text-5xl sm:text-6xl filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">👴</span>
-                    
-                    {/* Glowing Cyber Pill Banner */}
-                    <span className="absolute -bottom-2 bg-gradient-to-r from-amber-300 via-rose-500 to-amber-300 text-slate-950 font-mono text-[9px] sm:text-[10px] font-black px-3.5 py-1 rounded-full uppercase tracking-widest shadow-[0_0_20px_#fbbf24] border border-white whitespace-nowrap">
-                      👑 ELDER VETERAN
-                    </span>
-                  </div>
-                </div>
-              );
-            }
-            return (
-              <div className="relative w-28 h-28 sm:w-36 sm:h-36 shrink-0 flex items-center justify-center group/avatar select-none my-2">
-                <div className="absolute inset-0 bg-gradient-to-tr from-emerald-400 to-cyan-500 rounded-full blur-2xl opacity-50 group-hover/avatar:opacity-90 transition-opacity animate-pulse"></div>
-                <div className="absolute inset-1 border-2 border-dashed border-emerald-400/80 rounded-full animate-spin duration-[18000ms]"></div>
-                
-                <div className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-tr from-slate-950 via-emerald-950/60 to-slate-900 rounded-full border-[4px] border-emerald-400 flex flex-col items-center justify-center relative z-10 shadow-[0_0_60px_rgba(52,211,153,0.6)] group-hover/avatar:scale-110 transition-all duration-300">
-                  <span className="text-5xl sm:text-6xl filter drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">🧑‍🚀</span>
-                  
-                  <span className="absolute -bottom-2 bg-gradient-to-r from-emerald-400 to-cyan-400 text-slate-950 font-mono text-[9px] sm:text-[10px] font-black px-3.5 py-1 rounded-full uppercase tracking-widest shadow-[0_0_20px_#34d399] border border-white whitespace-nowrap">
-                    🛡️ DEFENDER
-                  </span>
-                </div>
-              </div>
-            );
-          };
-
-          const renderMemberCard = (m, isMaster) => {
-            const isMe = m.profiles?.id === user?.id;
-            const isPending = m.isPending;
-
-            return (
-              <div 
-                className={`glass-card relative overflow-hidden transition-all duration-300 w-full rounded-[2.5rem] ${
-                  isMaster 
-                    ? 'p-8 sm:p-10 max-w-2xl border-cyan-400 bg-gradient-to-r from-slate-950 via-purple-950/50 to-slate-950 shadow-[0_0_70px_rgba(34,211,238,0.3)] ring-2 ring-cyan-400/40' 
-                    : isPending 
-                    ? 'p-6 sm:p-8 border-amber-500/40 bg-amber-950/10 opacity-90' 
-                    : 'p-6 sm:p-8 border-white/20 hover:border-cyan-400/60 bg-slate-900/90 shadow-2xl hover:-translate-y-1.5'
-                }`}
-              >
-                {isMaster && (
-                  <div className="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500"></div>
-                )}
-                
-                <div className={`flex items-center justify-between gap-4 mb-6 ${isMaster ? 'flex-col sm:flex-row text-center sm:text-left' : 'flex-col text-center'}`}>
-                  <div className={`flex items-center gap-4 ${isMaster ? 'flex-col sm:flex-row' : 'flex-col'}`}>
-                    {renderChibiFace(m.profiles?.display_name, m.role)}
-                    <div className="w-full min-w-0">
-                      <div className={`flex flex-wrap items-center gap-2 ${isMaster ? 'justify-center sm:justify-start' : 'justify-center'}`}>
-                        <h3 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white tracking-wide break-words leading-tight">{m.profiles?.display_name || "Family Defender"}</h3>
-                        {isMaster && <span className="bg-gradient-to-r from-amber-300 to-amber-500 text-slate-950 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow">★ CIRCLE COMMANDER</span>}
-                        {isMe && !isMaster && <span className="bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase font-mono">YOU</span>}
-                      </div>
-                      <span className="text-xs text-cyan-300 font-mono tracking-wider block mt-1 uppercase font-bold truncate">{m.relation || (m.role === 'admin' ? 'Circle Commander' : 'Protected Member')}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 shrink-0">
-                    {isPending ? (
-                      <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 border border-amber-500/40 text-amber-300 px-3 py-1 rounded-full font-mono">
-                        <Clock size={12} className="animate-spin" /> Pending
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 px-3 py-1 rounded-full shadow-sm font-mono">
-                        <CheckCircle2 size={12} /> Protected
-                      </span>
-                    )}
-
-                    {m.role !== 'admin' && (
-                      <button
-                        onClick={() => {
-                          if (!isViewerCommander) {
-                            if (confirm(`Leave ${familyGroup?.name || "Family Umbrella"}?`)) {
-                              setFamilyGroup(null);
-                              localStorage.removeItem('cs_global_fam_grp');
-                              localStorage.removeItem('cs_global_fam_mem');
-                              confetti({ particleCount: 70 });
-                            }
-                          } else {
-                            handleRemoveMember(m);
-                          }
-                        }}
-                        className="w-7 h-7 bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-navy rounded-full border border-rose-500/30 font-black text-xs flex items-center justify-center transition-all cursor-pointer shadow-sm ml-1"
-                        title={!isViewerCommander ? "Leave Family Umbrella" : "Remove Member"}
-                      >
-                        ✕
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {!isPending ? (
-                  <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 text-center">
-                    <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-mono">Clearance XP</span>
-                      <span className="text-xl font-black font-['Outfit'] text-cyan-300">{m.profiles?.xp || 0} XP</span>
-                    </div>
-                    <div className="bg-white/5 p-3 rounded-2xl border border-white/5">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block font-mono">Daily Streak</span>
-                      <span className="text-xl font-black font-['Outfit'] text-amber-400 flex items-center justify-center gap-1.5">
-                        🔥 {m.profiles?.streak || 0} Days
-                      </span>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="pt-4 border-t border-white/10 text-xs text-slate-300 flex flex-col gap-2.5">
-                    <div className="flex items-center justify-between">
-                      <span className="text-slate-400">Invite sent to: <b className="text-white">{m.email}</b></span>
-                      <span className="text-cyan-400 font-bold hover:underline cursor-pointer" onClick={() => alert("Resent invitation email!")}>Resend</span>
-                    </div>
-                    <div className="bg-slate-950 p-2.5 rounded-xl border border-cyan-400/30 flex items-center justify-between gap-2">
-                      <span className="font-mono text-[11px] text-cyan-300 truncate">{`${typeof window !== 'undefined' ? window.location.origin : ''}/family?code=${familyGroup?.invite_code || 'SHIELD88'}`}</span>
-                      <button 
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${window.location.origin}/family?code=${familyGroup?.invite_code || 'SHIELD88'}`);
-                          alert("Direct Invite Link copied to clipboard!");
-                        }}
-                        className="bg-cyan-500 hover:bg-cyan-400 text-navy px-2.5 py-1 rounded-lg font-black text-[10px] uppercase tracking-wider shrink-0 cursor-pointer transition-all"
-                      >
-                        📋 Copy Link
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          };
-
-          return (
-            <>
-              {/* Master Root Node: Neha */}
-              {commander && renderMemberCard(commander, true)}
-
-              {/* Glowing Cyberpunk Circuit Laser Trunk Pipeline Flowing Down */}
-              {subMembers.length > 0 && (
-                <div className="flex flex-col items-center my-3">
-                  <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 via-purple-500 to-amber-400 rounded-full shadow-[0_0_15px_#00f0ff]"></div>
-                  <div className="px-4 py-1.5 rounded-full bg-slate-950 border border-purple-500/60 text-[10px] font-mono font-black text-purple-300 tracking-[0.2em] uppercase shadow-lg my-1.5 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> PROTECTED FAMILY BRANCHES
-                  </div>
-                  <div className="w-1 h-6 bg-gradient-to-b from-amber-400 to-cyan-400 rounded-full shadow-[0_0_15px_#fbbf24]"></div>
-                </div>
-              )}
-
-              {/* Horizontal Organizational Branch Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch pt-2 relative">
-                {subMembers.map((sm, idx) => (
-                  <div key={idx} className="relative flex flex-col items-center w-full h-full justify-between">
-                    <div className="absolute -top-4 w-full flex justify-center hidden lg:flex">
-                      <div className="w-0.5 h-4 bg-cyan-400/60 shadow-[0_0_8px_#00f0ff]"></div>
-                    </div>
-                    {renderMemberCard(sm, false)}
-                  </div>
-                ))}
-
-                {/* Explicit Interactive Invite/Upload Card in the Tree */}
-                <div 
-                  onClick={() => setShowInviteModal(true)}
-                  className="p-6 rounded-3xl border-2 border-dashed border-cyan-400/40 hover:border-cyan-400 bg-slate-950/40 hover:bg-slate-900/60 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-4 min-h-[260px] group shadow-lg my-auto"
-                >
-                  <div className="w-16 h-16 rounded-full bg-cyan-500/10 border border-cyan-400/30 text-cyan-400 flex items-center justify-center text-3xl group-hover:scale-110 group-hover:bg-cyan-500 group-hover:text-slate-950 transition-all shadow-[0_0_20px_rgba(34,211,238,0.2)]">
-                    <UserPlus size={30} />
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-black font-['Outfit'] text-white group-hover:text-cyan-300">Add / Invite New Member</h4>
-                    <p className="text-xs text-slate-400 mt-1 max-w-xs font-sans">Send email invitation or copy direct umbrella access link to add parents & relatives to circle.</p>
-                  </div>
-                  <span className="bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest group-hover:bg-cyan-400 group-hover:text-slate-950 transition-all">
-                    + Expand Circle
-                  </span>
-                </div>
-              </div>
-            </>
-          );
-        })()}
+          {/* Clean Onboarding Action Card */}
+          <div 
+            onClick={() => setShowInviteModal(true)}
+            className="p-8 rounded-[2.5rem] border border-dashed border-white/20 hover:border-blue-400 bg-slate-950/40 hover:bg-slate-900/80 transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-5 min-h-[260px] group shadow-lg"
+          >
+            <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-400/30 text-blue-400 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:bg-blue-600 group-hover:text-white transition-all">
+              <UserPlus size={28} />
+            </div>
+            <div>
+              <h4 className="text-xl font-bold font-heading text-white group-hover:text-blue-300">Authorize New Member</h4>
+              <p className="text-xs text-slate-400 mt-1 max-w-xs font-normal">Dispatch encrypted email invitation or share clearance token to protect relatives.</p>
+            </div>
+            <span className="bg-blue-500/20 text-blue-300 border border-blue-400/40 px-4 py-1.5 rounded-full text-xs font-mono font-bold uppercase tracking-widest group-hover:bg-blue-600 group-hover:text-white transition-all">
+              + Add Defender
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* 📊 Personalized Family Learning Dashboard & Benchmark Matrix */}
+      {/* Analytics Matrix */}
       <FamilyLearningAnalytics members={members} />
 
-      {/* 🚨 Live Family Security Incident Wall (Keeps everyone in circle warned & updated) */}
-      <div className="mb-20 glass-card p-6 sm:p-10 bg-slate-950 border-2 border-rose-500/80 shadow-[0_0_80px_rgba(244,63,94,0.2)] animate-fade-in font-mono select-none">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 border-b border-white/10 pb-6">
-          <div>
-            <div className="inline-flex items-center gap-2 bg-rose-500/20 border border-rose-500/40 px-3.5 py-1 rounded-full text-[11px] font-black text-rose-300 uppercase tracking-widest mb-2">
-              <Activity size={14} className="text-rose-400 animate-pulse" /> CIRCLE COLLABORATIVE INTELLIGENCE • LIVE FEED
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white">🚨 Family Incident Dispatch Wall</h3>
-            <p className="text-xs text-slate-400 font-sans mt-1">Log suspicious calls or SMS attempts you just faced. Instantly notifies and arms all elders and family defenders in your circle.</p>
+      {/* Sleek Command Intercept Section (Inspired by Screenshot 1) */}
+      <div className="mb-20 p-8 sm:p-14 rounded-[2.5rem] bg-[#070714] border border-indigo-500/20 shadow-2xl font-mono select-none relative overflow-hidden">
+        {/* Glow Effects */}
+        <div className="absolute top-0 right-1/4 w-96 h-96 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        {/* Top Header Row */}
+        <div className="relative z-10">
+          <div className="inline-flex items-center gap-2.5 bg-indigo-950/90 border border-indigo-500/40 text-indigo-300 px-4 py-2 rounded-full text-xs sm:text-sm font-black tracking-widest uppercase mb-6 shadow-md">
+            <span className="w-2.5 h-2.5 rounded-full bg-indigo-400 animate-pulse"></span> THREAT INTEL RECEIVER • CIRCLE DISPATCH
           </div>
-          <span className="bg-rose-500 text-slate-950 px-3.5 py-1.5 rounded-xl font-black text-xs uppercase animate-bounce">
-            {incidents.length} Active Intimations
-          </span>
+
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6">
+            <div>
+              <h3 className="text-6xl sm:text-8xl font-black font-serif text-white tracking-tight leading-none">
+                Command
+              </h3>
+              <span className="text-6xl sm:text-8xl font-black font-serif italic text-indigo-400 tracking-tight leading-none mt-1 block">
+                Intercept
+              </span>
+              <p className="text-slate-200 font-serif italic text-base sm:text-xl font-semibold mt-4 max-w-lg leading-relaxed">
+                Real-time forensic logging and verification of peripheral security breaches.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-start lg:items-end shrink-0 pt-4 lg:pt-0">
+              <span className="text-xs sm:text-sm font-mono font-black text-indigo-300 uppercase tracking-widest block mb-1">
+                ACTIVE DISPATCHES
+              </span>
+              <div className="text-7xl sm:text-9xl font-black font-serif text-white leading-none">
+                {incidents.length || 128}
+              </div>
+            </div>
+          </div>
+
+          {/* Divider */}
+          <div className="w-full h-px bg-indigo-900/40 my-10"></div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* 2-Column Grid Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative z-10">
           
-          {/* Post Incident Input Workbench */}
-          <div className="lg:col-span-5 bg-slate-900/60 p-6 rounded-3xl border border-white/10 space-y-4">
-            <h4 className="text-xs font-bold text-cyan-300 uppercase tracking-widest flex items-center gap-2">
-              <Sparkles size={16} /> Log Recent Threat Encounter:
-            </h4>
+          {/* Left Card: Payload Record (6 Cols) */}
+          <div className="lg:col-span-6 bg-[#0c0c1e] border border-indigo-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6">
+            <div className="flex justify-between items-center pb-5 border-b border-indigo-500/20">
+              <h4 className="font-serif font-black text-white text-3xl sm:text-4xl">Payload Record</h4>
+              <span className="font-mono text-xs sm:text-sm text-indigo-300 font-black tracking-widest uppercase">FORM ID: RX-909</span>
+            </div>
 
-            <form onSubmit={handlePostIncident} className="space-y-4">
+            <form onSubmit={handlePostIncident} className="space-y-6">
               <div>
-                <label className="text-[10px] text-slate-400 uppercase block mb-1.5 font-bold">Encounter Details</label>
+                <label className="text-xs sm:text-sm font-mono font-black text-indigo-300 uppercase tracking-widest block mb-2.5">
+                  THREAT SUMMARY
+                </label>
                 <textarea
                   value={newIncidentText}
                   onChange={e => setNewIncidentText(e.target.value)}
-                  placeholder="e.g., Fake SBI credit card reward APK received on family WhatsApp group. Warned grandma..."
-                  rows={3}
-                  className="w-full bg-slate-950 border border-white/10 rounded-2xl p-3.5 text-xs text-white focus:border-rose-500 outline-none resize-none font-mono"
+                  placeholder="Describe the interception profile..."
+                  rows={4}
+                  className="w-full bg-[#070714] border-2 border-indigo-500/30 rounded-2xl p-5 text-sm sm:text-base font-bold text-white focus:border-indigo-400 outline-none resize-none font-sans min-h-[120px] shadow-inner"
                 />
               </div>
 
-              <div>
-                <label className="text-[10px] text-slate-400 uppercase block mb-1.5 font-bold">📎 Attach Proof / Link / Phone # (Optional)</label>
-                <input
-                  type="text"
-                  value={incidentProof}
-                  onChange={e => setIncidentProof(e.target.value)}
-                  placeholder="e.g., Sender +91 9876543210 or sbi-reward.apk"
-                  className="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-xs text-cyan-300 focus:border-cyan-400 outline-none font-mono"
-                />
-              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-xs sm:text-sm font-mono font-black text-indigo-300 uppercase tracking-widest block mb-2.5">
+                    EVIDENCE IDENTIFIER
+                  </label>
+                  <input
+                    type="text"
+                    value={incidentProof}
+                    onChange={e => setIncidentProof(e.target.value)}
+                    placeholder="EVD-00-XXXX"
+                    className="w-full bg-[#070714] border-2 border-indigo-500/30 rounded-2xl p-4 text-sm sm:text-base font-bold text-white font-mono focus:border-indigo-400 outline-none shadow-inner"
+                  />
+                </div>
 
-              <div>
-                <label className="text-[10px] text-slate-400 uppercase block mb-1.5 font-bold">Threat Severity Level</label>
-                <div className="grid grid-cols-3 gap-1.5 text-[10px] font-bold">
-                  {["🔴 CRITICAL VECTOR", "🟡 TACTICAL SPAM", "🟢 MITIGATED THREAT"].map((sev, i) => (
-                    <button
-                      key={i}
-                      type="button"
-                      onClick={() => setIncidentSeverity(sev)}
-                      className={`py-2 rounded-xl border transition-all truncate px-1 ${
-                        incidentSeverity === sev ? "bg-rose-500 text-white border-rose-400 shadow-md font-black" : "bg-white/5 border-white/5 text-slate-400 hover:text-white"
-                      }`}
-                    >
-                      {sev.split(' ')[0]} {sev.split(' ')[1]}
-                    </button>
-                  ))}
+                <div>
+                  <label className="text-xs sm:text-sm font-mono font-black text-indigo-300 uppercase tracking-widest block mb-2.5">
+                    CLASSIFICATION TIER
+                  </label>
+                  <select
+                    value={incidentSeverity}
+                    onChange={e => setIncidentSeverity(e.target.value)}
+                    className="w-full bg-[#070714] border-2 border-indigo-500/30 rounded-2xl p-4 text-sm sm:text-base font-bold text-white font-mono focus:border-indigo-400 outline-none shadow-inner cursor-pointer"
+                  >
+                    <option value="MITIGATED THREAT">Tier 1: Minimal</option>
+                    <option value="TACTICAL SPAM">Tier 2: Elevated</option>
+                    <option value="CRITICAL VECTOR">Tier 3: Critical</option>
+                  </select>
                 </div>
               </div>
 
               <button
                 type="submit"
                 disabled={!newIncidentText.trim()}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white font-black text-xs uppercase tracking-widest shadow-lg cursor-pointer transition-all disabled:opacity-30 flex items-center justify-center gap-2"
+                className="w-full py-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-black text-sm sm:text-base uppercase tracking-widest shadow-[0_0_30px_rgba(79,70,229,0.5)] hover:scale-[1.02] cursor-pointer transition-all disabled:opacity-30 pt-5 mt-2"
               >
-                <Send size={14} /> <span>Broadcast To Family Circle</span>
+                BROADCAST DISPATCH
               </button>
             </form>
           </div>
 
-          {/* Incident Dispatches Stream */}
-          <div className="lg:col-span-7 space-y-3 max-h-[420px] overflow-y-auto pr-2">
-            <span className="text-xs font-black text-slate-300 uppercase tracking-widest block">📡 Recent Circle Threat Dispatches:</span>
-            {incidents.map((inc) => (
-              <div key={inc.id} className="p-4 rounded-2xl bg-white/5 border border-white/10 flex gap-3.5 items-start transition-all hover:border-cyan-400/50">
-                <span className="text-3xl shrink-0 p-2 bg-slate-900 rounded-2xl border border-white/5 shadow-md">{inc.avatar}</span>
-                <div className="space-y-1 w-full">
-                  <div className="flex justify-between items-center text-[10px]">
-                    <span className="font-black text-white">{inc.author}</span>
-                    <span className="text-slate-400 flex items-center gap-1"><Clock size={10} /> {inc.time}</span>
+          {/* Right Card: Verified Feed (6 Cols) */}
+          <div className="lg:col-span-6 bg-[#0c0c1e] border border-indigo-500/30 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6">
+            <div className="flex justify-between items-center pb-5 border-b border-indigo-500/20">
+              <h4 className="font-serif font-black text-white text-3xl sm:text-4xl">Verified Feed</h4>
+              <span className="flex items-center gap-2 text-xs sm:text-sm font-mono font-black text-emerald-400 uppercase tracking-widest">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span> SYSTEM OPERATIONAL
+              </span>
+            </div>
+
+            <div className="max-h-[460px] overflow-y-auto space-y-5 pr-2">
+              {incidents.map((inc) => (
+                <div key={inc.id} className="bg-[#070714] border-2 border-indigo-500/20 rounded-2xl p-6 space-y-4 transition-all hover:border-indigo-500/50 shadow-lg">
+                  <div className="flex justify-between items-center">
+                    <span className="font-serif font-black text-white text-lg sm:text-xl">{inc.author || "Defender A. Vance"}</span>
+                    <span className="font-mono font-bold text-xs sm:text-sm text-indigo-300">{inc.time || "08:42:11"}</span>
                   </div>
-                  <p className="text-xs text-slate-200 font-sans leading-relaxed">{inc.incident}</p>
-                  {inc.proof && (
-                    <div className="bg-slate-950 px-2.5 py-1 rounded-lg border border-cyan-400/30 text-[10px] font-mono text-cyan-300 inline-block mr-2 my-1">
-                      📎 Proof: {inc.proof}
-                    </div>
-                  )}
-                  <span className="inline-block mt-1 text-[9px] font-bold px-2 py-0.5 rounded bg-rose-500/15 border border-rose-500/30 text-rose-300">
-                    {inc.severity}
-                  </span>
+
+                  <p className="text-base sm:text-lg text-slate-100 font-sans font-semibold leading-relaxed">
+                    {inc.incident}
+                  </p>
+
+                  <div className="flex justify-between items-center pt-3 border-t border-indigo-500/20">
+                    <span className="bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 font-mono font-bold text-xs sm:text-sm px-3 py-1 rounded-lg">
+                      REF: {inc.proof || "992-B"}
+                    </span>
+                    <span className={`font-mono font-black text-xs sm:text-sm tracking-widest uppercase ${
+                      inc.severity?.includes('CRITICAL') ? 'text-orange-400' : 'text-indigo-400'
+                    }`}>
+                      {inc.severity?.includes('CRITICAL') ? 'FLAGGED' : 'VERIFIED'}
+                    </span>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
 
         </div>
       </div>
 
-      {/* Email Invitation Modal - True Viewport Portal Overlay */}
+      {/* Onboarding Modal */}
       {mounted && showInviteModal && createPortal(
         <div className="fixed inset-0 z-[999999] overflow-y-auto bg-black/85 backdrop-blur-2xl animate-fade-in select-none p-4 sm:p-6 flex">
-          <div className="glass-card max-w-lg w-full p-6 sm:p-10 relative bg-slate-950 border-cyan-400 shadow-[0_0_80px_rgba(34,211,238,0.3)] m-auto">
+          <div className="max-w-lg w-full p-8 sm:p-10 relative rounded-[2.5rem] bg-slate-950 border border-blue-500/50 shadow-[0_0_80px_rgba(59,130,246,0.3)] m-auto">
             
             <div className="flex items-center justify-between pb-6 mb-8 border-b border-white/10">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 flex items-center justify-center text-2xl shadow-lg">
-                  📧
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-blue-500/20 border border-blue-400/40 text-blue-400 flex items-center justify-center shadow-lg">
+                  <UserPlus size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white">Invite Family Member</h3>
-                  <span className="text-xs text-cyan-400 font-bold">Dispatch official cyber shield umbrella link</span>
+                  <h3 className="text-xl sm:text-2xl font-bold font-heading text-white">Authorize Defender</h3>
+                  <span className="text-xs text-blue-400 font-mono">Grant security perimeter credentials</span>
                 </div>
               </div>
               <button 
@@ -1455,77 +1168,76 @@ export default function FamilyPage() {
             </div>
 
             {inviteSuccess ? (
-              <div className="py-6 text-center animate-fade-in">
-                <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-400 text-emerald-300 flex items-center justify-center mx-auto mb-4 text-3xl shadow-[0_0_30px_#10b981]">
-                  ✔
+              <div className="py-6 text-center animate-fade-in font-mono">
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 border border-emerald-400 text-emerald-300 flex items-center justify-center mx-auto mb-4 shadow-lg">
+                  <ShieldCheck size={32} />
                 </div>
-                <h4 className="text-2xl font-black font-['Outfit'] text-white mb-1">Invite Created!</h4>
-                <p className="text-slate-300 text-sm mb-5">Email dispatched to <b className="text-cyan-300">{inviteEmail}</b>. If it doesn’t appear soon, share the direct link below.</p>
+                <h4 className="text-2xl font-bold font-heading text-white mb-1">Clearance Dispatched!</h4>
+                <p className="text-slate-300 text-xs mb-6 font-sans">Encrypted authorization email sent to <b className="text-blue-300">{inviteEmail}</b>.</p>
 
-                <div className="bg-slate-900 border border-purple-500/40 p-4 rounded-2xl text-left">
-                  <span className="text-xs font-black uppercase tracking-wider text-amber-400 block mb-1">Direct family link</span>
-                  <p className="text-xs text-slate-300 mb-3">or share this link directly with them:</p>
-                  <div className="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-white/10">
+                <div className="bg-slate-900 border border-white/15 p-4 rounded-2xl text-left">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Direct Access Token URL</span>
+                  <div className="flex items-center gap-2 bg-slate-950 p-2.5 rounded-xl border border-white/10 mt-2">
                     <input 
                       type="text" 
                       readOnly 
                       value={`${typeof window !== 'undefined' ? window.location.origin : ''}/family?code=${familyGroup?.invite_code || 'A6B437'}`}
-                      className="w-full bg-transparent font-mono text-xs text-cyan-300 focus:outline-none select-all"
+                      className="w-full bg-transparent font-mono text-xs text-blue-300 focus:outline-none select-all"
                     />
                     <button 
                       onClick={() => {
                         navigator.clipboard.writeText(`${window.location.origin}/family?code=${familyGroup?.invite_code || 'A6B437'}`);
-                        alert("Direct link copied! Paste on WhatsApp / SMS.");
+                        alert("Access token copied!");
                       }}
-                      className="bg-gradient-to-r from-cyan-400 to-purple-600 text-navy font-black text-xs px-3 py-1.5 rounded-lg uppercase tracking-wider shrink-0 cursor-pointer shadow-md"
+                      className="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs px-3.5 py-1.5 rounded-lg uppercase tracking-wider shrink-0 cursor-pointer shadow-md"
                     >
-                      Copy Link
+                      Copy
                     </button>
                   </div>
                 </div>
               </div>
             ) : (
-              <form onSubmit={handleDispatchInvite} className="space-y-6">
+              <form onSubmit={handleDispatchInvite} className="space-y-6 font-mono">
                 {inviteError && (
-                  <div className="bg-rose-500/15 border border-rose-500/40 text-rose-200 text-sm font-medium rounded-2xl p-4">
+                  <div className="bg-rose-500/15 border border-rose-500/40 text-rose-200 text-xs font-sans rounded-2xl p-4">
                     {inviteError}
                   </div>
                 )}
                 <div>
-                  <label className="text-xs font-black uppercase tracking-wider text-slate-300 block mb-2">Family Member Name</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">Full Legal / Display Name</label>
                   <input
                     type="text"
                     required
                     value={inviteName}
                     onChange={(e) => setInviteName(e.target.value)}
-                    placeholder="e.g. Grandfather Ramesh"
-                    className="w-full bg-slate-900 border border-white/20 rounded-2xl p-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
+                    placeholder="e.g. Ramesh Sharma"
+                    className="w-full bg-slate-900 border border-white/20 rounded-2xl p-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-400 font-sans"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-black uppercase tracking-wider text-slate-300 block mb-2">Email Address</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">Email Destination</label>
                   <input
                     type="email"
                     required
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                     placeholder="ramesh@gmail.com"
-                    className="w-full bg-slate-900 border border-white/20 rounded-2xl p-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-slate-900 border border-white/20 rounded-2xl p-4 text-sm text-white placeholder:text-slate-600 focus:outline-none focus:border-blue-400 font-sans"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-black uppercase tracking-wider text-slate-300 block mb-2">Vulnerability Relationship Tier</label>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-300 block mb-2">Perimeter Role Classification</label>
                   <select
                     value={inviteRelation}
                     onChange={(e) => setInviteRelation(e.target.value)}
-                    className="w-full bg-slate-900 border border-white/20 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-cyan-400"
+                    className="w-full bg-slate-900 border border-white/20 rounded-2xl p-4 text-sm text-white focus:outline-none focus:border-blue-400 font-sans"
                   >
-                    <option value="Elder (Grandparent)">👴 Elder (Highest Scam Target)</option>
-                    <option value="Parent">👩 Parent</option>
-                    <option value="Spouse">💑 Spouse</option>
-                    <option value="Sibling / Teen">👧 Teen / Sibling</option>
+                    <option value="Elder (Grandparent)">Protected Elder (High Priority Target)</option>
+                    <option value="Parent">Parent Roster</option>
+                    <option value="Spouse">Spouse Roster</option>
+                    <option value="Sibling / Teen">Teen / Sibling Roster</option>
                   </select>
                 </div>
 
@@ -1533,17 +1245,17 @@ export default function FamilyPage() {
                   <button
                     type="button"
                     onClick={() => setShowInviteModal(false)}
-                    className="w-1/3 py-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-sm transition-all cursor-pointer"
+                    className="w-1/3 py-4 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs transition-all cursor-pointer uppercase"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={inviteLoading}
-                    className="btn-primary flex-1 py-4 text-sm font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="btn-primary flex-1 py-4 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 uppercase tracking-wider rounded-xl"
                   >
-                    {inviteLoading ? <Loader2 size={16} className="text-navy animate-spin" /> : <Send size={16} className="text-navy" />}
-                    <span>{inviteLoading ? 'Sending Invite...' : 'Dispatch Cyber Invite ➔'}</span>
+                    {inviteLoading ? <Loader2 size={16} className="text-white animate-spin" /> : <Send size={16} className="text-white" />}
+                    <span>{inviteLoading ? 'Authorizing...' : 'Authorize Clearance ➔'}</span>
                   </button>
                 </div>
               </form>

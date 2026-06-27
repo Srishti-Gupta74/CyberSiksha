@@ -1,0 +1,101 @@
+[
+  {
+    "id": "upi-scams",
+    "title": "UPI Collect Request Scams",
+    "icon": "📱",
+    "description": "Learn how scammers use fake refund requests to steal money directly from your bank account.",
+    "lessons": [
+      {
+        "id": "upi-1",
+        "title": "The Fake Refund",
+        "steps": [
+          {
+            "text": "You receive a call from someone claiming to be from PhonePe or Paytm customer support. They say a previous transaction failed and they want to refund your money.",
+            "image": null
+          },
+          {
+            "text": "They tell you to open your UPI app. Suddenly, a pop-up appears asking you to enter your UPI PIN.",
+            "image": null
+          },
+          {
+            "text": "The caller insists you must enter your PIN to receive the money.",
+            "image": null
+          }
+        ],
+        "redFlags": [
+          "You NEVER need to enter your UPI PIN to RECEIVE money.",
+          "Customer support will never ask you to open your app and enter a PIN.",
+          "The pop-up actually says 'Pay' or 'Send', not 'Receive'."
+        ],
+        "protection": "If someone tells you to enter your UPI PIN to get a refund, disconnect immediately and block the number.",
+        "xpReward": 20
+      }
+    ]
+  },
+  {
+    "id": "digital-arrest",
+    "title": "Digital Arrest Scams",
+    "icon": "👮",
+    "description": "Scammers impersonate police or CBI to scare you into transferring all your savings.",
+    "lessons": [
+      {
+        "id": "arrest-1",
+        "title": "The Fake CBI Call",
+        "steps": [
+          {
+            "text": "You receive a video call on WhatsApp or Skype. The person is in a police uniform, sitting in what looks like a police station.",
+            "image": null
+          },
+          {
+            "text": "They tell you your Aadhaar card or phone number was used to send illegal drugs or money laundering.",
+            "image": null
+          },
+          {
+            "text": "They say you are under 'Digital Arrest' and cannot disconnect the call. They demand you transfer all your bank balance to an 'RBI safe account' for verification.",
+            "image": null
+          }
+        ],
+        "redFlags": [
+          "Police or CBI do NOT make official arrest calls via WhatsApp or Skype.",
+          "There is no legal concept of 'Digital Arrest' in Indian law.",
+          "Real law enforcement will never ask you to transfer your money to a 'safe account'."
+        ],
+        "protection": "Cut the call immediately. Real police will come to your house with a warrant, not call you on Skype. Report the number to 1930.",
+        "xpReward": 25
+      }
+    ]
+  },
+  {
+    "id": "kyc-fraud",
+    "title": "KYC Update Scams",
+    "icon": "💳",
+    "description": "Scammers send urgent text messages claiming your bank account will be blocked unless you update KYC.",
+    "lessons": [
+      {
+        "id": "kyc-1",
+        "title": "The Urgent SMS",
+        "steps": [
+          {
+            "text": "You get an SMS saying: 'Dear Customer, your HDFC account will be blocked in 24 hours. Click this link to update your PAN/KYC immediately.'",
+            "image": null
+          },
+          {
+            "text": "You panic and click the link. It takes you to a website that looks exactly like your bank's login page.",
+            "image": null
+          },
+          {
+            "text": "You enter your username, password, and the OTP you just received.",
+            "image": null
+          }
+        ],
+        "redFlags": [
+          "Banks never send SMS messages with links to update KYC.",
+          "Urgent threats (like 'account will be blocked in 24 hours') are a classic scare tactic.",
+          "The website URL does not match the official bank URL (e.g., it might be hdfc-update-kyc.com instead of hdfcbank.com)."
+        ],
+        "protection": "Never click links in SMS messages. Always type your bank's URL directly into your browser or use their official mobile app. Forward suspicious messages to 1909.",
+        "xpReward": 20
+      }
+    ]
+  }
+]

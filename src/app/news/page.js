@@ -39,42 +39,59 @@ export default function NewsPage() {
 
   const renderNewsShowcase = (id, title, subtitle, list, colorTheme, emojiIcon) => (
     <section key={id} className="mb-24 scroll-mt-24">
-      <div className="flex items-center gap-4 mb-8 pb-4 border-b border-white/10">
+      <div className="flex items-center gap-4 mb-10 pb-4 border-b border-white/10">
         <span className="text-4xl filter drop-shadow">{emojiIcon}</span>
         <div>
           <span className="text-xs font-mono uppercase tracking-widest text-slate-400 font-bold block">{subtitle}</span>
-          <h2 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white">{title}</h2>
+          <h2 className="text-2xl sm:text-4xl font-black font-heading text-white">{title}</h2>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {list.map((article, i) => (
-          <div 
-            key={i} 
-            onClick={() => setSelectedArticle(article)}
-            className="glass-card p-6 sm:p-8 flex flex-col justify-between group cursor-pointer border-white/10 hover:border-cyan-400 transition-all duration-300 relative overflow-hidden bg-slate-950/60"
-          >
-            <div className="space-y-4">
-              <div className="flex items-center justify-between text-xs text-slate-400 font-mono">
-                <span className="flex items-center gap-1.5"><Calendar size={13} className="text-cyan-400" /> {article.date || "Recent"}</span>
-                <span className="px-2.5 py-0.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-bold text-slate-300">{article.source || "I4C Grid"}</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 sm:gap-12 pt-2">
+        {list.map((article, i) => {
+          // Alternating realistic rotations and tape positions for organic clipping feel
+          const rotations = ["-rotate-2 hover:rotate-0", "rotate-2 hover:rotate-0", "-rotate-1 hover:rotate-0", "rotate-1 hover:rotate-0", "rotate-0 hover:-rotate-1"];
+          const tiltClass = rotations[i % rotations.length];
+
+          return (
+            <div 
+              key={i} 
+              onClick={() => setSelectedArticle(article)}
+              className={`bg-[#f4f1ea] text-[#1a1b18] p-6 sm:p-7 flex flex-col justify-between group cursor-pointer border border-[#d8d6cc] shadow-[8px_10px_25px_rgba(0,0,0,0.7)] transition-all duration-300 relative overflow-hidden ${tiltClass} hover:scale-[1.03] hover:shadow-[12px_15px_35px_rgba(34,211,238,0.3)] hover:z-20`}
+              style={{
+                clipPath: "polygon(0% 0%, 100% 0%, 99% 98%, 95% 100%, 88% 98%, 80% 100%, 72% 98%, 65% 100%, 55% 98%, 45% 100%, 35% 98%, 25% 100%, 15% 98%, 8% 100%, 0% 98%)"
+              }}
+            >
+              {/* Simulated Translucent Tape Piece on Top */}
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-28 h-7 bg-amber-100/60 border border-amber-200/50 rotate-1 shadow-sm pointer-events-none backdrop-blur-[1px]"></div>
+
+              <div className="space-y-4 pt-2">
+                {/* Authentic Newspaper Dateline */}
+                <div className="flex items-center justify-between text-[11px] text-[#555] font-mono border-b border-[#1a1b18]/20 pb-2 uppercase tracking-wider font-bold">
+                  <span>CLIPPING #{article.id || (i+1)}</span>
+                  <span>{article.date || "RECENT"}</span>
+                  <span>{article.source || "FORENSIC DESK"}</span>
+                </div>
+
+                {/* Headline */}
+                <h3 className="text-xl sm:text-2xl font-black font-serif text-[#1a1b18] group-hover:text-blue-900 transition-colors leading-tight line-clamp-3">
+                  {article.title}
+                </h3>
+
+                {/* Ink Snippet */}
+                <p className="text-[#3a3b35] text-xs sm:text-sm line-clamp-4 leading-relaxed font-serif italic">
+                  &ldquo;{article.summary}&rdquo;
+                </p>
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold font-['Outfit'] text-white group-hover:text-cyan-300 transition-colors leading-snug line-clamp-2">
-                {article.title}
-              </h3>
-
-              <p className="text-slate-300 text-xs sm:text-sm line-clamp-3 leading-relaxed font-normal">
-                {article.summary}
-              </p>
+              {/* Action Callout */}
+              <div className="pt-5 mt-6 border-t border-[#1a1b18]/20 flex items-center justify-between text-xs font-mono font-bold text-[#1a1b18] group-hover:text-blue-800 transition-colors">
+                <span className="flex items-center gap-1.5">✂️ Click cut piece to expand</span>
+                <span className="underline decoration-2 underline-offset-4 group-hover:translate-x-1 transition-transform">Read Report ➔</span>
+              </div>
             </div>
-
-            <div className="pt-6 mt-6 border-t border-white/5 flex items-center justify-between text-xs font-mono font-bold text-cyan-400 group-hover:translate-x-1 transition-transform">
-              <span>Read Full Dossier</span>
-              <ArrowRight size={15} />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -105,24 +122,24 @@ export default function NewsPage() {
         </div>
       </ScrollReveal>
 
-      {/* Tab Toggle Toolbar */}
-      <div className="flex justify-center mb-12">
-        <div className="bg-slate-900/80 p-2 rounded-2xl border border-white/10 flex flex-wrap justify-center gap-2 font-mono text-xs uppercase tracking-wider">
+      {/* Tab Toggle Toolbar (High contrast & large fonts for elders) */}
+      <div className="flex justify-center mb-16">
+        <div className="bg-slate-900/90 p-3 rounded-3xl border-2 border-white/20 flex flex-wrap justify-center gap-3 font-mono text-sm sm:text-base uppercase tracking-wider shadow-2xl">
           <button 
             onClick={() => setActiveTab("feed")}
-            className={`px-5 py-3 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${activeTab === "feed" ? "bg-cyan-400 text-slate-950 font-black shadow-lg" : "text-slate-400 hover:text-white"}`}
+            className={`px-6 py-4 rounded-2xl transition-all cursor-pointer flex items-center gap-3 font-bold ${activeTab === "feed" ? "bg-cyan-400 text-slate-950 font-black shadow-[0_0_20px_rgba(34,211,238,0.5)] scale-105" : "bg-white/5 border border-white/10 text-slate-100 hover:bg-white/10 hover:text-white"}`}
           >
-            <Newspaper size={16} /> <span>Chronicles Feed</span>
+            <Newspaper size={20} /> <span>Chronicles Feed</span>
           </button>
           <button 
             onClick={() => setActiveTab("map")}
-            className={`px-5 py-3 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${activeTab === "map" ? "bg-rose-500 text-white font-black shadow-lg" : "text-slate-400 hover:text-white"}`}
+            className={`px-6 py-4 rounded-2xl transition-all cursor-pointer flex items-center gap-3 font-bold ${activeTab === "map" ? "bg-rose-500 text-white font-black shadow-[0_0_20px_rgba(244,63,94,0.5)] scale-105" : "bg-white/5 border border-white/10 text-slate-100 hover:bg-white/10 hover:text-white"}`}
           >
-            <MapPin size={16} /> <span>Geographic Heat Map</span>
+            <MapPin size={20} /> <span>Geographic Heat Map</span>
           </button>
           <button 
             onClick={() => setActiveTab("analytics")}
-            className={`px-5 py-3 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${activeTab === "analytics" ? "bg-purple-600 text-white font-black shadow-lg shadow-[0_0_20px_rgba(147,51,234,0.4)]" : "text-slate-400 hover:text-white"}`}
+            className={`px-6 py-4 rounded-2xl transition-all cursor-pointer flex items-center gap-3 font-bold ${activeTab === "analytics" ? "bg-purple-600 text-white font-black shadow-[0_0_20px_rgba(147,51,234,0.5)] scale-105" : "bg-white/5 border border-white/10 text-slate-100 hover:bg-white/10 hover:text-white"}`}
           >
             <span>📊 National Threat Analytics</span>
           </button>
@@ -189,17 +206,42 @@ export default function NewsPage() {
 
             {/* Article Body */}
             <div className="prose max-w-none font-serif text-base sm:text-lg leading-[1.8] text-[#2c2d28] space-y-6">
-              <p className="font-bold text-xl leading-relaxed text-[#1a1b18] first-letter:text-6xl first-letter:font-black first-letter:float-left first-letter:mr-3.5 first-letter:leading-none">
+              {/* Lead Summary Paragraph with Drop Cap */}
+              <p className="font-bold text-xl leading-relaxed text-[#1a1b18] first-letter:text-6xl first-letter:font-black first-letter:float-left first-letter:mr-3.5 first-letter:leading-none border-b border-[#1a1b18]/10 pb-6">
                 {selectedArticle.summary}
               </p>
               
-              <div className="p-6 bg-[#f0ede1] border-l-4 border-[#1a1b18] my-8 rounded-r-2xl font-sans text-sm text-[#333] space-y-2">
-                <span className="font-mono text-[11px] font-bold tracking-widest uppercase text-rose-700 block">
-                  🚨 Citizen Safety Mandate:
-                </span>
-                <p className="m-0 leading-relaxed font-semibold">
-                  Under official Department of Telecom regulations, citizens receiving unsolicited financial warrants or deepfake extortion demands must immediately register the suspect handle on Chakshu portal (sancharsaathi.gov.in) and dial 1930 within the first 2 hours.
-                </p>
+              {/* Full In-Depth Investigation Report */}
+              {selectedArticle.details && (
+                <div className="space-y-4 text-[#222] font-normal leading-relaxed pt-2">
+                  <h4 className="font-mono text-xs uppercase tracking-widest font-bold text-[#666]">
+                    [ FORENSIC DESK REPORT ]
+                  </h4>
+                  <p className="whitespace-pre-line text-lg">
+                    {selectedArticle.details}
+                  </p>
+                </div>
+              )}
+
+              {/* Actionable Defense Protocol List */}
+              {selectedArticle.protection && selectedArticle.protection.length > 0 && (
+                <div className="p-6 sm:p-8 bg-[#f0ede1] border-2 border-[#1a1b18] my-8 rounded-2xl font-sans text-sm text-[#333] shadow-md">
+                  <div className="flex items-center gap-2 font-mono text-xs font-black tracking-widest uppercase text-rose-700 mb-4 border-b border-[#1a1b18]/20 pb-2">
+                    <ShieldAlert size={16} /> <span>CITIZEN SAFETY DEFENSE PROTOCOLS</span>
+                  </div>
+                  <ul className="space-y-2.5 m-0 pl-5 list-disc font-semibold text-[#1a1b18]">
+                    {selectedArticle.protection.map((protocol, idx) => (
+                      <li key={idx} className="leading-snug">
+                        {protocol}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <div className="p-5 bg-white/60 border border-[#1a1b18]/20 rounded-xl font-sans text-xs text-[#555] flex flex-col sm:flex-row items-center justify-between gap-3 font-mono">
+                <span>🚨 Official Cyber Emergency Helpline: <b>1930</b></span>
+                <span>Chakshu Portal: <b>sancharsaathi.gov.in</b></span>
               </div>
             </div>
 

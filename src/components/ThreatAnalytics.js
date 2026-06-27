@@ -34,50 +34,50 @@ export default function ThreatAnalytics() {
   return (
     <div className="space-y-10 font-mono animate-fade-in select-none">
       
-      {/* Top KPI Summary Tickers */}
+      {/* Top KPI Summary Tickers (High contrast & large fonts for elders) */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <div className="glass-card p-6 bg-slate-950 border-rose-500/40 relative overflow-hidden">
-          <div className="flex justify-between items-start mb-3">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">CERT-In Reported Incidents</span>
-            <span className="bg-rose-500/20 text-rose-300 border border-rose-500/30 text-[10px] font-black px-2 py-0.5 rounded flex items-center gap-1">
-              +44.2% YoY <ArrowUpRight size={12} />
+        <div className="glass-card p-6 sm:p-8 bg-slate-900 border-2 border-rose-500/60 relative overflow-hidden rounded-3xl shadow-xl">
+          <div className="flex justify-between items-start mb-4">
+            <span className="text-xs sm:text-sm text-slate-200 font-bold uppercase tracking-wider">CERT-In Reported Incidents</span>
+            <span className="bg-rose-500/30 text-rose-200 border border-rose-400 font-black text-xs px-2.5 py-1 rounded-lg flex items-center gap-1 shadow">
+              +44.2% YoY <ArrowUpRight size={14} />
             </span>
           </div>
-          <span className="text-4xl font-black text-white font-['Outfit'] block tracking-tight">29.44 Lakh</span>
-          <span className="text-xs text-rose-400 block mt-1">Official MeitY parliamentary data disclosure</span>
+          <span className="text-4xl sm:text-5xl font-black text-white font-['Outfit'] block tracking-tight">29.44 Lakh</span>
+          <span className="text-xs sm:text-sm font-bold text-rose-300 block mt-2">Official MeitY parliamentary data disclosure</span>
         </div>
 
-        <div className="glass-card p-6 bg-slate-950 border-emerald-500/40 relative overflow-hidden">
-          <div className="flex justify-between items-start mb-3">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">I4C Citizen Funds Saved</span>
-            <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-black px-2 py-0.5 rounded">
+        <div className="glass-card p-6 sm:p-8 bg-slate-900 border-2 border-emerald-500/60 relative overflow-hidden rounded-3xl shadow-xl">
+          <div className="flex justify-between items-start mb-4">
+            <span className="text-xs sm:text-sm text-slate-200 font-bold uppercase tracking-wider">I4C Citizen Funds Saved</span>
+            <span className="bg-emerald-500/30 text-emerald-200 border border-emerald-400 font-black text-xs px-2.5 py-1 rounded-lg shadow">
               23.61L+ Cases
             </span>
           </div>
-          <span className="text-4xl font-black text-emerald-400 font-['Outfit'] block tracking-tight">₹8,189 Cr</span>
-          <span className="text-xs text-slate-300 block mt-1">Total money saved/frozen via 1930 NCRP Portal</span>
+          <span className="text-4xl sm:text-5xl font-black text-emerald-400 font-['Outfit'] block tracking-tight">₹8,189 Cr</span>
+          <span className="text-xs sm:text-sm font-bold text-slate-200 block mt-2">Total money saved/frozen via 1930 NCRP Portal</span>
         </div>
 
-        <div className="glass-card p-6 bg-slate-950 border-cyan-400/40 relative overflow-hidden">
-          <div className="flex justify-between items-start mb-3">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">NCRP Citizen Complaints</span>
-            <span className="bg-cyan-500/20 text-cyan-300 border border-cyan-400/30 text-[10px] font-black px-2 py-0.5 rounded">
+        <div className="glass-card p-6 sm:p-8 bg-slate-900 border-2 border-cyan-400/60 relative overflow-hidden rounded-3xl shadow-xl">
+          <div className="flex justify-between items-start mb-4">
+            <span className="text-xs sm:text-sm text-slate-200 font-bold uppercase tracking-wider">NCRP Citizen Complaints</span>
+            <span className="bg-cyan-500/30 text-cyan-200 border border-cyan-400 font-black text-xs px-2.5 py-1 rounded-lg shadow">
               ~88,976 / Day
             </span>
           </div>
-          <span className="text-4xl font-black text-cyan-300 font-['Outfit'] block tracking-tight">28.15 Lakh</span>
-          <span className="text-xs text-slate-300 block mt-1">Annual complaints registered on cybercrime.gov.in</span>
+          <span className="text-4xl sm:text-5xl font-black text-cyan-300 font-['Outfit'] block tracking-tight">28.15 Lakh</span>
+          <span className="text-xs sm:text-sm font-bold text-slate-200 block mt-2">Annual complaints registered on cybercrime.gov.in</span>
         </div>
       </div>
 
       {/* Visual Pie Donut Chart Showcase & Breakdown */}
-      <div className="glass-card p-8 sm:p-12 bg-slate-950 border-2 border-purple-500/60 shadow-[0_0_80px_rgba(139,92,246,0.2)]">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/10 pb-6 mb-8">
+      <div className="glass-card p-8 sm:p-12 bg-slate-900 border-2 border-purple-500/80 shadow-[0_0_80px_rgba(139,92,246,0.2)] rounded-[2.5rem]">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-white/20 pb-6 mb-8">
           <div>
-            <span className="text-xs text-purple-400 font-black uppercase tracking-widest block mb-1">National Typology Grid (I4C NCRP)</span>
-            <h3 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white">Scam Vector Distribution Pie Chart</h3>
+            <span className="text-xs sm:text-sm text-purple-300 font-black uppercase tracking-widest block mb-1">National Typology Grid (I4C NCRP)</span>
+            <h3 className="text-3xl sm:text-4xl font-black font-['Outfit'] text-white">Scam Vector Distribution Pie Chart</h3>
           </div>
-          <span className="text-xs text-slate-400 bg-white/5 px-3 py-1.5 rounded-xl border border-white/10">
+          <span className="text-xs sm:text-sm font-bold text-slate-200 bg-white/10 px-4 py-2 rounded-xl border border-white/20 shadow">
             Based on 28.15 Lakh documented NCRP filings
           </span>
         </div>
@@ -86,41 +86,41 @@ export default function ThreatAnalytics() {
           
           {/* CSS Conic Donut Chart */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center py-4">
-            <div className="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full shadow-[0_0_50px_rgba(255,255,255,0.08)] flex items-center justify-center"
+            <div className="relative w-64 h-64 sm:w-80 sm:h-80 rounded-full shadow-[0_0_50px_rgba(255,255,255,0.12)] flex items-center justify-center"
                  style={{ background: `conic-gradient(${gradientStops})` }}>
               
               {/* Inner Donut Cutout */}
-              <div className="w-40 h-40 sm:w-48 sm:h-48 bg-slate-950 rounded-full flex flex-col items-center justify-center p-4 text-center border border-white/10 shadow-inner">
-                <span className="text-xs text-slate-400 uppercase font-bold">Vector Share</span>
-                <span className="text-3xl sm:text-4xl font-black font-['Outfit'] text-white mt-0.5" style={{ color: activeSector.color }}>
+              <div className="w-44 h-44 sm:w-56 sm:h-56 bg-slate-950 rounded-full flex flex-col items-center justify-center p-4 text-center border-2 border-white/20 shadow-inner">
+                <span className="text-xs sm:text-sm text-slate-300 uppercase font-bold">Vector Share</span>
+                <span className="text-4xl sm:text-5xl font-black font-['Outfit'] text-white mt-1" style={{ color: activeSector.color }}>
                   {activeSector.pct}%
                 </span>
-                <span className="text-[10px] text-slate-300 font-bold line-clamp-2 mt-1">{activeSector.label}</span>
+                <span className="text-xs sm:text-sm text-slate-100 font-bold line-clamp-2 mt-1 px-2">{activeSector.label}</span>
               </div>
             </div>
           </div>
 
           {/* Interactive Legend & Selector Matrix */}
-          <div className="lg:col-span-7 space-y-3">
-            <span className="text-xs font-black text-cyan-300 uppercase tracking-widest block mb-2">⚡ Tap Category To Inspect Dossier:</span>
-            <div className="space-y-2.5">
+          <div className="lg:col-span-7 space-y-4">
+            <span className="text-base sm:text-lg font-black text-cyan-300 uppercase tracking-wider block mb-3">⚡ Tap Category To Inspect Dossier:</span>
+            <div className="space-y-3">
               {CRIME_DISTRIBUTION.map((item, idx) => {
                 const isSelected = selectedSector === idx;
                 return (
                   <div 
                     key={idx}
                     onClick={() => setSelectedSector(idx)}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
-                      isSelected ? "bg-white/10 border-cyan-400 scale-102 shadow-lg" : "bg-white/5 border-white/5 hover:border-white/20"
+                    className={`p-4 sm:p-5 rounded-2xl border-2 transition-all cursor-pointer flex items-center justify-between gap-4 shadow-md ${
+                      isSelected ? "bg-white/15 border-cyan-400 scale-102 shadow-xl" : "bg-white/[0.06] border-white/15 hover:border-white/30 hover:bg-white/[0.1]"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <span className="w-3.5 h-3.5 rounded-full shrink-0 shadow-md" style={{ backgroundColor: item.color }}></span>
-                      <span className="text-xs sm:text-sm font-bold text-white">{item.label}</span>
+                    <div className="flex items-center gap-3.5">
+                      <span className="w-4 h-4 rounded-full shrink-0 shadow-md" style={{ backgroundColor: item.color }}></span>
+                      <span className="text-sm sm:text-base font-bold text-white">{item.label}</span>
                     </div>
                     <div className="text-right shrink-0">
-                      <span className="text-sm font-black font-['Outfit'] block" style={{ color: item.color }}>{item.pct}%</span>
-                      <span className="text-[10px] text-slate-400 block">{item.count}</span>
+                      <span className="text-lg sm:text-2xl font-black font-['Outfit'] block" style={{ color: item.color }}>{item.pct}%</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-200 block">{item.count}</span>
                     </div>
                   </div>
                 );
@@ -132,17 +132,17 @@ export default function ThreatAnalytics() {
       </div>
 
       {/* Annual Escalation Bar Chart Heuristic */}
-      <div className="glass-card p-8 sm:p-12 bg-slate-950 border-rose-500/40">
-        <div className="flex justify-between items-center border-b border-white/10 pb-6 mb-8">
+      <div className="glass-card p-8 sm:p-12 bg-slate-900 border-2 border-rose-500/60 rounded-[2.5rem] shadow-2xl">
+        <div className="flex justify-between items-center border-b border-white/20 pb-6 mb-8">
           <div>
-            <span className="text-xs text-rose-400 font-black uppercase tracking-widest block mb-1">Year-over-Year Escalation</span>
-            <h3 className="text-2xl sm:text-3xl font-black font-['Outfit'] text-white">Annual Cyber Security Incidents Surge (CERT-In)</h3>
+            <span className="text-xs sm:text-sm text-rose-300 font-black uppercase tracking-widest block mb-1">Year-over-Year Escalation</span>
+            <h3 className="text-2xl sm:text-4xl font-black font-['Outfit'] text-white">Annual Cyber Security Incidents Surge (CERT-In)</h3>
           </div>
-          <TrendingUp size={28} className="text-rose-400 shrink-0" />
+          <TrendingUp size={36} className="text-rose-400 shrink-0" />
         </div>
 
         {/* Bar Matrix */}
-        <div className="flex items-end justify-between gap-2 sm:gap-6 h-64 pt-8 px-2 sm:px-6 border-b border-white/10">
+        <div className="flex items-end justify-between gap-3 sm:gap-8 h-72 pt-8 px-2 sm:px-6 border-b border-white/20">
           {ANNUAL_INCIDENTS.map((m, idx) => {
             const maxVal = 2944248;
             const heightPct = Math.round((m.cases / maxVal) * 100);
@@ -158,23 +158,23 @@ export default function ThreatAnalytics() {
 
             return (
               <div key={idx} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
-                <span className={`text-[10px] sm:text-xs font-black transition-transform group-hover:-translate-y-1 ${isCurrent ? "text-amber-300 scale-110" : "text-slate-300"}`}>
+                <span className={`text-xs sm:text-sm font-black transition-transform group-hover:-translate-y-1 ${isCurrent ? "text-amber-300 scale-110" : "text-slate-200"}`}>
                   {m.label}
                 </span>
                 <div 
-                  className={`w-full rounded-t-xl transition-all duration-500 bg-gradient-to-t ${barGradients[idx] || barGradients[0]} hover:brightness-125`}
+                  className={`w-full rounded-t-2xl transition-all duration-500 bg-gradient-to-t ${barGradients[idx] || barGradients[0]} hover:brightness-125`}
                   style={{ height: `${heightPct}%` }}
                 ></div>
-                <span className="text-xs font-black text-white mt-2">{m.year}</span>
+                <span className="text-sm sm:text-base font-black text-white mt-3">{m.year}</span>
               </div>
             );
           })}
         </div>
-        <div className="text-center pt-6 space-y-1">
-          <p className="text-xs font-bold text-cyan-300">
+        <div className="text-center pt-8 space-y-2">
+          <p className="text-sm sm:text-base font-bold text-cyan-300">
             Official Citation Sources: Ministry of Electronics & Information Technology (MeitY) / CERT-In Parliamentary Disclosures & MHA I4C NCRP Dossier
           </p>
-          <p className="text-[10px] text-slate-500 max-w-2xl mx-auto">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-3xl mx-auto leading-relaxed">
             Data reflects total cyber incidents tracked by CERT-In and citizen financial fraud reports logged via the National Helpline 1930 and cybercrime.gov.in.
           </p>
         </div>

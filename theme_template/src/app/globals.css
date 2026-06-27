@@ -1,0 +1,253 @@
+@import "tailwindcss";
+
+@theme {
+  --color-slate-800: #111111;
+  --color-slate-900: #0a0a0a;
+  --color-slate-950: #050505;
+  --color-navy: #000000;
+  --color-navy-card: #050505;
+  --color-navy-light: #0a0a0a;
+  --color-purple-elite: #4c1d95;
+  --color-violet-glow: #8b5cf6;
+  --color-cyan-elite: #22d3ee;
+  --color-cyan: #22d3ee;
+  --color-emerald: #10b981;
+  --color-rose: #f43f5e;
+  --color-gold: #f59e0b;
+  --color-violet: #8b5cf6;
+  --font-family-body: var(--font-body), -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-family-heading: var(--font-heading), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+:root {
+  --background: #000000;
+  --foreground: #ffffff;
+}
+
+body {
+  color: var(--foreground);
+  background: #050505;
+  font-family: var(--font-family-body);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.font-heading {
+  font-family: var(--font-family-heading);
+}
+
+.font-body {
+  font-family: var(--font-family-body);
+}
+
+/* Subtle Aesthetic Ambient Glow */
+body::before {
+  content: '';
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.01) 50%, transparent 70%);
+  filter: blur(80px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Elite Glassmorphic Card */
+.glass-card {
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(139, 92, 246, 0.22);
+  border-top: 1px solid rgba(167, 139, 250, 0.35);
+  border-radius: 1.75rem;
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.6),
+    0 0 25px rgba(139, 92, 246, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  background: rgba(17, 17, 17, 0.85);
+  border-color: rgba(167, 139, 250, 0.45);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.7),
+    0 0 35px rgba(139, 92, 246, 0.2),
+    inset 0 1px 2px rgba(255, 255, 255, 0.15);
+}
+
+/* Elite Primary CTA Button */
+.btn-primary {
+  background: linear-gradient(135deg, #38bdf8 0%, #8b5cf6 50%, #c084fc 100%);
+  color: #0b0f19;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  padding: 1rem 2.5rem;
+  border-radius: 1.25rem;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  text-transform: uppercase;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 15px 35px rgba(139, 92, 246, 0.55);
+  color: #ffffff;
+}
+
+.btn-primary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Chat Bubbles */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  background: rgba(10, 15, 29, 0.9);
+  border-radius: 1.5rem;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 0.9rem 1.25rem;
+  border-radius: 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.chat-bubble.scammer {
+  align-self: flex-start;
+  background: rgba(244, 63, 94, 0.15);
+  border-bottom-left-radius: 0.25rem;
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+  font-family: 'Space Grotesk', monospace;
+}
+
+.chat-bubble.victim {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+  border-bottom-right-radius: 0.25rem;
+  color: #0a0f1d;
+  font-weight: 700;
+}
+
+@keyframes floatUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: floatUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.35);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.6);
+}
+
+/* ==================== MARQUEE ==================== */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+.animate-marquee {
+  animation: marquee linear infinite;
+}
+
+.animate-marquee-reverse {
+  animation: marquee-reverse linear infinite;
+}
+
+/* ==================== SCROLL-DRIVEN UTILITIES ==================== */
+.text-gradient-white {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Stat card glow pulse */
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.05); }
+  50% { box-shadow: 0 0 40px rgba(255,255,255,0.1), 0 0 80px rgba(255,255,255,0.03); }
+}
+
+.stat-glow {
+  animation: glowPulse 4s ease-in-out infinite;
+}
+
+/* Full-screen CTA shimmer line */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.shimmer-line {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer-line::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* Cinematic floating idle animation */
+@keyframes cinematicFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.015); }
+}
+
+.cinematic-float {
+  animation: cinematicFloat 5s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Vertical Marquee for Mockups */
+@keyframes marqueeVertical {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.animate-marquee-vertical {
+  animation: marqueeVertical 20s linear infinite;
+}

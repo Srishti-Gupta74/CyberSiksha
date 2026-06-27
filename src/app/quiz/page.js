@@ -104,9 +104,8 @@ export default function QuizPage() {
       <div className="animate-fade-in max-w-4xl mx-auto text-center pt-8 pb-44 mb-16 px-4 select-none">
         
         {/* Levitating 3D Arcade Reactor Sphere */}
-        <div className="relative w-32 h-32 mx-auto mb-10 group">
-          <div className="absolute inset-0 bg-gradient-to-tr from-cyan-400 via-purple-500 to-pink-500 rounded-full blur-2xl opacity-75 group-hover:opacity-100 transition-opacity duration-700 animate-pulse"></div>
-          <div className="absolute inset-1 border-2 border-dashed border-cyan-400/80 rounded-full animate-spin duration-[14000ms]"></div>
+        <div className="relative w-36 h-36 mx-auto mb-10 group cursor-pointer animate-floating">
+          <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500 via-purple-600 to-pink-500 rounded-full blur-2xl opacity-60 group-hover:opacity-100 transition-opacity duration-500"></div>
           <div className="absolute inset-3 border border-purple-400/50 rounded-full animate-ping duration-[3500ms]"></div>
           
           <div className="w-full h-full bg-gradient-to-tr from-slate-950 via-purple-950 to-slate-900 rounded-full border-[3px] border-cyan-400 flex items-center justify-center relative z-10 shadow-[0_0_60px_rgba(34,211,238,0.65)] group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
@@ -131,15 +130,15 @@ export default function QuizPage() {
         
         {/* Luminous Glassmorphism 3D Dossier Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-2xl mx-auto mb-16">
-          <div className="bg-slate-950/85 border border-white/15 hover:border-amber-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 group">
+          <div className="bg-slate-950/85 border border-white/15 hover:border-amber-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl hover-lift group">
             <div className="text-amber-400 font-black text-4xl font-['Outfit'] drop-shadow-[0_0_15px_#fbbf24] group-hover:scale-110 transition-transform">5</div>
             <div className="text-xs text-slate-300 font-mono font-black uppercase tracking-widest mt-2">Quick Scenarios</div>
           </div>
-          <div className="bg-slate-950/85 border border-white/15 hover:border-cyan-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 group">
+          <div className="bg-slate-950/85 border border-white/15 hover:border-cyan-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl hover-lift group animate-floating-slow">
             <div className="text-cyan-400 font-black text-4xl font-['Outfit'] drop-shadow-[0_0_15px_#22d3ee] group-hover:scale-110 transition-transform">+50</div>
             <div className="text-xs text-slate-300 font-mono font-black uppercase tracking-widest mt-2">Max Safety XP</div>
           </div>
-          <div className="bg-slate-950/85 border border-white/15 hover:border-rose-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl transition-all duration-300 hover:-translate-y-2 group">
+          <div className="bg-slate-950/85 border border-white/15 hover:border-rose-400/60 p-6 rounded-3xl shadow-2xl backdrop-blur-xl hover-lift group">
             <div className="text-rose-400 font-black text-4xl font-['Outfit'] drop-shadow-[0_0_15px_#f43f5e] group-hover:scale-110 transition-transform">🔥</div>
             <div className="text-xs text-slate-300 font-mono font-black uppercase tracking-widest mt-2">Streak Bonus</div>
           </div>

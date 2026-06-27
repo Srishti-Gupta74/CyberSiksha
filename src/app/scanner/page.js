@@ -118,7 +118,7 @@ export default function ScamScannerPage() {
         
         {/* Upload Workbench */}
         <div className="lg:col-span-6 space-y-6">
-          <div className="glass-card p-6 sm:p-10 bg-slate-950 border-white/10 space-y-6">
+          <div className="glass-card p-6 sm:p-10 bg-slate-950 border-white/10 space-y-6 hover-lift hover-glow-border transition-all duration-300">
             <h2 className="text-xl sm:text-2xl font-black font-['Outfit'] text-white flex items-center gap-3">
               <Upload className="text-cyan-400" /> Upload Suspicious Evidence
             </h2>
@@ -137,7 +137,7 @@ export default function ScamScannerPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="space-y-3 animate-floating">
                     <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 mx-auto flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg">
                       <Camera size={32} />
                     </div>
@@ -155,8 +155,8 @@ export default function ScamScannerPage() {
               </div>
 
               <div>
-                <div className="flex flex-wrap items-center gap-2 mb-3">
-                  <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider">💡 Quick Scan Category:</span>
+                <div className="flex flex-wrap items-center gap-2.5 mb-4">
+                  <span className="text-xs sm:text-sm font-mono font-bold text-cyan-300 uppercase tracking-wider">💡 Quick Scan Category:</span>
                   {[
                     { label: "🎁 Prize / Lottery", text: "Coca-Cola Blender Prize giveaway claim" },
                     { label: "👮 CBI Digital Arrest", text: "CBI Digital Arrest warrant Skype call" },
@@ -168,28 +168,28 @@ export default function ScamScannerPage() {
                       key={idx}
                       type="button"
                       onClick={() => setTextInput(tag.text)}
-                      className="text-[10px] bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-400 text-slate-300 hover:text-cyan-300 px-2.5 py-1 rounded-lg font-mono transition-all cursor-pointer"
+                      className="text-xs sm:text-sm bg-white/10 hover:bg-cyan-500/30 border border-white/20 hover:border-cyan-400 text-slate-100 hover:text-white px-3 py-2 rounded-xl font-mono font-bold transition-all cursor-pointer shadow-sm"
                     >
                       {tag.label}
                     </button>
                   ))}
                 </div>
-                <label className="text-xs font-mono text-slate-400 uppercase font-bold block mb-2">Or Paste Intercepted SMS / Script Text:</label>
+                <label className="text-sm sm:text-base font-mono text-slate-200 uppercase font-bold block mb-2">Or Paste Intercepted SMS / Script Text:</label>
                 <textarea 
                   value={textInput}
                   onChange={e => setTextInput(e.target.value)}
-                  placeholder="Dear Citizen, your SIM card will be deactivated within 2 hours. Call CBI helpline..."
-                  rows={3}
-                  className="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-xs text-white focus:border-cyan-400 outline-none font-mono"
-                />
+                  placeholder="Paste SMS text here..."
+                  rows="3"
+                  className="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-white text-sm sm:text-base font-mono focus:outline-none focus:border-cyan-400 transition-all placeholder:text-slate-500"
+                ></textarea>
               </div>
 
               <button 
                 type="submit"
                 disabled={scanning || (!imagePreview && !textInput.trim())}
-                className="w-full py-4 rounded-2xl btn-primary text-xs font-black uppercase tracking-widest shadow-xl cursor-pointer transition-all disabled:opacity-30 flex items-center justify-center gap-2 font-mono"
+                className="w-full py-5 rounded-2xl btn-primary text-sm sm:text-base font-black uppercase tracking-widest shadow-2xl cursor-pointer transition-all disabled:opacity-30 flex items-center justify-center gap-3 font-mono"
               >
-                {scanning ? <RefreshCw className="animate-spin" /> : <ScanLine />}
+                {scanning ? <RefreshCw className="animate-spin" size={20} /> : <ScanLine size={20} />}
                 <span>{scanning ? "Forensic Vision Interception..." : "⚡ Analyze Evidence With AI Vision"}</span>
               </button>
             </form>
@@ -199,29 +199,29 @@ export default function ScamScannerPage() {
         {/* Vision Verdict Results */}
         <div className="lg:col-span-6 space-y-6">
           {report ? (
-            <div className="glass-card p-6 sm:p-10 bg-slate-950 border-rose-500/50 space-y-6 relative animate-scale-up font-mono">
+            <div className="glass-card p-6 sm:p-10 bg-slate-900 border-2 border-rose-500/80 space-y-8 relative animate-scale-up font-mono rounded-[2.5rem] shadow-2xl">
               
-              <div className="text-center pb-6 border-b border-white/10">
-                <span className="text-lg sm:text-2xl font-black text-rose-400 block tracking-wider mb-1">{report.verdict}</span>
-                <span className="text-xs text-slate-400 font-sans block">{report.manipulationTactic} (Confidence: {report.confidenceScore})</span>
+              <div className="text-center pb-6 border-b border-white/20">
+                <span className="text-2xl sm:text-4xl font-black text-rose-400 block tracking-wider mb-2">{report.verdict}</span>
+                <span className="text-sm sm:text-base text-slate-200 font-bold block">{report.manipulationTactic} (Confidence: {report.confidenceScore})</span>
               </div>
 
-              <div className="space-y-2">
-                <span className="text-xs text-pink-400 font-black uppercase tracking-wider block mb-2">🚩 Visual Manipulation Red Flags:</span>
+              <div className="space-y-3">
+                <span className="text-sm sm:text-base text-pink-300 font-black uppercase tracking-wider block mb-2">🚩 Visual Manipulation Red Flags:</span>
                 {report.redFlagsDetected.map((fl, i) => (
-                  <div key={i} className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-200 text-xs flex items-start gap-2">
-                    <span>⚠️</span>
-                    <span>{fl}</span>
+                  <div key={i} className="p-4 rounded-2xl bg-rose-500/15 border-2 border-rose-500/30 text-rose-100 text-sm sm:text-base font-bold flex items-start gap-3 shadow-sm">
+                    <span className="text-lg">⚠️</span>
+                    <span className="leading-relaxed">{fl}</span>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-2 pt-2 border-t border-white/10">
-                <span className="text-xs text-cyan-300 font-black uppercase tracking-wider block mb-2">🛡️ Immediate Citizen Safety Protocol:</span>
+              <div className="space-y-3 pt-4 border-t border-white/20">
+                <span className="text-sm sm:text-base text-cyan-300 font-black uppercase tracking-wider block mb-2">🛡️ Immediate Citizen Safety Protocol:</span>
                 {report.actionProtocol.map((st, i) => (
-                  <div key={i} className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-200 text-xs flex items-start gap-2">
-                    <span>✅</span>
-                    <span>{st}</span>
+                  <div key={i} className="p-4 rounded-2xl bg-cyan-500/15 border-2 border-cyan-500/30 text-cyan-100 text-sm sm:text-base font-bold flex items-start gap-3 shadow-sm">
+                    <span className="text-lg">✅</span>
+                    <span className="leading-relaxed">{st}</span>
                   </div>
                 ))}
               </div>
@@ -323,7 +323,7 @@ export default function ScamScannerPage() {
                     printWin.document.write(htmlContent);
                     printWin.document.close();
                   }}
-                  className="py-3 px-4 bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+                  className="py-4 px-5 bg-gradient-to-r from-rose-600 to-purple-600 hover:from-rose-500 hover:to-purple-500 text-white rounded-2xl text-sm sm:text-base font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xl"
                 >
                   📄 Download Report (.PDF)
                 </button>
@@ -331,7 +331,7 @@ export default function ScamScannerPage() {
                   href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`🚨 Hey! I just scanned a suspicious screenshot/message using CyberSiksha Vision Analyzer! 🛡️\n\nHere is the Forensic AI Analysis:\nVerdict: ${report.verdict}\nTactic: ${report.manipulationTactic}\nConfidence: ${report.confidenceScore}\n\n⚠️ Why it's a scam (Red Flags):\n• ${report.redFlagsDetected.join('\n• ')}\n\n🛡️ What you should do (Safety Protocol):\n• ${report.actionProtocol.join('\n• ')}\n\nVerify yourself at: https://cybersiksha.vercel.app/scanner`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-3 px-4 bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-lg"
+                  className="py-4 px-5 bg-[#25D366] hover:bg-[#20ba5a] text-slate-950 rounded-2xl text-sm sm:text-base font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-xl"
                 >
                   💬 Share on WhatsApp
                 </a>
@@ -339,10 +339,10 @@ export default function ScamScannerPage() {
 
             </div>
           ) : (
-            <div className="glass-card p-12 bg-slate-950/50 border-white/5 text-center flex flex-col items-center justify-center h-full min-h-[350px]">
-              <ScanLine size={48} className="text-slate-600 mb-4 animate-pulse" />
-              <h3 className="text-base font-bold text-slate-400 mb-1">Awaiting Screenshot Upload</h3>
-              <p className="text-xs text-slate-600 max-w-xs">Upload suspect SMS evidence to launch AI multimodal OCR diagnostics.</p>
+            <div className="glass-card p-12 bg-slate-900/90 border-2 border-white/20 text-center flex flex-col items-center justify-center h-full min-h-[380px] rounded-[2.5rem] shadow-2xl hover-lift animate-floating-slow">
+              <ScanLine size={64} className="text-cyan-400 mb-6 animate-pulse" />
+              <h3 className="text-xl sm:text-2xl font-black text-white mb-2 font-['Outfit']">Awaiting Screenshot Upload</h3>
+              <p className="text-sm sm:text-base font-bold text-slate-300 max-w-sm leading-relaxed">Upload suspect SMS evidence or paste text script to launch AI multimodal OCR diagnostics.</p>
             </div>
           )}
         </div>
